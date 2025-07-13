@@ -1,0 +1,6 @@
+[submodules "apenssl"]
+path = apenssl
+url = https://github.com/JoseMariaUrzuaOchoa/apenssl.git
+[submodule "openssl"]
+	path = openssl
+	url = https://github.com/openssl/openssl.git
