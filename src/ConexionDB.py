@@ -6,7 +6,7 @@ def get_connection():
     try:
         connection = mysql.connector.connect(
             host="localhost",
-            pott=3306,
+            port=3306,
             user="root",
             password="Jose1708$",
             database="administracion"
