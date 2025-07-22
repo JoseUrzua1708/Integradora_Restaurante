@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <title>Formulario de sucursal</title>
+    <link rel="stylesheet" href="../static/css/formulario_sucursales.css"/>
+</head>
+<body>
+    <div class="sucursal">
+        <h1>Registro Sucursal</h1>
+        <form class="Sucursal">
+
+            <label for="Nombre">Nombre de la sucursal</label>
+            <input type="text" id="Nombre" name="Nombre" required/>
+
+            <label for="Direccion">Dirección</label>
+            <textarea id="Direccion" name="Direccion" required></textarea>
+
+            <label for="Telefono">Telefono</label>
+            <input type="tel" id="Telefono" name="Telefono" pattern="[0-9]{10}" placeholder="10 díjitos" required/>
+
+            <label for="Responsable">Responsable</label>
+            <input type="text" id="Responsable" name="Responsable" required/> 
+
+            <label for="Horario_Apertura">Horario de Apertura</label>
+            <input type="time" id="Horario_Apertura" name="Horario_Apertura" required/>
+
+            <label for="Horario_Cierre">Horario de cierre</label>
+            <input type="time" id="Horario_Cierre" name="Horario_cierre" required>
+
+            <label for="Estatus">Estatus</label>
+            <select id="Estatus" name="estatus" required>
+                <option value="Activa" selected>Activa</option>
+                <option value="Inactiva">Inactiva</option>
+                <option value="En Mantenimiento">En mantenimiento</option>
+            </select>
+
+            <label for="Fecha_Apertura">Fecha de apertura</label>
+            <input type="date" id="Fecha_Apertura" name="Fecha_Apertura">
+            
+            <button type="submit">Guardar Sucursal</button>
+        </form>
+    </div>
+</body>
+</html>

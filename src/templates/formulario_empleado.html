@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Formulario Empleado</title>
+    <link rel="stylesheet" href="../static/css/formulario_empleado.css">
+</head>
+<body>
+    <div class="empleado">
+        <h1>Formulario de empleado</h1>
+        <form class="Empleado">
+
+            <label for="Sucursal_ID">Sucursal *</label>
+            <input type="number" id="Sucursal_ID" name="Sucursal_ID"/>
+
+
+            <label for="Rol_ID">Rol *</label>
+            <select name="Rol_ID" id="Rol_ID" required>
+                {% for R in Rol_ID%}
+                <option value="{{ R.Rol_ID }}">{{R.nombre}}</option>
+                {% endfor}
+            </select>
+
+            <label for="Nombre">Nombre *</label>
+            <input type="text" id="Nombre"  name="Nombre" required/>
+
+            <label for="Apellido_p">Apellido Paterno</label>
+            <input type="text" id="Apellido_p" name="Apellido_p" required/>
+            
+            <label for="Apellido_M">Apellido Materno</label>
+            <input type="text" id="Apellido_M" name="Apellido_M" required/>
+
+            <label for="Correo">Correo</label>
+            <input type="email" id="Correo" name="Correo" required/>
+
+            <label for="Contrasena">Contraseña</label>
+            <input type="password" id="Contrasena" name="Contrasena" required/>
+
+            <label for="Telefono">Teléfono</label>
+            <input type="text" id="Telefono" name="Telefono"  pattern="[0-9]{10}" placeholder="10 dígitos"/>
+
+            <label for="Fecha_Registro">Fecha Registro *</label>
+            <input type="date" id="Fecha_Registro" name="Fecha_Registro" required />
+
+            <label for="RFC">RFC</label>
+            <input type="text" id="RFC" name="RFC" maxlength="13" placeholder="Opcional"/>
+
+            <label for="CURP">CURP</label>
+            <input type="text" id="CURP" name="CURP" maxlength="18" placeholder="Opcional"/>
+
+            <label for="Direccion">Direccion</label>
+            <textarea id="Direccion" name="Direccion" rows="3" placeholder="Opcional"></textarea>
+
+            <label for="Fecha_Nacimiento">Fecha de nacimiento</label>
+            <input type="date" id="Fecha_Nacimiento" name="Fecha_Nacimiento" required/>
+            
+            <label for="Genero">Genero</label>
+            <select  id="Genero" name="Genero" required>
+                <option>Seleccione</option>
+                <option value="Masculino">Masculino</option>
+                <option value="Femenino">Femenino</option>
+                <option value="Otro">Otro</option>
+            </select>
+
+            <label for="Estatus">Estatus</label>
+            <select id="Estatus" name="Estatus">
+                <option value="Activo" selected>Activo</option>
+                <option value="Inactivo">Inactivo</option>
+                <option value="Suspendido">Suspendido</option>
+                <option value="Vacaciones">Vacaciones</option>
+            </select>
+
+            <label for="Salario">Salario</label>
+            <input type="number" name="Salario" id="Salario" step="0.01" min="0" placeholder="Opcional" />
+
+            <label for="Tipo_Contrato">Tipo_Contrato</label>
+            <select id="Tipo_Contrato" name="Tipo_Contrato">
+                <option >Seleccione</option>
+                <option value="Tiempo Completo">Tiempo Completo</option>
+                <option value="Medio Tiempo">Medio Tiempo</option>
+                <option value="Temporal">Temporal</option>
+                <option value="Por Horas">Por HOras</option>
+            </select>
+
+            <label for="Fecha_Contratacion">Fecha de contratación</label>
+            <input type="date" id="Fecha_Contratacion" name="Fecha_Contratacion" required/>
+
+            <label for="Fecha_Terminacion">Fecha de terminación</label>
+            <input type="date" id="Fecha_Terminacion" name="Fecha_Terminacion"/>
+
+            <button type="submit">Registrar Empleado</button>
+        </form>
+    </div>
+</body>
+</html>

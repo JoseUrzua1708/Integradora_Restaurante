@@ -1,0 +1,67 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', 'sans-serif';
+    background-color: #fefefe;
+    color: #333;
+}
+
+.sucursal {
+    max-width: 600px;
+    margin: 40px auto;
+    background-color: #fffaf3;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(0, 81, 135, 0.2);
+    
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #9c6800;
+}
+
+.Sucursal label {
+    display: block;
+    font-weight: bold;
+    margin-top: 15px;
+    color: #5c4500;
+}
+
+.Sucursal input,
+.Sucursal textarea,
+.Sucursal select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #d5c4a1;
+    border-radius: 8px;
+    background-color: #fffef5;
+    color: #333;
+    font-size: 1em;
+    box-sizing: border-box;
+}
+
+.Sucursal textarea {
+    min-height: 60px;
+    resize: vertical;
+}
+
+button[type="submit"] {
+    margin-top: 25px;
+    width: 100%;
+    background-color: #e0a800;
+    color: white;
+    padding: 12px;
+    font-size: 1em;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #c48000;
+}
