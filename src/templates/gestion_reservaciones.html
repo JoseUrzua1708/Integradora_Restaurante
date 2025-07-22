@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Reservaciones</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/gestion_reservaciones.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <h1>Reservaciones</h1>
+        <div class="nav-right">Eventos & Mesas</div>
+    </nav>
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="mostrarTab('formulario')">Formulario</button>
+        <button class="tab-btn" onclick="mostrarTab('historial-mesas')">Historial Mesas</button>
+        <button class="tab-btn" onclick="mostrarTab('historial-eventos')">Historial Eventos</button>
+    </div>
+
+    <main class="container">
+        <!-- Formulario -->
+        <section id="formulario" class="tab-content active">
+            <section class="panel">
+                <h2>Formulario de Reservación</h2>
+                <form id="reservaForm" method="POST" action="/guardar">
+                    <label for="tipo">Tipo de reservación:</label>
+                    <select id="tipo" name="tipo" required>
+                        <option value="mesa">Mesa</option>
+                        <option value="evento">Evento</option>
+                    </select>
+
+                    <label>Cliente:</label>
+                    <select name="cliente" required>
+                        {% for c in clientes %}
+                            <option value="{{ c[0] }}">{{ c[1] }}</option>
+                        {% endfor %}
+                    </select>
+
+                    <label>Número de personas:</label>
+                    <input type="number" name="personas" min="1" required>
+
+                    <label>Fecha y hora:</label>
+                    <input type="datetime-local" name="fecha" required>
+
+                    <label>Notas adicionales:</label>
+                    <textarea name="notas"></textarea>
+
+                    <div id="campos-mesa">
+                        <label>Sucursal:</label>
+                        <select name="sucursal">
+                            {% for s in sucursales %}
+                                <option value="{{ s[0] }}">{{ s[1] }}</option>
+                            {% endfor %}
+                        </select>
+
+                        <label>Mesa:</label>
+                        <select name="mesa">
+                            {% for m in mesas %}
+                                <option value="{{ m[0] }}">{{ m[1] }}</option>
+                            {% endfor %}
+                        </select>
+
+                        <label>Empleado:</label>
+                        <select name="empleado">
+                            {% for e in empleados %}
+                                <option value="{{ e[0] }}">{{ e[1] }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div id="campos-evento" style="display:none;">
+                        <label>Evento:</label>
+                        <select name="evento">
+                            {% for ev in eventos %}
+                                <option value="{{ ev[0] }}">{{ ev[1] }}</option>
+                            {% endfor %}
+                        </select>
+
+                        <label>Monto pagado:</label>
+                        <input type="number" name="monto" min="0" step="0.01">
+                    </div>
+
+                    <div class="botones">
+                        <button type="submit" class="btn verde">Guardar</button>
+                        <button type="reset" class="btn rojo">Cancelar</button>
+                    </div>
+                </form>
+            </section>
+        </section>
+
+        <!-- Historial Mesas -->
+        <section id="historial-mesas" class="tab-content">
+            <section class="panel resumen">
+                <h2>Historial de Reservaciones (Mesas)</h2>
+                {% for r in reservas_mesas %}
+                    <p><strong>ID:</strong> {{ r[0] }} | Cliente: {{ r[1] }} | Mesa: {{ r[2] }} | Personas: {{ r[3] }} | Fecha: {{ r[4] }}</p>
+                {% else %}
+                    <p>No hay reservaciones de mesas.</p>
+                {% endfor %}
+            </section>
+        </section>
+
+        <!-- Historial Eventos -->
+        <section id="historial-eventos" class="tab-content">
+            <section class="panel resumen">
+                <h2>Historial de Reservaciones (Eventos)</h2>
+                {% for e in reservas_eventos %}
+                    <p><strong>ID:</strong> {{ e[0] }} | Cliente: {{ e[1] }} | Evento: {{ e[2] }} | Personas: {{ e[3] }} | Fecha: {{ e[4] }}</p>
+                {% else %}
+                    <p>No hay reservaciones de eventos.</p>
+                {% endfor %}
+            </section>
+        </section>
+    </main>
+
+    <script>
+        function mostrarTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        document.getElementById('tipo').addEventListener('change', function () {
+            const mesa = document.getElementById('campos-mesa');
+            const evento = document.getElementById('campos-evento');
+
+            if (this.value === 'mesa') {
+                mesa.style.display = 'block';
+                evento.style.display = 'none';
+            } else {
+                mesa.style.display = 'none';
+                evento.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>
