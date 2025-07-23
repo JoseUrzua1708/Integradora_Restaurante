@@ -11,6 +11,11 @@ conexion = mysql.connector.connect(
     database="administracion"
 )
 
+##########PAOLA##########
+
+
+
+##########ALEX##########
 @app.route('/')
 def gestion_reservaciones():
     cursor = conexion.cursor()
