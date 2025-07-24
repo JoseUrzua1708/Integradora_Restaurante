@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gestión de Restaurantes</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/Gestion_Restaurante.css') }}" />
+</head>
+<body>
+  <div class="contenedor">
+    <h1>Gestión de Restaurantes</h1>
+
+    <a href="{{ url_for('formulario_restaurante') }}">
+      <button type="button">Agregar</button>
+    </a>
+
+    <table class="vista_restaurante">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Dirección</th>
+          <th>Teléfono</th>
+          <th>Correo de contacto</th>
+          <th>Horario de apertura</th>
+          <th>Horario de cierre</th>
+          <th>Moneda</th>
+          <th>Impuesto</th>
+          <th>Reserva mínima</th>
+          <th>Política de cancelación</th>
+          <th>Actualización</th>
+          <th>Opciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for d in data %}
+        <tr>
+          <td>{{ d.ID }}</td>
+          <td>{{ d.Nombre_Restaurante }}</td>
+          <td>{{ d.Direccion }}</td>
+          <td>{{ d.Telefono }}</td>
+          <td>{{ d.Correo_Contacto }}</td>
+          <td>{{ d.Horario_Apertura }}</td>
+          <td>{{ d.Horario_Cierre }}</td>
+          <td>{{ d.Moneda }}</td>
+          <td>{{ d.Impuesto }}</td>
+          <td>{{ d.Tiempo_Reserva_Min }}</td>
+          <td>{{ d.Politica_Cancelacion }}</td>
+          <td>{{ d.Fecha_Actualizacion }}</td>
+          <td>
+            <select onchange="
+              if (this.value === 'actualizar') {
+                abrirModal('{{ d.ID }}');
+              } else if (this.value === 'eliminar') {
+                eliminarRestaurante('{{ d.ID }}');
+              }
+              this.value = 'Opciones';
+            ">
+              <option selected disabled>Opciones</option>
+              <option value="actualizar">Actualizar</option>
+              <option value="eliminar">Eliminar</option>
+            </select>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <!-- MODALES DE ACTUALIZACIÓN FUERA DEL TBODY -->
+    {% for d in data %}
+    <div class="modal" id="modal{{ d.ID }}">
+      <form action="/actualizar/{{ d.ID }}" method="post" class="modal-form">
+        <h5>Actualizar Restaurante: {{ d.Nombre_Restaurante }}</h5>
+
+        <label>Nombre del Restaurante</label>
+        <input type="text" name="Nombre_Restaurante" value="{{ d.Nombre_Restaurante }}" required />
+
+        <label>Dirección</label>
+        <textarea name="Direccion" required>{{ d.Direccion }}</textarea>
+
+        <label>Teléfono</label>
+        <input type="tel" name="Telefono" value="{{ d.Telefono }}" required />
+
+        <label>Correo de Contacto</label>
+        <input type="email" name="Correo_Contacto" value="{{ d.Correo_Contacto }}" required />
+
+        <label>Horario de Apertura</label>
+        <input type="time" name="Horario_Apertura" value="{{ d.Horario_Apertura }}" required />
+
+        <label>Horario de Cierre</label>
+        <input type="time" name="Horario_Cierre" value="{{ d.Horario_Cierre }}" required />
+
+        <label>Moneda</label>
+        <input type="text" name="Moneda" value="{{ d.Moneda }}" required />
+
+        <label>Impuesto (%)</label>
+        <input type="number" step="0.01" name="Impuesto" value="{{ d.Impuesto }}" required />
+
+        <label>Tiempo mínimo de reserva (minutos)</label>
+        <input type="number" name="Tiempo_Reserva_Min" value="{{ d.Tiempo_Reserva_Min }}" required />
+
+        <label>Política de Cancelación</label>
+        <textarea name="Politica_Cancelacion" required>{{ d.Politica_Cancelacion }}</textarea>
+
+        <div class="botones">
+          <button type="submit">Guardar</button>
+          <button type="button" onclick="cerrarModal('{{ d.ID }}')">Cancelar</button>
+        </div>
+      </form>
+    </div>
+    {% endfor %}
+
+    <!-- Modal de confirmación -->
+    <div id="modalConfirmacion" class="modal">
+      <div class="modal-contenido">
+        <p>¿Estás seguro de que deseas eliminar este restaurante?</p>
+        <div class="botones">
+          <button id="btnConfirmar">Sí</button>
+          <button id="btnCancelar">Cancelar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function abrirModal(id) {
+      document.getElementById('modal' + id).style.display = 'block';
+    }
+
+    function cerrarModal(id) {
+      document.getElementById('modal' + id).style.display = 'none';
+    }
+
+    let idAEliminar = null;
+
+    function eliminarRestaurante(id) {
+      idAEliminar = id;
+      document.getElementById('modalConfirmacion').style.display = 'block';
+    }
+
+    document.getElementById('btnConfirmar').addEventListener('click', function () {
+      window.location.href = '/eliminar/' + idAEliminar;
+    });
+
+    document.getElementById('btnCancelar').addEventListener('click', function () {
+      document.getElementById('modalConfirmacion').style.display = 'none';
+      idAEliminar = null;
+    });
+
+    window.onclick = function (event) {
+      let modal = document.getElementById('modalConfirmacion');
+      if (event.target === modal) {
+        modal.style.display = "none";
+        idAEliminar = null;
+      }
+    }
+  </script>
+</body>
+</html>
