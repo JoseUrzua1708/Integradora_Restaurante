@@ -1,67 +1,179 @@
-body {
+/* Variables y estilos base */
+:root {
+    --primary-color: #9c6800;
+    --secondary-color: #5c4500;
+    --accent-color: #e0a800;
+    --light-color: #fffaf3;
+    --dark-color: #333;
+    --border-color: #d5c4a1;
+    --error-color: #e74c3c;
+    --success-color: #2ecc71;
+}
+
+* {
     margin: 0;
     padding: 0;
-    font-family: 'Segoe UI', 'sans-serif';
-    background-color: #fefefe;
-    color: #333;
-}
-
-.sucursal {
-    max-width: 600px;
-    margin: 40px auto;
-    background-color: #fffaf3;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 0 10px rgba(0, 81, 135, 0.2);
-    
-}
-
-h1 {
-    text-align: center;
-    margin-bottom: 20px;
-    color: #9c6800;
-}
-
-.Sucursal label {
-    display: block;
-    font-weight: bold;
-    margin-top: 15px;
-    color: #5c4500;
-}
-
-.Sucursal input,
-.Sucursal textarea,
-.Sucursal select {
-    width: 100%;
-    padding: 10px;
-    margin-top: 5px;
-    border: 1px solid #d5c4a1;
-    border-radius: 8px;
-    background-color: #fffef5;
-    color: #333;
-    font-size: 1em;
     box-sizing: border-box;
 }
 
-.Sucursal textarea {
-    min-height: 60px;
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #fefefe;
+    color: var(--dark-color);
+    padding: 20px;
+    line-height: 1.6;
+}
+
+/* Contenedor principal */
+.sucursal-container {
+    max-width: 700px;
+    margin: 30px auto;
+    background-color: var(--light-color);
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 0 15px rgba(0, 81, 135, 0.15);
+}
+
+/* Encabezado */
+.sucursal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.sucursal-header h1 {
+    color: var(--primary-color);
+    font-size: 1.8rem;
+}
+
+.back-button {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.back-button:hover {
+    text-decoration: underline;
+}
+
+/* Formulario */
+.sucursal-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-row {
+    display: flex;
+    gap: 20px;
+}
+
+.form-row .form-group {
+    flex: 1;
+}
+
+label {
+    font-weight: 600;
+    color: var(--secondary-color);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+input, textarea, select {
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: #fffef5;
+    font-size: 1em;
+    transition: border-color 0.3s;
+}
+
+input:focus, textarea:focus, select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(156, 104, 0, 0.1);
+}
+
+textarea {
+    min-height: 80px;
     resize: vertical;
 }
 
-button[type="submit"] {
-    margin-top: 25px;
-    width: 100%;
-    background-color: #e0a800;
-    color: white;
-    padding: 12px;
-    font-size: 1em;
-    font-weight: bold;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+.input-hint {
+    font-size: 0.8em;
+    color: #666;
+    font-style: italic;
 }
 
-button:hover {
-    background-color: #c48000;
+/* Botones */
+.form-actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.btn {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1em;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.3s;
+}
+
+.btn-primary {
+    background-color: var(--accent-color);
+    color: white;
+    flex: 1;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-color);
+}
+
+.btn-secondary {
+    background-color: #f0f0f0;
+    color: var(--dark-color);
+}
+
+.btn-secondary:hover {
+    background-color: #e0e0e0;
+}
+
+/* Validación */
+.error-message {
+    color: var(--error-color);
+    font-size: 0.85em;
+    margin-top: 5px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .form-row {
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .sucursal-container {
+        padding: 20px;
+        margin: 20px auto;
+    }
 }

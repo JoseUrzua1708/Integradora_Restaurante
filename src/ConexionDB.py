@@ -8,7 +8,7 @@ def get_connection():
             host="localhost",
             port=3306,
             user="root",
-            password="pokemon445588",
+            password="Jose1708$",
             database="administracion"
         )
 
