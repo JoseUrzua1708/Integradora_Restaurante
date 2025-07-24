@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario Empleado</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/formulario_empleado.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    {% include 'navbar.html' %}
+    
+    <div class="container">
+        <main class="main-content">
+            <div class="form-container">
+                <h1><i class="fas fa-user-plus"></i> Formulario de Empleado</h1>
+                
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                
+                <form method="POST" action="{{ url_for('guardar_empleado') }}" class="empleado-form">
+                    <div class="form-grid">
+                        <!-- Columna 1 -->
+                        <div class="form-column">
+                            <div class="form-group">
+                                <label for="Sucursal_ID"><i class="fas fa-store"></i> Sucursal *</label>
+                                <select name="Sucursal_ID" id="Sucursal_ID" required>
+                                    <option value="">Seleccione una sucursal</option>
+                                    {% for sucursal in sucursales %}
+                                    <option value="{{ sucursal.ID }}">{{ sucursal.Nombre }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="Rol_ID"><i class="fas fa-user-tag"></i> Rol *</label>
+                                <select name="Rol_ID" id="Rol_ID" required>
+                                    <option value="">Seleccione un rol</option>
+                                    {% for rol in roles %}
+                                    <option value="{{ rol.ID }}">{{ rol.Nombre }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="Nombre"><i class="fas fa-user"></i> Nombre *</label>
+                                <input type="text" id="Nombre" name="Nombre" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="Apellido_p"><i class="fas fa-user"></i> Apellido Paterno *</label>
+                                <input type="text" id="Apellido_p" name="Apellido_p" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="Apellido_M"><i class="fas fa-user"></i> Apellido Materno</label>
+                                <input type="text" id="Apellido_M" name="Apellido_M">
+                            </div>
+                        </div>
+
+                        <!-- Columna 2 -->
+                        <div class="form-column">
+                            <div class="form-group">
+                                <label for="Correo"><i class="fas fa-envelope"></i> Correo *</label>
+                                <input type="email" id="Correo" name="Correo" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="Contrasena"><i class="fas fa-lock"></i> Contraseña *</label>
+                                <input type="password" id="Contrasena" name="Contrasena" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="Telefono"><i class="fas fa-phone"></i> Teléfono</label>
+                                <input type="text" id="Telefono" name="Telefono" pattern="[0-9]{10}" placeholder="10 dígitos">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="Fecha_Nacimiento"><i class="fas fa-birthday-cake"></i> Fecha de nacimiento *</label>
+                                <input type="date" id="Fecha_Nacimiento" name="Fecha_Nacimiento" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="Genero"><i class="fas fa-venus-mars"></i> Género *</label>
+                                <select id="Genero" name="Genero" required>
+                                    <option value="">Seleccione</option>
+                                    <option value="Masculino">Masculino</option>
+                                    <option value="Femenino">Femenino</option>
+                                    <option value="Otro">Otro</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Columna 3 -->
+                        <div class="form-column">
+                            <div class="form-group">
+                                <label for="Estatus"><i class="fas fa-check-circle"></i> Estatus</label>
+                                <select id="Estatus" name="Estatus">
+                                    <option value="Activo" selected>Activo</option>
+                                    <option value="Inactivo">Inactivo</option>
+                                    <option value="Suspendido">Suspendido</option>
+                                    <option value="Vacaciones">Vacaciones</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="Salario"><i class="fas fa-money-bill-wave"></i> Salario</label>
+                                <input type="number" name="Salario" id="Salario" step="0.01" min="0" placeholder="0.00">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="Tipo_Contrato"><i class="fas fa-file-contract"></i> Tipo de Contrato</label>
+                                <select id="Tipo_Contrato" name="Tipo_Contrato">
+                                    <option value="">Seleccione</option>
+                                    <option value="Tiempo Completo">Tiempo Completo</option>
+                                    <option value="Medio Tiempo">Medio Tiempo</option>
+                                    <option value="Temporal">Temporal</option>
+                                    <option value="Por Horas">Por Horas</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="Fecha_Contratacion"><i class="fas fa-calendar-check"></i> Fecha de contratación *</label>
+                                <input type="date" id="Fecha_Contratacion" name="Fecha_Contratacion" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="Fecha_Terminacion"><i class="fas fa-calendar-times"></i> Fecha de terminación</label>
+                                <input type="date" id="Fecha_Terminacion" name="Fecha_Terminacion">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-footer">
+                        <button type="submit" class="btn-submit">
+                            <i class="fas fa-save"></i> Registrar Empleado
+                        </button>
+                        <button type="reset" class="btn-reset">
+                            <i class="fas fa-undo"></i> Limpiar Formulario
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

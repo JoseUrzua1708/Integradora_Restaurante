@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Sucursal - Sistema Restaurante</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/formulario_sucursales.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="{{ url_for('static', filename='js/formulario_sucursales.js') }}" defer></script>
+</head>
+<body>
+    {% include 'navbar.html' %}
+    <div class="sucursal-container">
+        <div class="sucursal-header">
+            <h1><i class="fas fa-store"></i> Registro de Sucursal</h1>
+            <a href="{{ url_for('inicio') }}" class="back-button">
+                <i class="fas fa-arrow-left"></i> Volver al panel
+            </a>
+        </div>
+        
+        <form id="sucursalForm" class="sucursal-form" method="POST" action="#">
+            <div class="form-group">
+                <label for="Nombre">
+                    <i class="fas fa-signature"></i> Nombre de la sucursal
+                </label>
+                <input type="text" id="Nombre" name="Nombre" required placeholder="Ej: Sucursal Centro">
+            </div>
+
+            <div class="form-group">
+                <label for="Direccion">
+                    <i class="fas fa-map-marker-alt"></i> Dirección
+                </label>
+                <textarea id="Direccion" name="Direccion" required rows="3" placeholder="Calle, número, colonia"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="Telefono">
+                    <i class="fas fa-phone"></i> Teléfono
+                </label>
+                <input type="tel" id="Telefono" name="Telefono" pattern="[0-9]{10}" required placeholder="10 dígitos">
+                <span class="input-hint">Formato: 10 dígitos sin espacios</span>
+            </div>
+
+            <div class="form-group">
+                <label for="Responsable">
+                    <i class="fas fa-user-tie"></i> Responsable
+                </label>
+                <input type="text" id="Responsable" name="Responsable" required>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="Horario_Apertura">
+                        <i class="far fa-clock"></i> Apertura
+                    </label>
+                    <input type="time" id="Horario_Apertura" name="Horario_Apertura" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="Horario_Cierre">
+                        <i class="far fa-clock"></i> Cierre
+                    </label>
+                    <input type="time" id="Horario_Cierre" name="Horario_Cierre" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="Estatus">
+                        <i class="fas fa-info-circle"></i> Estatus
+                    </label>
+                    <select id="Estatus" name="Estatus" required>
+                        <option value="Activa" selected>Activa</option>
+                        <option value="Inactiva">Inactiva</option>
+                        <option value="En Mantenimiento">En mantenimiento</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="Fecha_Apertura">
+                        <i class="far fa-calendar-alt"></i> Fecha apertura
+                    </label>
+                    <input type="date" id="Fecha_Apertura" name="Fecha_Apertura" required>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="reset" class="btn btn-secondary">
+                    <i class="fas fa-eraser"></i> Limpiar
+                </button>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Guardar
+                </button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

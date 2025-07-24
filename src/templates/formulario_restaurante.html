@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <title>Configuración del restaurante</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/formulario_restaurante.css') }}">
+
+</head>
+<body>
+    <div class="container">
+        <h1>Configuración del restaurante</h1>
+        <form class="formulario" >
+            <label for="Nombre_Restaurante" >Nombre del restaurante</label>
+            <input type="text" id="Nombre_Restaurante" name="Nombre_Restaurante" required/>
+
+            <label for="Direccion">Dirección</label>
+            <textarea  id="Direccion" name="Direccion" required></textarea>
+
+            <label for="Correo_Contacto">Correo de contacto</label>
+            <input type="email" id="Correo_Contacto" name="Correo_Contacto" required/>
+
+            <label for="Horario_Apertura">Horario de Apertura</label>
+            <input type="time" id="Horario_Apertura" name="Horario_Apertura" required/>
+
+            <label for="Horario_Cierre">Horario_Cierre</label>
+            <input type="time" id="Horario_Cierre" name="Horario_Cierre" required/>
+
+            <label for="Moneda">Moneda</label>
+            <input type="text" id="Moneda" name="Moneda" required/>
+
+            <label for="Impuesto">Impuesto (%)</label>
+            <input type="number" id="Impuesto" step="0.01" name="Impuesto" required/>
+
+            <label for="Tiempo_Reserva_Min">Tiempo minimo de reserva (minutos)</label>
+            <input type="number" id="Tiempo_Reserva_Min" name="Tiempo_Reserva_Min" required/>
+
+            <label for="Politica_Cancelacion">Politica de Cancelación</label>
+            <textarea id="Politica_Cancelacion" name="Politica_Cancelacion" required></textarea>
+
+            <button type="submit">Guardar Configuración</button>
+
+        </form>
+    </div>
+</body>
+</html>
