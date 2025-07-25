@@ -10,6 +10,7 @@
   <div class="contenedor">
     <h1>Gestión de Restaurantes</h1>
 
+    <a href="{{url_for('formulario_restaurante')}}">
       <button type="button">Agregar</button>
     </a>
 
@@ -47,7 +48,7 @@
           <td>{{ d.Politica_Cancelacion }}</td>
           <td>{{ d.Fecha_Actualizacion }}</td>
           <td>
-            <select onchange="
+            <select name="opciones" onchange="
               if (this.value === 'actualizar') {
                 abrirModal('{{ d.ID }}');
               } else if (this.value === 'eliminar') {

@@ -32,6 +32,40 @@ h1 {
   font-weight: 600;
 }
 
+button[type="button"] {
+
+
+  margin-bottom: 10px;
+  background-color: #315d8b;
+  color: white;
+  border: none;
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+}
+
+button[type="button"]:hover {
+  background-color: #687d93;
+}
+
+
+select[name="opciones"] {
+  background-color: #325f8f;
+  color: white;
+  border: none;
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+select[name="opciones"]:hover {
+  background-color: #547598;
+}
 
 .vista_restaurante {
   width: 100%;

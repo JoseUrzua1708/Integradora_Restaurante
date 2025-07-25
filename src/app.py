@@ -76,7 +76,7 @@ def gestion_restaurante():
 # Formulario de restaurante
 ################################################################################ 
 
-@app.route('/formulario-restaurante', methods=['GET', 'POST'])
+@app.route('/formulario_restaurante', methods=['GET', 'POST'])
 def formulario_restaurante():
     if request.method == 'POST':
         try:
