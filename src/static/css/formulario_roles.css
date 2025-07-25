@@ -1,0 +1,55 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f6f9;
+    margin: 0;
+    padding: 0;
+}
+
+.Roles {
+    max-width: 500px;
+    margin: 40px auto;
+    background-color: #cedffa;
+    padding: 25px 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(55, 3, 3, 0.1);
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #4771ac;
+}
+
+form label {
+    display: block;
+    margin-top: 15px;
+    font-weight: bold;
+    color: #2a3e76;
+}
+
+form input,
+form select {
+    width: 100%;
+    padding: 8px 10px;
+    margin-top: 7px;
+    border: 1px solid #96bbf7;
+    border-radius: 9px;
+    font-size: 15px;
+    box-sizing: border-box;
+}
+
+form button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 25px;
+    background-color: #4c61af;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+form button:hover {
+    background-color: #697dc4;
+}

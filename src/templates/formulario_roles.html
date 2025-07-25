@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Formulario de roles</title>
+    <link rel="stylesheet" href="../static/formulario_roles.css">
+</head>
+<body>
+
+    <div class="Roles">
+        <h1>Registro Roles</h1>
+        <form class="roles">
+
+            <label for="Nombre">Nombre del rol</label>
+            <input type="text" id="Nombre" name="Name" required/>
+
+            <label for="Descripcion">Descripción del rol</label>
+            <input type="text" id="Descripcion" name="Descripcion" required/>
+
+            <label for="Fecha_Creacion">Fecha de creación</label>
+            <input type="date" id="Fecha_Creacion" name="Fecha_Creacion" required/>
+
+            <label for="Fecha_Actualizacion">Fecha de actualización</label>
+            <input type="date" id="Fecha_Actualizacion" name="Fecha_Actualizacion" required/>
+
+            <label for="Sucursal_ID">Sucursal</label>
+            <select name="Sucursal_ID" id="Sucursal_ID" required>
+                <option value="">Seleccione una sucursal</option>
+                {% for id, nombre in sucursales %}
+                    <option value="{{ id }}">{{ nombre }}</option>
+                {% endfor %}
+            </select>
+
+            <button type="submit">Guardar Rol</button>
+
+        </form>
+    </div>
+    
+</body>
+</html>
