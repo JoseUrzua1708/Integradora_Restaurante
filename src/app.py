@@ -4,14 +4,21 @@ from datetime import datetime
 from contextlib import closing
 import os
 from dotenv import load_dotenv
+import logging
+from datetime import time
 
+
+###############################################################################
 # Cargar variables de entorno
+###############################################################################
 load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = os.getenv('SECRET_KEY', 'your-secret-key-here')
 
-# Configuración de la base de datos
+###############################################################################
+# Configuración de la base de datos (conexión a la base de datos)
+###############################################################################
 db_config = {
     'host': os.getenv('DB_HOST', 'localhost'),
     'user': os.getenv('DB_USER', 'root'),
@@ -32,12 +39,18 @@ def get_db_connection():
         flash(f"Error de conexión a la base de datos: {err}", "error")
         raise
 
+###############################################################################
+# Inicio de la aplicación
+###############################################################################
+
 @app.route('/')
 def inicio():
     """Página principal del sistema"""
     return render_template('inicio.html')
 
+################################################################################
 # Gestión de restaurantes
+################################################################################
 @app.route('/gestion_restaurante')
 def gestion_restaurante():
     """Muestra todos los restaurantes"""
@@ -59,54 +72,81 @@ def gestion_restaurante():
         if conn is not None:
             conn.close()
 
-@app.route('/formulario_restaurante')
+################################################################################
+# Formulario de restaurante
+################################################################################ 
+
+@app.route('/formulario-restaurante', methods=['GET', 'POST'])
 def formulario_restaurante():
-    """Muestra el formulario para agregar restaurante"""
+    if request.method == 'POST':
+        try:
+            # Obtener datos del formulario
+            datos = {
+                'nombre': request.form['Nombre_Restaurante'],
+                'direccion': request.form['Direccion'],
+                'telefono': request.form['telefono_completo'],  # Usamos el teléfono completo
+                'correo': request.form['Correo_Contacto'],
+                'apertura': request.form['Horario_Apertura'],
+                'cierre': request.form['Horario_Cierre'],
+                'moneda': request.form['tipo_moneda'],  # Usamos el código de moneda
+                'impuesto': float(request.form['Impuesto']),
+                'tiempo_reserva': int(request.form['Tiempo_Reserva_Min']),
+                'politica': request.form['Politica_Cancelacion']
+            }
+
+            # Validación básica
+            if not all(datos.values()):
+                flash("Todos los campos son obligatorios", "error")
+                return redirect(url_for('formulario_restaurante'))
+
+            # Convertir horarios a objetos time para validación
+            hora_apertura = time.fromisoformat(datos['apertura'])
+            hora_cierre = time.fromisoformat(datos['cierre'])
+            
+            if hora_apertura >= hora_cierre:
+                flash("El horario de cierre debe ser posterior al de apertura", "error")
+                return redirect(url_for('formulario_restaurante'))
+
+            # Conexión a la base de datos
+            conn = get_db_connection()
+            cursor = conn.cursor()
+            
+            query = """
+                INSERT INTO Configuracion_Restaurante 
+                (Nombre_Restaurante, Direccion, Telefono, Correo_Contacto, 
+                 Horario_Apertura, Horario_Cierre, Moneda, Impuesto, 
+                 Tiempo_Reserva_Min, Politica_Cancelacion)
+                VALUES (%(nombre)s, %(direccion)s, %(telefono)s, %(correo)s, 
+                        %(apertura)s, %(cierre)s, %(moneda)s, %(impuesto)s, 
+                        %(tiempo_reserva)s, %(politica)s)
+            """
+            cursor.execute(query, datos)
+            conn.commit()
+            
+            flash("Restaurante agregado exitosamente", "success")
+            return redirect(url_for('gestion_restaurante'))
+            
+        except ValueError as e:
+            flash(f"Error en los datos proporcionados: {str(e)}", "error")
+            return redirect(url_for('formulario_restaurante'))
+            
+        except Exception as e:
+            logging.error(f"Error al insertar restaurante: {str(e)}")
+            flash("Error técnico al agregar el restaurante", "error")
+            return redirect(url_for('formulario_restaurante'))
+            
+        finally:
+            if 'cursor' in locals() and cursor is not None:
+                cursor.close()
+            if 'conn' in locals() and conn is not None:
+                conn.close()
+    
+    # Método GET - Mostrar formulario
     return render_template('formulario_restaurante.html')
 
-@app.route('/insertar', methods=['POST'])
-def insertar_restaurante():
-    """Inserta un nuevo restaurante"""
-    conn = None
-    cursor = None
-    try:
-        datos = {
-            'nombre': request.form['Nombre_Restaurante'],
-            'direccion': request.form['Direccion'],
-            'telefono': request.form['Telefono'],
-            'correo': request.form['Correo_Contacto'],
-            'apertura': request.form['Horario_Apertura'],
-            'cierre': request.form['Horario_Cierre'],
-            'moneda': request.form['Moneda'],
-            'impuesto': request.form['Impuesto'],
-            'tiempo_reserva': request.form['Tiempo_Reserva_Min'],
-            'politica': request.form['Politica_Cancelacion']
-        }
-
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        query = """
-            INSERT INTO Configuracion_Restaurante 
-            (Nombre_Restaurante, Direccion, Telefono, Correo_Contacto, 
-             Horario_Apertura, Horario_Cierre, Moneda, Impuesto, 
-             Tiempo_Reserva_Min, Politica_Cancelacion)
-            VALUES (%(nombre)s, %(direccion)s, %(telefono)s, %(correo)s, 
-                    %(apertura)s, %(cierre)s, %(moneda)s, %(impuesto)s, 
-                    %(tiempo_reserva)s, %(politica)s)
-        """
-        cursor.execute(query, datos)
-        conn.commit()
-        flash("Restaurante agregado exitosamente", "success")
-        return redirect(url_for('gestion_restaurante'))
-    except Exception as e:
-        app.logger.error(f"Error al insertar restaurante: {str(e)}")
-        flash("Error al agregar el restaurante", "error")
-        return redirect(url_for('formulario_restaurante'))
-    finally:
-        if cursor is not None:
-            cursor.close()
-        if conn is not None:
-            conn.close()
+################################################################################
+# Eliminar restaurante
+################################################################################
 
 @app.route('/eliminar/<int:id>')
 def eliminar_restaurante(id):
@@ -128,6 +168,10 @@ def eliminar_restaurante(id):
         if conn is not None:
             conn.close()
     return redirect(url_for('gestion_restaurante'))
+
+################################################################################
+# Actualizar restaurante
+################################################################################
 
 @app.route('/actualizar/<int:id>', methods=['POST'])
 def actualizar_restaurante(id):
@@ -178,7 +222,10 @@ def actualizar_restaurante(id):
             conn.close()
     return redirect(url_for('gestion_restaurante'))
 
+################################################################################
 # Gestión de sucursales
+################################################################################
+
 @app.route('/formulario_sucursales')
 def formulario_sucursales():
     """Muestra el formulario para agregar sucursales"""

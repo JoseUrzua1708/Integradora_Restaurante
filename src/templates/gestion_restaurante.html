@@ -10,7 +10,6 @@
   <div class="contenedor">
     <h1>Gestión de Restaurantes</h1>
 
-    <a href="{{ url_for('formulario_restaurante') }}">
       <button type="button">Agregar</button>
     </a>
 
@@ -121,39 +120,6 @@
       </div>
     </div>
   </div>
-
-  <script>
-    function abrirModal(id) {
-      document.getElementById('modal' + id).style.display = 'block';
-    }
-
-    function cerrarModal(id) {
-      document.getElementById('modal' + id).style.display = 'none';
-    }
-
-    let idAEliminar = null;
-
-    function eliminarRestaurante(id) {
-      idAEliminar = id;
-      document.getElementById('modalConfirmacion').style.display = 'block';
-    }
-
-    document.getElementById('btnConfirmar').addEventListener('click', function () {
-      window.location.href = '/eliminar/' + idAEliminar;
-    });
-
-    document.getElementById('btnCancelar').addEventListener('click', function () {
-      document.getElementById('modalConfirmacion').style.display = 'none';
-      idAEliminar = null;
-    });
-
-    window.onclick = function (event) {
-      let modal = document.getElementById('modalConfirmacion');
-      if (event.target === modal) {
-        modal.style.display = "none";
-        idAEliminar = null;
-      }
-    }
-  </script>
+  <script src="{{ url_for('static', filename='js/Gestion_Restaurante.js') }}"></script>
 </body>
 </html>

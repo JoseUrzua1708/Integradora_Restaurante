@@ -2,19 +2,57 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Configuración del restaurante</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/formulario_restaurante.css') }}">
-
 </head>
 <body>
     <div class="container">
         <h1>Configuración del restaurante</h1>
-        <form class="formulario" >
-            <label for="Nombre_Restaurante" >Nombre del restaurante</label>
+        <form class="formulario" method="POST" action="#">
+            <label for="Nombre_Restaurante">Nombre del restaurante</label>
             <input type="text" id="Nombre_Restaurante" name="Nombre_Restaurante" required/>
 
             <label for="Direccion">Dirección</label>
-            <textarea  id="Direccion" name="Direccion" required></textarea>
+            <textarea id="Direccion" name="Direccion" required></textarea>
+
+            <label>Teléfono</label>
+            <div class="input-group">
+                <div class="prefix-container">
+                    <select id="codigo_pais" name="codigo_pais" required>
+                        <option value="" data-prefix="">Seleccionar país</option>
+                        <!-- América -->
+                        <optgroup label="América">
+                            <option value="1" data-prefix="+1">Estados Unidos/Canadá (+1)</option>
+                            <option value="52" data-prefix="+52">México (+52)</option>
+                            <option value="54" data-prefix="+54">Argentina (+54)</option>
+                            <option value="55" data-prefix="+55">Brasil (+55)</option>
+                            <option value="56" data-prefix="+56">Chile (+56)</option>
+                            <option value="57" data-prefix="+57">Colombia (+57)</option>
+                            <option value="58" data-prefix="+58">Venezuela (+58)</option>
+                            <option value="51" data-prefix="+51">Perú (+51)</option>
+                            <option value="593" data-prefix="+593">Ecuador (+593)</option>
+                            <option value="502" data-prefix="+502">Guatemala (+502)</option>
+                        </optgroup>
+                        <!-- Europa -->
+                        <optgroup label="Europa">
+                            <option value="34" data-prefix="+34">España (+34)</option>
+                            <option value="33" data-prefix="+33">Francia (+33)</option>
+                            <option value="49" data-prefix="+49">Alemania (+49)</option>
+                            <option value="39" data-prefix="+39">Italia (+39)</option>
+                            <option value="44" data-prefix="+44">Reino Unido (+44)</option>
+                        </optgroup>
+                        <!-- Asia -->
+                        <optgroup label="Asia">
+                            <option value="86" data-prefix="+86">China (+86)</option>
+                            <option value="81" data-prefix="+81">Japón (+81)</option>
+                            <option value="82" data-prefix="+82">Corea del Sur (+82)</option>
+                        </optgroup>
+                    </select>
+                </div>
+                <input type="tel" id="telefono" name="telefono" pattern="[0-9]{7,15}" placeholder="Número local" required/>
+            </div>
+            <input type="hidden" id="telefono_completo" name="telefono_completo">
 
             <label for="Correo_Contacto">Correo de contacto</label>
             <input type="email" id="Correo_Contacto" name="Correo_Contacto" required/>
@@ -22,24 +60,51 @@
             <label for="Horario_Apertura">Horario de Apertura</label>
             <input type="time" id="Horario_Apertura" name="Horario_Apertura" required/>
 
-            <label for="Horario_Cierre">Horario_Cierre</label>
+            <label for="Horario_Cierre">Horario de Cierre</label>
             <input type="time" id="Horario_Cierre" name="Horario_Cierre" required/>
 
-            <label for="Moneda">Moneda</label>
-            <input type="text" id="Moneda" name="Moneda" required/>
+            <label>Moneda</label>
+            <div class="input-group">
+                <div class="prefix-container">
+                    <select id="tipo_moneda" name="tipo_moneda" required>
+                        <option value="">Seleccionar moneda</option>
+                        <optgroup label="Principales">
+                            <option value="USD">Dólar Estadounidense (USD)</option>
+                            <option value="EUR">Euro (EUR)</option>
+                            <option value="JPY">Yen Japonés (JPY)</option>
+                            <option value="GBP">Libra Esterlina (GBP)</option>
+                        </optgroup>
+                        <optgroup label="América">
+                            <option value="MXN">Peso Mexicano (MXN)</option>
+                            <option value="BRL">Real Brasileño (BRL)</option>
+                            <option value="COP">Peso Colombiano (COP)</option>
+                            <option value="CLP">Peso Chileno (CLP)</option>
+                            <option value="PEN">Sol Peruano (PEN)</option>
+                            <option value="ARS">Peso Argentino (ARS)</option>
+                        </optgroup>
+                        <optgroup label="Otras">
+                            <option value="CAD">Dólar Canadiense (CAD)</option>
+                            <option value="AUD">Dólar Australiano (AUD)</option>
+                            <option value="CNY">Yuan Chino (CNY)</option>
+                        </optgroup>
+                    </select>
+                </div>
+                <input type="text" id="simbolo_moneda" name="simbolo_moneda" readonly class="readonly-input"/>
+            </div>
 
             <label for="Impuesto">Impuesto (%)</label>
-            <input type="number" id="Impuesto" step="0.01" name="Impuesto" required/>
+            <input type="number" id="Impuesto" step="0.01" name="Impuesto" min="0" max="100" required/>
 
-            <label for="Tiempo_Reserva_Min">Tiempo minimo de reserva (minutos)</label>
-            <input type="number" id="Tiempo_Reserva_Min" name="Tiempo_Reserva_Min" required/>
+            <label for="Tiempo_Reserva_Min">Tiempo mínimo de reserva (minutos)</label>
+            <input type="number" id="Tiempo_Reserva_Min" name="Tiempo_Reserva_Min" min="1" required/>
 
-            <label for="Politica_Cancelacion">Politica de Cancelación</label>
+            <label for="Politica_Cancelacion">Política de Cancelación</label>
             <textarea id="Politica_Cancelacion" name="Politica_Cancelacion" required></textarea>
 
             <button type="submit">Guardar Configuración</button>
-
         </form>
     </div>
+
+    <script src="{{ url_for('static', filename='js/formulario_restaurante.js') }}"></script>
 </body>
 </html>
