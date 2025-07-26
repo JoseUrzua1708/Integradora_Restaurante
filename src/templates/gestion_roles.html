@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Roles</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/gestion_roles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    {% include 'navbar.html' %}
+    <div class="container">
+        <main class="main-content">
+            <div class="table-container">
+                <h1><i class="fas fa-user-tag"></i> Gestión de Roles</h1>
+                <div class="table-actions">
+                    <a href="{{ url_for('formulario_roles') }}" class="btn btn-primary"><i class="fas fa-plus"></i> Añadir Rol</a>
+                </div>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Descripción</th>
+                                <th>Sucursal</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for rol in roles %}
+                            <tr>
+                                <td>{{ rol.ID }}</td>
+                                <td>{{ rol.Nombre }}</td>
+                                <td>{{ rol.Descripcion }}</td>
+                                <td>{{ rol.Sucursal }}</td>
+                                <td class="actions">
+                                    <a href="#" class="btn-action btn-edit"><i class="fas fa-edit"></i></a>
+                                    <a href="#" class="btn-action btn-delete"><i class="fas fa-trash"></i></a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

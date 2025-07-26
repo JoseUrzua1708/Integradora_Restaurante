@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Sucursales</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/gestion_sucursales.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    {% include 'navbar.html' %}
+    <div class="container">
+        <main class="main-content">
+            <div class="table-container">
+                <h1><i class="fas fa-store-alt"></i> Gestión de Sucursales</h1>
+                <div class="table-actions">
+                    <a href="{{ url_for('formulario_sucursales') }}" class="btn btn-primary"><i class="fas fa-plus"></i> Añadir Sucursal</a>
+                </div>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Dirección</th>
+                                <th>Teléfono</th>
+                                <th>Responsable</th>
+                                <th>Estatus</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for sucursal in sucursales %}
+                            <tr>
+                                <td>{{ sucursal.ID }}</td>
+                                <td>{{ sucursal.Nombre }}</td>
+                                <td>{{ sucursal.Direccion }}</td>
+                                <td>{{ sucursal.Telefono }}</td>
+                                <td>{{ sucursal.Responsable }}</td>
+                                <td><span class="status status-{{ sucursal.Estatus.lower() }}">{{ sucursal.Estatus }}</span></td>
+                                <td class="actions">
+                                    <a href="#" class="btn-action btn-edit"><i class="fas fa-edit"></i></a>
+                                    <a href="#" class="btn-action btn-delete"><i class="fas fa-trash"></i></a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

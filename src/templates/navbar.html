@@ -1,29 +1,58 @@
-<nav class="main-nav">
-    <ul class="nav-menu">
-        <li>
-            <a href="{{ url_for('gestion_reservaciones') }}" class="nav-link">
-                <i class="fas fa-calendar-alt"></i> Gestión de Reservaciones
-            </a>
-        </li>
-        <li>
-            <a href="{{ url_for('formulario_restaurante') }}" class="nav-link">
-                <i class="fas fa-utensils"></i> Formulario de Restaurante
-            </a>
-        </li>
-        <li>
-            <a href="{{ url_for('formulario_empleado') }}" class="nav-link">
-                <i class="fas fa-user-tie"></i> Formulario de Empleados
-            </a>
-        </li>
-        <li>
-            <a href="{{ url_for('gestion_restaurante') }}" class="nav-link">
-                <i class="fas fa-chart-bar"></i> Gestión de Restaurantes
-            </a>
-        </li>
-        <li>
-            <a href="{{ url_for('formulario_sucursales') }}" class="nav-link">
-                <i class="fas fa-store"></i> Formulario de Sucursales
-            </a>
-        </li>
-    </ul>
-</nav>
+<header class="admin-header">
+    <div class="header-content">
+        <h1>Panel Administrativo</h1>
+        <div class="user-info">
+            <span class="welcome-msg">Bienvenido, Administrador</span>
+            <button class="logout-btn">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <path fill="currentColor" d="M16 17v-3h-3v-2h3V9l4 3-4 3M12 3a1 1 0 0 1 1 1v1h6a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-6v1a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h8z"/>
+                </svg>
+                Cerrar Sesión
+            </button>
+        </div>
+    </div>
+    
+    <nav class="main-nav">
+        <button class="nav-toggle" aria-label="toggle navigation">
+            <span class="hamburger"></span>
+        </button>
+        <ul class="nav-menu">
+            <li>
+                <a href="{{ url_for('inicio') }}" class="nav-link">
+                    <i class="fas fa-home"></i> Inicio
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('gestion_reservaciones') }}" class="nav-link">
+                    <i class="fas fa-calendar-alt"></i> Reservaciones
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('gestion_proveedores') }}" class="nav-link">
+                    <i class="fas fa-truck"></i> Proveedores
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('gestion_empleados') }}" class="nav-link">
+                    <i class="fas fa-users"></i> Empleados
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('gestion_restaurante') }}" class="nav-link">
+                    <i class="fas fa-utensils"></i> Restaurantes
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('gestion_sucursales') }}" class="nav-link">
+                    <i class="fas fa-store-alt"></i> Sucursales
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('gestion_roles') }}" class="nav-link">
+                    <i class="fas fa-user-tag"></i> Roles
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<script src="{{ url_for('static', filename='js/navbar.js') }}"></script>
