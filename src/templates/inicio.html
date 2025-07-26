@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel Administrativo - Restaurante</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/inicio.css') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
     <div class="container">
@@ -15,7 +14,10 @@
                 <div class="user-info">
                     <span class="welcome-msg">Bienvenido, Administrador</span>
                     <button class="logout-btn">
-                        <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                        <svg class="icon" viewBox="0 0 24 24">
+                            <path fill="currentColor" d="M16 17v-3h-3v-2h3V9l4 3-4 3M12 3a1 1 0 0 1 1 1v1h6a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-6v1a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h8z"/>
+                        </svg>
+                        Cerrar Sesión
                     </button>
                 </div>
             </div>
@@ -24,27 +26,42 @@
                 <ul class="nav-menu">
                     <li>
                         <a href="{{ url_for('gestion_reservaciones') }}" class="nav-link">
-                            <i class="fas fa-calendar-alt"></i> Gestión de Reservaciones
+                            <svg class="icon" viewBox="0 0 24 24">
+                                <path fill="currentColor" d="M19 3h-1V1h-2v2H8V1H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2m0 16H5V9h14v10m0-12H5V5h14M7 11h5v5H7v-5z"/>
+                            </svg>
+                            Gestión de Reservaciones
                         </a>
                     </li>
                     <li>
                         <a href="{{ url_for('gestion_proveedores') }}" class="nav-link">
-                            <i class="fas fa-utensils"></i> Gestión de Proveedores
+                            <svg class="icon" viewBox="0 0 24 24">
+                                <path fill="currentColor" d="M18 18.5a1.5 1.5 0 0 1-1.5 1.5a1.5 1.5 0 0 1-1.5-1.5a1.5 1.5 0 0 1 1.5-1.5a1.5 1.5 0 0 1 1.5 1.5m1.5-7.5l1.96 2.5H17V11h2.5m-11 7.5a1.5 1.5 0 0 1-1.5 1.5a1.5 1.5 0 0 1-1.5-1.5a1.5 1.5 0 0 1 1.5-1.5a1.5 1.5 0 0 1 1.5 1.5M20 8h-3V4H3c-1.11 0-2 .89-2 2v11h2a3 3 0 0 0 3 3a3 3 0 0 0 3-3h6a3 3 0 0 0 3 3a3 3 0 0 0 3-3h2v-5l-3-4z"/>
+                            </svg>
+                            Gestión de Proveedores
                         </a>
                     </li>
                     <li>
                         <a href="{{ url_for('formulario_empleado') }}" class="nav-link">
-                            <i class="fas fa-user-tie"></i> Formulario de Empleados
+                            <svg class="icon" viewBox="0 0 24 24">
+                                <path fill="currentColor" d="M19 3h-1V1h-2v2H8V1H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2m-7 3a3 3 0 0 1 3 3a3 3 0 0 1-3 3a3 3 0 0 1-3-3a3 3 0 0 1 3-3m6 12H6v-1c0-2 4-3.1 6-3.1s6 1.1 6 3.1v1z"/>
+                            </svg>
+                            Formulario de Empleados
                         </a>
                     </li>
                     <li>
                         <a href="{{ url_for('gestion_restaurante') }}" class="nav-link">
-                            <i class="fas fa-chart-bar"></i> Gestión de Restaurantes
+                            <svg class="icon" viewBox="0 0 24 24">
+                                <path fill="currentColor" d="M22 21H2v-2h1V4a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v1h2v14h1v2m-5-2h2v-8h-6v8h2v-6h2v6m-4-8h2V9h-2v2m-2 2h2V9h-2v4m-2 6h2v-4h-2v4m0-6h2V9h-2v4m-2 0h2V9H7v4m-2 0h2V9H5v4m0 6h2v-4H5v4Z"/>
+                            </svg>
+                            Gestión de Restaurantes
                         </a>
                     </li>
                     <li>
                         <a href="{{ url_for('formulario_sucursales') }}" class="nav-link">
-                            <i class="fas fa-store"></i> Formulario de Sucursales
+                            <svg class="icon" viewBox="0 0 24 24">
+                                <path fill="currentColor" d="M18 15a3 3 0 0 1 3 3a3 3 0 0 1-3 3a2.99 2.99 0 0 1-2.83-2H14v-2h1.17c.41-1.17 1.52-2 2.83-2m0 2a1 1 0 0 0-1 1a1 1 0 0 0 1 1a1 1 0 0 0 1-1a1 1 0 0 0-1-1m0-9a3 3 0 0 1 3 3a3 3 0 0 1-3 3a3 3 0 0 1-3-3a3 3 0 0 1 3-3m0 2a1 1 0 0 0-1 1a1 1 0 0 0 1 1a1 1 0 0 0 1-1a1 1 0 0 0-1-1M6 11a3 3 0 0 1 3 3a3 3 0 0 1-3 3a3 3 0 0 1-3-3a3 3 0 0 1 3-3m0 2a1 1 0 0 0-1 1a1 1 0 0 0 1 1a1 1 0 0 0 1-1a1 1 0 0 0-1-1m0-6a3 3 0 0 1 3 3a3 3 0 0 1-3 3a3 3 0 0 1-3-3a3 3 0 0 1 3-3m0 2a1 1 0 0 0-1 1a1 1 0 0 0 1 1a1 1 0 0 0 1-1a1 1 0 0 0-1-1Z"/>
+                            </svg>
+                            Formulario de Sucursales
                         </a>
                     </li>
                 </ul>
@@ -52,7 +69,6 @@
         </header>
         
         <main class="main-content">
-            <!-- Contenido dinámico se inyectará aquí -->
             <div class="dashboard-welcome">
                 <h2>Bienvenido al Sistema de Gestión</h2>
                 <p>Seleccione una opción del menú para comenzar</p>
@@ -68,17 +84,26 @@
                 <ul class="footer-menu">
                     <li>
                         <a href="#" class="footer-link">
-                            <i class="fas fa-envelope"></i> Contacto
+                            <svg class="icon" viewBox="0 0 24 24">
+                                <path fill="currentColor" d="M22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6m-2 0l-8 5l-8-5h16m0 12H4V8l8 5l8-5v10Z"/>
+                            </svg>
+                            Contacto
                         </a>
                     </li>
                     <li>
                         <a href="#" class="footer-link">
-                            <i class="fas fa-shield-alt"></i> Políticas
+                            <svg class="icon" viewBox="0 0 24 24">
+                                <path fill="currentColor" d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12c5.16-1.26 9-6.45 9-12V5l-9-4m0 6c1.4 0 2.8 1.1 2.8 2.5V11c.6 0 1.2.6 1.2 1.3v3.5c0 .6-.6 1.2-1.3 1.2H9.2c-.6 0-1.2-.6-1.2-1.3v-3.5c0-.6.6-1.2 1.2-1.2V9.5C9.2 8.1 10.6 7 12 7m0 1.2c-.8 0-1.5.5-1.5 1.3V11h3V9.5c0-.8-.7-1.3-1.5-1.3Z"/>
+                            </svg>
+                            Políticas
                         </a>
                     </li>
                     <li>
                         <a href="#" class="footer-link">
-                            <i class="fas fa-info-circle"></i> Acerca de
+                            <svg class="icon" viewBox="0 0 24 24">
+                                <path fill="currentColor" d="M13 9h-2V7h2m0 10h-2v-6h2m-1-9A10 10 0 0 0 2 12a10 10 0 0 0 10 10a10 10 0 0 0 10-10A10 10 0 0 0 12 2Z"/>
+                            </svg>
+                            Acerca de
                         </a>
                     </li>
                 </ul>
