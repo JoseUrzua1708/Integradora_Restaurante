@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nuevo Proveedor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/formulario_proveedor.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Nuevo Proveedor</h1>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="flash {{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+        
+        <form method="POST" action="{{ url_for('guardar_proveedor') }}">
+            <div class="form-section">
+                <h2>Información Básica</h2>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="Nombre_Empresa">Nombre de la Empresa*</label>
+                        <input type="text" id="Nombre_Empresa" name="Nombre_Empresa" value="{{ datos.Nombre_Empresa if datos else '' }}" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="Contacto_Principal">Contacto Principal*</label>
+                        <input type="text" id="Contacto_Principal" name="Contacto_Principal" 
+                               value="{{ datos.contacto if datos else '' }}" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="Telefono">Teléfono*</label>
+                        <input type="tel" id="Telefono" name="Telefono" 
+                               value="{{ datos.telefono if datos else '' }}" required
+                               pattern="\d{8,15}" title="8-15 dígitos numéricos">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="Correo_Electronico">Correo Electrónico*</label>
+                        <input type="email" id="Correo_Electronico" name="Correo_Electronico" 
+                               value="{{ datos.correo if datos else '' }}" required>
+                    </div>
+                </div>
+                
+                <div class="form-group full-width">
+                    <label for="Direccion">Dirección*</label>
+                    <textarea id="Direccion" name="Direccion" required>{{ datos.direccion if datos else '' }}</textarea>
+                </div>
+                <div class="form-row">
+                <div class="form-group">
+                    <label for="Tipo_Proveedor">Tipo de Proveedor*</label>
+                    <select id="Tipo_Proveedor" name="Tipo_Proveedor" required>
+                        <option value="">Seleccione un tipo</option>
+                        <optgroup label="Alimentos">
+                            <option value="Carnes y Aves">Carnes y Aves</option>
+                            <option value="Pescados y Mariscos">Pescados y Mariscos</option>
+                            <option value="Frutas y Verduras">Frutas y Verduras</option>
+                            <option value="Lácteos y Huevos">Lácteos y Huevos</option>
+                            <option value="Panadería y Repostería">Panadería y Repostería</option>
+                            <option value="Alimentos Secos y Enlatados">Alimentos Secos y Enlatados</option>
+                            <option value="Especias y Condimentos">Especias y Condimentos</option>
+                            <option value="Aceites y Vinagres">Aceites y Vinagres</option>
+                        </optgroup>
+                        <optgroup label="Bebidas">
+                            <option value="Vinos y Licores">Vinos y Licores</option>
+                            <option value="Cervezas">Cervezas</option>
+                            <option value="Bebidas no Alcohólicas">Bebidas no Alcohólicas</option>
+                            <option value="Café y Té">Café y Té</option>
+                        </optgroup>
+                        <optgroup label="Equipamiento">
+                            <option value="Equipo de Cocina">Equipo de Cocina</option>
+                            <option value="Maquinaria para Restaurante">Maquinaria para Restaurante</option>
+                            <option value="Mobiliario">Mobiliario</option>
+                            <option value="Vajilla y Cristalería">Vajilla y Cristalería</option>
+                        </optgroup>
+                        <optgroup label="Suministros">
+                            <option value="Menaje Desechable">Menaje Desechable</option>
+                            <option value="Empaques y Envases">Empaques y Envases</option>
+                            <option value="Utensilios de Cocina">Utensilios de Cocina</option>
+                            <option value="Uniforme y Ropa de Trabajo">Uniforme y Ropa de Trabajo</option>
+                        </optgroup>
+                        <optgroup label="Servicios">
+                            <option value="Limpieza y Mantenimiento">Limpieza y Mantenimiento</option>
+                            <option value="Seguridad">Seguridad</option>
+                            <option value="Lavandería de Uniformes">Lavandería de Uniformes</option>
+                            <option value="Gestión de Residuos">Gestión de Residuos</option>
+                            <option value="Software para Restaurantes">Software para Restaurantes</option>
+                        </optgroup>
+                    </select>
+                </div>
+                    
+                    <div class="form-group">
+                        <label for="Fecha_Registro">Fecha de Registro*</label>
+                        <input type="date" id="Fecha_Registro" name="Fecha_Registro" 
+                               value="{{ datos.fecha_registro if datos else '' }}" required>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-section">
+                <h2>Información Fiscal y Bancaria</h2>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="RFC">RFC</label>
+                        <input type="text" id="RFC" name="RFC" 
+                               value="{{ datos.rfc if datos else '' }}"
+                               pattern="[A-Z&Ñ]{3,4}\d{6}[A-Z0-9]{3}" title="Formato de RFC válido">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="Plazo_Entrega">Plazo de Entrega (días)</label>
+                        <input type="number" id="Plazo_Entrega" name="Plazo_Entrega" 
+                               value="{{ datos.plazo_entrega if datos else '7' }}" min="1">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="Terminos_Pago">Términos de Pago</label>
+                        <input type="text" id="Terminos_Pago" name="Terminos_Pago" 
+                               value="{{ datos.terminos_pago if datos else '30 días' }}">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="Cuenta_Bancaria">Cuenta Bancaria</label>
+                        <input type="text" id="Cuenta_Bancaria" name="Cuenta_Bancaria" 
+                               value="{{ datos.cuenta_bancaria if datos else '' }}">
+                    </div>
+                </div>
+                
+                <div class="form-group full-width">
+                    <label for="Banco">Banco</label>
+                    <input type="text" id="Banco" name="Banco" 
+                           value="{{ datos.banco if datos else '' }}">
+                </div>
+            </div>
+            
+            <div class="form-section">
+                <h2>Configuración Adicional</h2>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="Estatus">Estatus</label>
+                        <select id="Estatus" name="Estatus">
+                            <option value="Activo" {% if not datos or datos.estatus == 'Activo' %}selected{% endif %}>Activo</option>
+                            <option value="Inactivo" {% if datos and datos.estatus == 'Inactivo' %}selected{% endif %}>Inactivo</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group full-width">
+                    <label for="Notas">Notas</label>
+                    <textarea id="Notas" name="Notas">{{ datos.notas if datos else '' }}</textarea>
+                </div>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Guardar Proveedor</button>
+                <a href="{{ url_for('gestion_proveedores') }}" class="btn btn-secondary">Cancelar</a>
+            </div>
+            
+            <div class="required-info">* Campos obligatorios</div>
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestión de Proveedores</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/gestion_proveedores.css') }}">
+</head>
+<body>
+    <h1>Lista de Proveedores</h1>
+
+    <a href="{{ url_for('formulario_proveedor') }}" class="btn btn-agregar">Agregar Proveedor</a>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Contacto</th>
+                <th>Teléfono</th>
+                <th>Correo</th>
+                <th>RFC</th>
+                <th>Entrega</th>
+                <th>Pago</th>
+                <th>Banco</th>
+                <th>Estatus</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for proveedor in proveedores %}
+            <tr>
+                <td>{{ proveedor.ID }}</td>
+                <td>{{ proveedor.Nombre }}</td>
+                <td>{{ proveedor.Nombre_Contacto }}</td>
+                <td>{{ proveedor.Telefono }}</td>
+                <td>{{ proveedor.Correo }}</td>
+                <td>{{ proveedor.RFC }}</td>
+                <td>{{ proveedor.Plazo_Entrega }}</td>
+                <td>{{ proveedor.Terminos_Pago }}</td>
+                <td>{{ proveedor.Banco }}</td>
+                <td>{{ proveedor.Estatus }}</td>
+                <td>
+                    <a href="{{ url_for('editar_proveedor', id=proveedor.ID) }}">Editar</a> |
+                    <a href="{{ url_for('eliminar_proveedor', id=proveedor.ID) }}" onclick="return confirm('¿Eliminar este proveedor?')">Eliminar</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

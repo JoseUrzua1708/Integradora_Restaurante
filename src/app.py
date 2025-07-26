@@ -6,6 +6,8 @@ import os
 from dotenv import load_dotenv
 import logging
 from datetime import time
+import re
+from mysql.connector import Error
 
 
 ###############################################################################
@@ -247,7 +249,9 @@ def formulario_sucursales():
         if conn is not None:
             conn.close()
 
+################################################################################
 # Gestión de empleados
+################################################################################
 @app.route('/formulario_empleado')
 def formulario_empleado():
     """Muestra el formulario para agregar empleados"""
@@ -276,7 +280,9 @@ def formulario_empleado():
         if conn is not None:
             conn.close()
 
+################################################################################
 # Gestión de reservaciones
+################################################################################
 @app.route('/gestion_reservaciones')
 def gestion_reservaciones():
     """Muestra la gestión de reservaciones"""
@@ -391,5 +397,149 @@ def guardar_reserva():
         if conn is not None:
             conn.close()
 
+################################################################################
+# Formulario de proveedores
+################################################################################
+@app.route('/gestion_proveedores')
+def gestion_proveedores():
+    """Muestra la lista de proveedores"""
+    conn = None
+    cursor = None
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM Proveedores")
+        proveedores = cursor.fetchall()
+        return render_template('gestion_proveedores.html', proveedores=proveedores)
+    except Error as e:
+        app.logger.error(f"Error en gestion_proveedores: {e}")
+        flash("Error al cargar los proveedores", "error")
+        return redirect(url_for('inicio'))
+    finally:
+        if cursor: cursor.close()
+        if conn: conn.close()
+
+
+################################################################################
+# Formulario de proveedores
+################################################################################
+
+@app.route('/formulario_proveedor')
+def formulario_proveedor():
+    """Muestra el formulario para agregar un nuevo proveedor"""
+    tipos_proveedor = [
+        'Carnes y Aves', 'Pescados y Mariscos', 'Frutas y Verduras',
+        'Lácteos y Huevos', 'Panadería y Repostería', 'Alimentos Secos y Enlatados',
+        'Especias y Condimentos', 'Aceites y Vinagres', 'Vinos y Licores',
+        'Cervezas', 'Bebidas no Alcohólicas', 'Café y Té', 'Equipo de Cocina',
+        'Maquinaria para Restaurante', 'Mobiliario', 'Vajilla y Cristalería',
+        'Servicios de Limpieza', 'Servicios de Seguridad', 'Menaje Desechable'
+    ]
+    return render_template('formulario_proveedor.html', tipos_proveedor=tipos_proveedor)
+
+@app.route('/guardar_proveedor', methods=['POST'])
+def guardar_proveedor():
+    """Procesa el formulario y guarda el nuevo proveedor"""
+    conn = None
+    cursor = None
+    try:
+        # Obtener datos del formulario
+        datos = {
+            'Nombre_Empresa': request.form['Nombre_Empresa'].strip().upper(),
+            'Contacto_Principal': request.form['Contacto_Principal'].strip(),
+            'Telefono': request.form['Telefono'].strip(),
+            'Correo_Electronico': request.form['Correo_Electronico'].strip().lower(),
+            'Direccion': request.form['Direccion'].strip(),
+            'Tipo_Proveedor': request.form['Tipo_Proveedor'],
+            'RFC': request.form.get('RFC', '').strip().upper(),
+            'Plazo_Entrega': request.form.get('Plazo_Entrega', '7'),
+            'Terminos_Pago': request.form.get('Terminos_Pago', '30 días').strip(),
+            'Cuenta_Bancaria': request.form.get('Cuenta_Bancaria', '').strip(),
+            'Banco': request.form.get('Banco', '').strip(),
+            'Estatus': request.form.get('Estatus', 'Activo'),
+            'Notas': request.form.get('Notas', '').strip(),
+            'Fecha_Registro': request.form.get('Fecha_Registro', '')
+        }
+
+        # Validación de campos obligatorios
+        campos_requeridos = ['Nombre_Empresa', 'Contacto_Principal', 'Telefono', 
+                            'Correo_Electronico', 'Direccion', 'Tipo_Proveedor']
+        if not all(datos[campo] for campo in campos_requeridos):
+            flash("Todos los campos obligatorios deben completarse", "error")
+            return render_template('formulario_proveedor.html', datos=datos, tipos_proveedor=tipos_proveedor)
+
+        # Conexión y consulta SQL
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        query = """
+            INSERT INTO Proveedores (
+                Nombre_Empresa,
+                Contacto_Principal,
+                Telefono,
+                Correo_Electronico,
+                Direccion,
+                Tipo_Proveedor,
+                RFC,
+                Plazo_Entrega,
+                Terminos_Pago,
+                Cuenta_Bancaria,
+                Banco,
+                Estatus,
+                Notas,
+                Fecha_Creacion
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW())
+        """
+
+        params = (
+            datos['Nombre_Empresa'],
+            datos['Contacto_Principal'],
+            datos['Telefono'],
+            datos['Correo_Electronico'],
+            datos['Direccion'],
+            datos['Tipo_Proveedor'],
+            datos['RFC'],
+            datos['Plazo_Entrega'],
+            datos['Terminos_Pago'],
+            datos['Cuenta_Bancaria'],
+            datos['Banco'],
+            datos['Estatus'],
+            datos['Notas']
+        )
+
+
+        
+        cursor.execute(query, params)
+        conn.commit()
+        
+        flash("Proveedor registrado exitosamente", "success")
+        return redirect(url_for('gestion_proveedores'))
+        
+    except Error as e:
+        if conn: conn.rollback()
+        flash(f"Error de base de datos: {e.msg}", "error")
+        app.logger.error(f"Error SQL: {e}")
+        # Recargar tipos de proveedor para mostrar el formulario nuevamente
+        tipos_proveedor = [
+            'Carnes y Aves', 'Pescados y Mariscos', 'Frutas y Verduras',
+            'Lácteos y Huevos', 'Panadería y Repostería', 'Alimentos Secos y Enlatados',
+            'Especias y Condimentos', 'Aceites y Vinagres', 'Vinos y Licores',
+            'Cervezas', 'Bebidas no Alcohólicas', 'Café y Té', 'Equipo de Cocina',
+            'Maquinaria para Restaurante', 'Mobiliario', 'Vajilla y Cristalería',
+            'Servicios de Limpieza', 'Servicios de Seguridad', 'Menaje Desechable'
+        ]
+        return render_template('formulario_proveedor.html', datos=datos, tipos_proveedor=tipos_proveedor)
+        
+    except Exception as e:
+        if conn: conn.rollback()
+        flash("Error inesperado al registrar el proveedor", "error")
+        app.logger.error(f"Error en guardar_proveedor: {str(e)}")
+        return render_template('formulario_proveedor.html', datos=request.form)
+        
+    finally:
+        if cursor: cursor.close()
+        if conn: conn.close()
+
 if __name__ == '__main__':
     app.run(debug=True, port=2001)
+
