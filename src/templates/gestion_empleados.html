@@ -14,40 +14,96 @@
         <main class="main-content">
             <div class="table-container">
                 <h1><i class="fas fa-users"></i> Gestión de Empleados</h1>
+                
                 <div class="table-actions">
-                    <a href="{{ url_for('formulario_empleado') }}" class="btn btn-primary"><i class="fas fa-plus"></i> Añadir Empleado</a>
+                    <div class="actions-left">
+                        <a href="{{ url_for('formulario_empleado') }}" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Añadir Empleado
+                        </a>
+                    </div>
+                    <div class="actions-right">
+                        <div class="search-box">
+                            <input type="text" placeholder="Buscar empleado..." id="searchInput">
+                            <button class="btn-search" id="searchButton">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
                 </div>
+                
                 <div class="table-responsive">
-                    <table class="table">
+                    <table class="table" id="empleadosTable">
                         <thead>
                             <tr>
-                                <th>ID</th>
-                                <th>Nombre</th>
-                                <th>Rol</th>
-                                <th>Sucursal</th>
-                                <th>Estatus</th>
+                                <th data-column="id">ID <i class="fas fa-sort sort-icon"></i></th>
+                                <th data-column="nombre">Nombre <i class="fas fa-sort sort-icon"></i></th>
+                                <th data-column="apellido_p">Apellido P <i class="fas fa-sort sort-icon"></i></th>
+                                <th data-column="apellido_m">Apellido M <i class="fas fa-sort sort-icon"></i></th>
+                                <th data-column="correo">Correo <i class="fas fa-sort sort-icon"></i></th>
+                                <th data-column="telefono">Teléfono</th>
+                                <th data-column="rol">Rol <i class="fas fa-sort sort-icon"></i></th>
+                                <th data-column="sucursal">Sucursal <i class="fas fa-sort sort-icon"></i></th>
+                                <th data-column="estatus">Estatus <i class="fas fa-sort sort-icon"></i></th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="empleadosBody">
                             {% for empleado in empleados %}
-                            <tr>
+                            <tr data-id="{{ empleado.ID }}">
                                 <td>{{ empleado.ID }}</td>
-                                <td>{{ empleado.Nombre }} {{ empleado.Apellido_p }}</td>
-                                <td>{{ empleado.Rol }}</td>
-                                <td>{{ empleado.Sucursal }}</td>
-                                <td><span class="status status-{{ empleado.Estatus.lower() }}">{{ empleado.Estatus }}</span></td>
+                                <td>{{ empleado.Nombre }}</td>
+                                <td>{{ empleado.Apellido_P }}</td>
+                                <td>{{ empleado.Apellido_M if empleado.Apellido_M else '-' }}</td>
+                                <td>{{ empleado.Correo }}</td>
+                                <td>{{ empleado.Telefono if empleado.Telefono else '-' }}</td>
+                                <td>{{ empleado.rol_nombre if empleado.rol_nombre else empleado.Rol_ID }}</td>
+                                <td>{{ empleado.sucursal_nombre if empleado.sucursal_nombre else (empleado.Sucursal_ID if empleado.Sucursal_ID else '-') }}</td>
+                                <td>
+                                    <span class="status status-{{ empleado.Estatus.lower() }}">
+                                        {{ empleado.Estatus }}
+                                    </span>
+                                </td>
                                 <td class="actions">
-                                    <a href="#" class="btn-action btn-edit"><i class="fas fa-edit"></i></a>
-                                    <a href="#" class="btn-action btn-delete"><i class="fas fa-trash"></i></a>
+                                    <a href="{{ url_for('editar_empleado', id=empleado.ID) }}" class="btn-action btn-edit" title="Editar">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="{{ url_for('ver_empleado', id=empleado.ID) }}" class="btn-action btn-view" title="Ver detalles">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    {% if empleado.Estatus == 'Activo' %}
+                                    <a href="{{ url_for('desactivar_empleado', id=empleado.ID) }}" class="btn-action btn-suspend" title="Desactivar">
+                                        <i class="fas fa-user-slash"></i>
+                                    </a>
+                                    {% else %}
+                                    <a href="{{ url_for('activar_empleado', id=empleado.ID) }}" class="btn-action btn-activate" title="Activar">
+                                        <i class="fas fa-user-check"></i>
+                                    </a>
+                                    {% endif %}
                                 </td>
                             </tr>
                             {% endfor %}
                         </tbody>
                     </table>
                 </div>
+                
+                <div class="table-footer">
+                    <div class="pagination-info" id="paginationInfo">
+                        Mostrando {{ empleados|length }} de {{ total_empleados }} empleados
+                    </div>
+                    <div class="pagination-controls">
+                        <button class="btn-pagination" id="prevPage" disabled>
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <span class="page-number" id="currentPage">1</span>
+                        <button class="btn-pagination" id="nextPage">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
             </div>
         </main>
     </div>
+    
+    <script src="{{ url_for('static', filename='js/gestion_empleados.js') }}"></script>
 </body>
 </html>

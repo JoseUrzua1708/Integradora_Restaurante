@@ -42,14 +42,6 @@
                         </a>
                     </li>
                     <li>
-                        <a href="{{ url_for('formulario_empleado') }}" class="nav-link">
-                            <svg class="icon" viewBox="0 0 24 24">
-                                <path fill="currentColor" d="M19 3h-1V1h-2v2H8V1H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2m-7 3a3 3 0 0 1 3 3a3 3 0 0 1-3 3a3 3 0 0 1-3-3a3 3 0 0 1 3-3m6 12H6v-1c0-2 4-3.1 6-3.1s6 1.1 6 3.1v1z"/>
-                            </svg>
-                            Formulario de Empleados
-                        </a>
-                    </li>
-                    <li>
                         <a href="{{ url_for('gestion_restaurante') }}" class="nav-link">
                             <svg class="icon" viewBox="0 0 24 24">
                                 <path fill="currentColor" d="M22 21H2v-2h1V4a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v1h2v14h1v2m-5-2h2v-8h-6v8h2v-6h2v6m-4-8h2V9h-2v2m-2 2h2V9h-2v4m-2 6h2v-4h-2v4m0-6h2V9h-2v4m-2 0h2V9H7v4m-2 0h2V9H5v4m0 6h2v-4H5v4Z"/>
@@ -58,11 +50,35 @@
                         </a>
                     </li>
                     <li>
-                        <a href="{{ url_for('formulario_sucursales') }}" class="nav-link">
+                        <a href="{{ url_for('gestion_sucursales') }}" class="nav-link">
                             <svg class="icon" viewBox="0 0 24 24">
-                                <path fill="currentColor" d="M18 15a3 3 0 0 1 3 3a3 3 0 0 1-3 3a2.99 2.99 0 0 1-2.83-2H14v-2h1.17c.41-1.17 1.52-2 2.83-2m0 2a1 1 0 0 0-1 1a1 1 0 0 0 1 1a1 1 0 0 0 1-1a1 1 0 0 0-1-1m0-9a3 3 0 0 1 3 3a3 3 0 0 1-3 3a3 3 0 0 1-3-3a3 3 0 0 1 3-3m0 2a1 1 0 0 0-1 1a1 1 0 0 0 1 1a1 1 0 0 0 1-1a1 1 0 0 0-1-1M6 11a3 3 0 0 1 3 3a3 3 0 0 1-3 3a3 3 0 0 1-3-3a3 3 0 0 1 3-3m0 2a1 1 0 0 0-1 1a1 1 0 0 0 1 1a1 1 0 0 0 1-1a1 1 0 0 0-1-1m0-6a3 3 0 0 1 3 3a3 3 0 0 1-3 3a3 3 0 0 1-3-3a3 3 0 0 1 3-3m0 2a1 1 0 0 0-1 1a1 1 0 0 0 1 1a1 1 0 0 0 1-1a1 1 0 0 0-1-1Z"/>
+                                <path fill="currentColor" d="M12 2L1 7v10a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2V7l-11-5m9 15H3V8.5l9-4.5l9 4.5V17m-6-3h-4v4h4v-4Z"/>
                             </svg>
-                            Formulario de Sucursales
+                            Gestión de Sucursales
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('gestion_roles') }}" class="nav-link">
+                            <svg class="icon" viewBox="0 0 24 24">
+                                <path fill="currentColor" d="M12 2L1 7v10a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2V7l-11-5m9 15H3V8.5l9-4.5l9 4.5V17m-6-3h-4v4h4v-4Z"/>
+                            </svg>
+                            Gestión de Roles
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('gestion_empleados') }}" class="nav-link">
+                            <svg class="icon" viewBox="0 0 24 24">
+                                <path fill="currentColor" d="M12 2L1 7v10a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2V7l-11-5m9 15H3V8.5l9-4.5l9 4.5V17m-6-3h-4v4h4v-4Z"/>
+                            </svg>
+                            Gestión de Empleados
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('gestion_inventario') }}" class="nav-link">
+                            <svg class="icon" viewBox="0 0 24 24">
+                                <path fill="currentColor" d="M12 2L1 7v10a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2V7l-11-5m9 15H3V8.5l9-4.5l9 4.5V17m-6-3h-4v4h4v-4Z"/>
+                            </svg>
+                            Gestión de Inventario
                         </a>
                     </li>
                 </ul>

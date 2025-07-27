@@ -290,7 +290,7 @@ def guardar_sucursal():
         }
 
         campos_requeridos = ['Nombre', 'Direccion', 'Telefono', 'Responsable',
-                            'Horario_Apertura', 'Horario_Cierre', 'Estatus', 'Fecha_Apertura']
+                            'Horario_Apertura', 'Horario_Cierre', 'Estatus', 'Fecha_Apertura']        
         if not all(datos[campo] for campo in campos_requeridos):
             flash("Todos los campos obligatorios deben completarse", "error")
             return redirect(url_for('formulario_sucursales'))
@@ -320,6 +320,80 @@ def guardar_sucursal():
             cursor.close()
         if conn is not None:
             conn.close()
+
+################################################################################        
+# Eliminar sucursal
+################################################################################
+
+@app.route('/eliminar/<int:id>')
+def eliminar_sucursal(id):
+    """Elimina una sucursal por ID"""
+    conn = None
+    cursor = None
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM Sucursales WHERE ID = %s", (id,))
+        conn.commit()
+        flash("Sucursal eliminada exitosamente", "success")
+    except Exception as e:
+        app.logger.error(f"Error al eliminar sucursal ID {id}: {str(e)}")
+        flash("Error al eliminar la sucursal", "error")
+    finally:
+        if cursor is not None:
+            cursor.close()
+        if conn is not None:
+            conn.close()
+    return redirect(url_for('gestion_sucursales'))  
+
+################################################################################
+# Actualizar sucursal
+################################################################################
+
+@app.route('/actualizar/<int:id>', methods=['POST'])
+def actualizar_sucursal(id):
+    """Actualiza una sucursal existente"""
+    conn = None
+    cursor = None
+    try:
+        datos = {
+            'id': id,
+            'nombre': request.form['Nombre'].strip(),
+            'direccion': request.form['Direccion'].strip(),
+            'telefono': request.form['Telefono'].strip(),
+            'responsable': request.form['Responsable'].strip(),
+            'horario_apertura': request.form['Horario_Apertura'],
+            'horario_cierre': request.form['Horario_Cierre'],
+            'estatus': request.form['Estatus'],
+            'fecha_apertura': request.form['Fecha_Apertura']
+        }
+
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        query = """
+            UPDATE Sucursales SET 
+                Nombre = %(nombre)s,
+                Direccion = %(direccion)s,
+                Telefono = %(telefono)s,
+                Responsable = %(responsable)s,
+                Horario_Apertura = %(horario_apertura)s,
+                Horario_Cierre = %(horario_cierre)s,
+                Estatus = %(estatus)s,
+                Fecha_Apertura = %(fecha_apertura)s
+            WHERE ID = %(id)s
+        """
+        cursor.execute(query, datos)
+        conn.commit()
+        flash("Sucursal actualizada exitosamente", "success")
+    except Exception as e:
+        app.logger.error(f"Error al actualizar sucursal ID {id}: {str(e)}")
+        flash("Error al actualizar la sucursal", "error")
+    finally:
+        if cursor is not None:
+            cursor.close()
+        if conn is not None:
+            conn.close()
+    return redirect(url_for('gestion_sucursales'))
 
 ################################################################################
 # Gestión de roles
@@ -414,6 +488,98 @@ def guardar_rol():
             conn.close()
 
 ################################################################################
+# Eliminar rol
+################################################################################
+
+@app.route('/eliminar/<int:id>')
+def eliminar_rol(id):
+    """Elimina un rol por ID"""
+    conn = None
+    cursor = None
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM Roles WHERE ID = %s", (id,))
+        conn.commit()
+        flash("Rol eliminado exitosamente", "success")
+    except Exception as e:
+        app.logger.error(f"Error al eliminar rol ID {id}: {str(e)}")
+        flash("Error al eliminar el rol", "error")
+    finally:
+        if cursor is not None:
+            cursor.close()
+        if conn is not None:
+            conn.close()
+    return redirect(url_for('gestion_roles'))
+
+################################################################################
+# actualizar rol
+################################################################################
+
+@app.route('/actualizar/<int:id>', methods=['POST'])
+def actualizar_rol(id):
+    """Actualiza un rol existente"""
+    conn = None
+    cursor = None
+    try:
+        datos = {
+            'id': id,
+            'nombre': request.form['Nombre'].strip(),
+            'descripcion': request.form['Descripcion'].strip(),
+            'fecha_creacion': request.form['Fecha_Creacion'],
+            'fecha_actualizacion': request.form['Fecha_Actualizacion'],
+            'sucursal_id': request.form['Sucursal_ID']
+        }
+
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        query = """
+            UPDATE Roles SET 
+                Nombre = %(nombre)s,
+                Descripcion = %(descripcion)s,
+                Fecha_Creacion = %(fecha_creacion)s,
+                Fecha_Actualizacion = %(fecha_actualizacion)s,
+                Sucursal_ID = %(sucursal_id)s
+            WHERE ID = %(id)s
+        """
+        cursor.execute(query, datos)
+        conn.commit()
+        flash("Rol actualizado exitosamente", "success")        
+    except Exception as e:
+        app.logger.error(f"Error al actualizar rol ID {id}: {str(e)}")
+        flash("Error al actualizar el rol", "error")
+    finally:
+        if cursor is not None:
+            cursor.close()
+        if conn is not None:
+            conn.close()
+    return redirect(url_for('gestion_roles'))
+
+################################################################################
+# Gestión de empleados
+################################################################################
+@app.route('/gestion_empleados')
+def gestion_empleados():
+    """Muestra la lista de empleados"""
+    conn = None
+    cursor = None
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT ID, Nombre, Apellido_p, Apellido_M, Correo, Telefono FROM Empleados")
+        empleados = cursor.fetchall()
+        return render_template('gestion_empleados.html', empleados=empleados)
+    except Exception as e:
+        app.logger.error(f"Error en gestion_empleados: {str(e)}")
+        flash("Error al cargar los empleados", "error")
+        return redirect(url_for('inicio'))
+    finally:
+        if cursor is not None:
+            cursor.close()
+        if conn is not None:
+            conn.close()
+
+################################################################################
 # Formulario de empleados
 ################################################################################
 @app.route('/formulario_empleado')
@@ -424,16 +590,11 @@ def formulario_empleado():
     try:
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
-        
         cursor.execute("SELECT ID, Nombre FROM Sucursales WHERE Estatus = 'Activa'")
         sucursales = cursor.fetchall()
-        
         cursor.execute("SELECT ID, Nombre FROM Roles")
         roles = cursor.fetchall()
-        
-        return render_template("formulario_empleado.html", 
-                            sucursales=sucursales, 
-                            roles=roles)
+        return render_template('formulario_empleado.html', sucursales=sucursales, roles=roles)
     except Exception as e:
         app.logger.error(f"Error en formulario_empleado: {str(e)}")
         flash("Error al cargar el formulario de empleado", "error")
@@ -444,9 +605,6 @@ def formulario_empleado():
         if conn is not None:
             conn.close()
 
-################################################################################
-# Gestión de reservaciones
-################################################################################
 @app.route('/guardar_empleado', methods=['POST'])
 def guardar_empleado():
     """Guarda un nuevo empleado"""
@@ -460,7 +618,6 @@ def guardar_empleado():
             'Apellido_p': request.form['Apellido_p'].strip(),
             'Apellido_M': request.form.get('Apellido_M', '').strip(),
             'Correo': request.form['Correo'].strip(),
-            'Contrasena': request.form['Contrasena'],
             'Telefono': request.form.get('Telefono', '').strip(),
             'Fecha_Nacimiento': request.form['Fecha_Nacimiento'],
             'Genero': request.form['Genero'],
@@ -471,9 +628,9 @@ def guardar_empleado():
             'Fecha_Terminacion': request.form.get('Fecha_Terminacion', None) if request.form.get('Fecha_Terminacion') else None
         }
 
-        # Validación básica
+        # Validación de campos obligatorios
         campos_requeridos = ['Sucursal_ID', 'Rol_ID', 'Nombre', 'Apellido_p', 'Correo', 
-                            'Contrasena', 'Fecha_Nacimiento', 'Genero', 'Fecha_Contratacion']
+                            'Telefono', 'Fecha_Nacimiento', 'Genero', 'Fecha_Contratacion']
         if not all(datos[campo] for campo in campos_requeridos):
             flash("Todos los campos obligatorios deben completarse", "error")
             return redirect(url_for('formulario_empleado'))
@@ -482,16 +639,16 @@ def guardar_empleado():
         cursor = conn.cursor()
         query = """
             INSERT INTO Empleados (
-                Sucursal_ID, Rol_ID, Nombre, Apellido_p, Apellido_M, Correo, Contrasena,
-                Telefono, Fecha_Nacimiento, Genero, Estatus, Salario, Tipo_Contrato,
+                Sucursal_ID, Rol_ID, Nombre, Apellido_p, Apellido_M, Correo, Telefono,
+                Fecha_Nacimiento, Genero, Estatus, Salario, Tipo_Contrato,
                 Fecha_Contratacion, Fecha_Terminacion
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """
         params = (
             datos['Sucursal_ID'], datos['Rol_ID'], datos['Nombre'], datos['Apellido_p'],
-            datos['Apellido_M'], datos['Correo'], datos['Contrasena'], datos['Telefono'],
-            datos['Fecha_Nacimiento'], datos['Genero'], datos['Estatus'], datos['Salario'],
-            datos['Tipo_Contrato'], datos['Fecha_Contratacion'], datos['Fecha_Terminacion']
+            datos['Apellido_M'], datos['Correo'], datos['Telefono'], datos['Fecha_Nacimiento'],
+            datos['Genero'], datos['Estatus'], datos['Salario'], datos['Tipo_Contrato'],
+            datos['Fecha_Contratacion'], datos['Fecha_Terminacion']
         )
         cursor.execute(query, params)
         conn.commit()
@@ -507,122 +664,94 @@ def guardar_empleado():
         if conn is not None:
             conn.close()
 
-@app.route('/gestion_reservaciones')
-def gestion_reservaciones():
-    """Muestra la gestión de reservaciones"""
+################################################################################
+# eliminar empleado
+################################################################################
+
+@app.route('/eliminar/<int:id>')
+def eliminar_empleado(id):
+    """Elimina un empleado por ID"""
     conn = None
     cursor = None
     try:
         conn = get_db_connection()
-        cursor = conn.cursor(dictionary=True)
-        
-        # Cargar opciones para los selects
-        cursor.execute("SELECT ID, CONCAT(Nombre, ' ', Apellido_P) AS Nombre FROM Clientes")
-        clientes = cursor.fetchall()
-
-        cursor.execute("SELECT ID, CONCAT(Nombre, ' ', Apellido_P) AS Nombre FROM Empleados")
-        empleados = cursor.fetchall()
-
-        cursor.execute("SELECT ID, Numero_Mesa FROM Mesas")
-        mesas = cursor.fetchall()
-
-        cursor.execute("SELECT ID, Nombre FROM Eventos")
-        eventos = cursor.fetchall()
-
-        cursor.execute("SELECT ID, Nombre FROM Sucursales")
-        sucursales = cursor.fetchall()
-
-        # Historial
-        cursor.execute("""
-            SELECT R.ID, C.Nombre, M.Numero_Mesa, R.Numero_Personas, R.Fecha_Hora 
-            FROM Reservaciones R 
-            JOIN Clientes C ON R.Cliente_ID = C.ID 
-            JOIN Mesas M ON R.Mesa_ID = M.ID
-            ORDER BY R.Fecha_Hora DESC
-        """)
-        reservas_mesas = cursor.fetchall()
-
-        cursor.execute("""
-            SELECT E.ID, C.Nombre, EV.Nombre AS Evento, E.Numero_Personas, E.Fecha_Reserva 
-            FROM Eventos_Reservaciones E 
-            JOIN Clientes C ON E.Cliente_ID = C.ID 
-            JOIN Eventos EV ON E.Evento_ID = EV.ID
-            ORDER BY E.Fecha_Reserva DESC
-        """)
-        reservas_eventos = cursor.fetchall()
-
-        return render_template("gestion_reservaciones.html", 
-                            clientes=clientes, 
-                            empleados=empleados, 
-                            mesas=mesas, 
-                            eventos=eventos, 
-                            sucursales=sucursales, 
-                            reservas_mesas=reservas_mesas, 
-                            reservas_eventos=reservas_eventos)
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM Empleados WHERE ID = %s", (id,))
+        conn.commit()
+        flash("Empleado eliminado exitosamente", "success")
     except Exception as e:
-        app.logger.error(f"Error en gestion_reservaciones: {str(e)}")
-        flash("Error al cargar la gestión de reservaciones", "error")
-        return redirect(url_for('inicio'))
+        app.logger.error(f"Error al eliminar empleado ID {id}: {str(e)}")
+        flash("Error al eliminar el empleado", "error")
     finally:
         if cursor is not None:
             cursor.close()
         if conn is not None:
             conn.close()
+    return redirect(url_for('gestion_empleados'))
 
-@app.route('/guardar_reserva', methods=['POST'])
-def guardar_reserva():
-    """Guarda una nueva reservación"""
+################################################################################
+# actualizar empleado
+################################################################################
+
+@app.route('/actualizar/<int:id>', methods=['POST'])
+def actualizar_empleado(id):
+    """Actualiza un empleado existente"""
     conn = None
     cursor = None
     try:
-        tipo = request.form.get('tipo')
-        cliente = request.form.get('cliente')
-        personas = request.form.get('personas')
-        fecha = request.form.get('fecha')
-        notas = request.form.get('notas', '')
-
-        if not all([tipo, cliente, personas, fecha]):
-            flash("Todos los campos obligatorios deben ser completados", "error")
-            return redirect(url_for('gestion_reservaciones'))
+        datos = {
+            'id': id,
+            'sucursal_id': request.form['Sucursal_ID'],
+            'rol_id': request.form['Rol_ID'],
+            'nombre': request.form['Nombre'].strip(),
+            'apellido_p': request.form['Apellido_p'].strip(),
+            'apellido_m': request.form.get('Apellido_M', '').strip(),
+            'correo': request.form['Correo'].strip(),
+            'telefono': request.form.get('Telefono', '').strip(),
+            'fecha_nacimiento': request.form['Fecha_Nacimiento'],
+            'genero': request.form['Genero'],
+            'estatus': request.form.get('Estatus', 'Activo'),
+            'salario': float(request.form.get('Salario', 0.0)),
+            'tipo_contrato': request.form.get('Tipo_Contrato', ''),
+            'fecha_contratacion': request.form['Fecha_Contratacion'],
+            'fecha_terminacion': request.form.get('Fecha_Terminacion', None) if request.form.get('Fecha_Terminacion') else None
+        }
 
         conn = get_db_connection()
         cursor = conn.cursor()
-
-        if tipo == "mesa":
-            sucursal = request.form.get('sucursal')
-            mesa = request.form.get('mesa')
-            empleado = request.form.get('empleado')
-
-            cursor.execute("""
-                INSERT INTO Reservaciones 
-                (Cliente_ID, Sucursal_ID, Mesa_ID, Fecha_Hora, Numero_Personas, Notas, Empleado_ID)
-                VALUES (%s, %s, %s, %s, %s, %s, %s)
-            """, (cliente, sucursal, mesa, fecha, personas, notas, empleado))
-        else:
-            evento = request.form.get('evento')
-            monto = request.form.get('monto', 0)
-
-            cursor.execute("""
-                INSERT INTO Eventos_Reservaciones 
-                (Evento_ID, Cliente_ID, Numero_Personas, Monto_Pagado, Notas)
-                VALUES (%s, %s, %s, %s, %s)
-            """, (evento, cliente, personas, monto, notas))
-
+        query = """
+            UPDATE Empleados SET 
+                Sucursal_ID = %(sucursal_id)s,
+                Rol_ID = %(rol_id)s,
+                Nombre = %(nombre)s,
+                Apellido_p = %(apellido_p)s,
+                Apellido_M = %(apellido_m)s,
+                Correo = %(correo)s,
+                Telefono = %(telefono)s,
+                Fecha_Nacimiento = %(fecha_nacimiento)s,
+                Genero = %(genero)s,
+                Estatus = %(estatus)s,
+                Salario = %(salario)s,
+                Tipo_Contrato = %(tipo_contrato)s,
+                Fecha_Contratacion = %(fecha_contratacion)s,
+                Fecha_Terminacion = %(fecha_terminacion)s
+            WHERE ID = %(id)s
+        """
+        cursor.execute(query, datos)
         conn.commit()
-        flash("Reservación guardada exitosamente", "success")
-        return redirect(url_for('gestion_reservaciones'))
+        flash("Empleado actualizado exitosamente", "success")
     except Exception as e:
-        app.logger.error(f"Error al guardar reserva: {str(e)}")
-        flash("Error al guardar la reservación", "error")
-        return redirect(url_for('gestion_reservaciones'))
+        app.logger.error(f"Error al actualizar empleado ID {id}: {str(e)}")
+        flash("Error al actualizar el empleado", "error")
     finally:
         if cursor is not None:
             cursor.close()
         if conn is not None:
-            conn.close()
+            conn.close()        
+    return redirect(url_for('gestion_empleados'))
 
 ################################################################################
-# Formulario de proveedores
+# gestion de proveedores
 ################################################################################
 @app.route('/gestion_proveedores')
 def gestion_proveedores():
@@ -643,7 +772,6 @@ def gestion_proveedores():
         if cursor: cursor.close()
         if conn: conn.close()
 
-
 ################################################################################
 # Formulario de proveedores
 ################################################################################
@@ -660,6 +788,8 @@ def formulario_proveedor():
         'Servicios de Limpieza', 'Servicios de Seguridad', 'Menaje Desechable'
     ]
     return render_template('formulario_proveedor.html', tipos_proveedor=tipos_proveedor)
+
+
 
 @app.route('/guardar_proveedor', methods=['POST'])
 def guardar_proveedor():
@@ -751,18 +881,414 @@ def guardar_proveedor():
             'Cervezas', 'Bebidas no Alcohólicas', 'Café y Té', 'Equipo de Cocina',
             'Maquinaria para Restaurante', 'Mobiliario', 'Vajilla y Cristalería',
             'Servicios de Limpieza', 'Servicios de Seguridad', 'Menaje Desechable'
-        ]
-        return render_template('formulario_proveedor.html', datos=datos, tipos_proveedor=tipos_proveedor)
+        ]        
+        return render_template('formulario_proveedor.html', datos=request.form, tipos_proveedor=tipos_proveedor)
         
     except Exception as e:
         if conn: conn.rollback()
         flash("Error inesperado al registrar el proveedor", "error")
         app.logger.error(f"Error en guardar_proveedor: {str(e)}")
-        return render_template('formulario_proveedor.html', datos=request.form)
+        return render_template('formulario_proveedor.html', datos=request.form, tipos_proveedor=tipos_proveedor)
         
     finally:
         if cursor: cursor.close()
         if conn: conn.close()
+
+################################################################################
+# Eliminar proveedor
+################################################################################
+@app.route('/eliminar/<int:id>')
+def eliminar_proveedor(id):
+    """Elimina un proveedor por ID"""
+    conn = None
+    cursor = None
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM Proveedores WHERE ID = %s", (id,))
+        conn.commit()
+        flash("Proveedor eliminado exitosamente", "success")
+    except Error as e:
+        app.logger.error(f"Error al eliminar proveedor ID {id}: {str(e)}")
+        flash("Error al eliminar el proveedor", "error")
+    finally:
+        if cursor is not None:
+            cursor.close()
+        if conn is not None:
+            conn.close()
+    return redirect(url_for('gestion_proveedores'))
+
+################################################################################
+# Actualizar proveedor
+################################################################################
+@app.route('/actualizar/<int:id>', methods=['POST'])
+def actualizar_proveedor(id):
+    """Actualiza un proveedor existente"""
+    conn = None
+    cursor = None
+    try:
+        datos = {
+            'id': id,
+            'nombre_empresa': request.form['Nombre_Empresa'].strip().upper(),
+            'contacto_principal': request.form['Contacto_Principal'].strip(),
+            'telefono': request.form['Telefono'].strip(),
+            'correo_electronico': request.form['Correo_Electronico'].strip().lower(),
+            'direccion': request.form['Direccion'].strip(),
+            'tipo_proveedor': request.form['Tipo_Proveedor'],
+            'rfc': request.form.get('RFC', '').strip().upper(),
+            'plazo_entrega': request.form.get('Plazo_Entrega', '7'),
+            'terminos_pago': request.form.get('Terminos_Pago', '30 días').strip(),
+            'cuenta_bancaria': request.form.get('Cuenta_Bancaria', '').strip(),
+            'banco': request.form.get('Banco', '').strip(),
+            'estatus': request.form.get('Estatus', 'Activo'),
+            'notas': request.form.get('Notas', '').strip(),
+            'fecha_registro': request.form.get('Fecha_Registro', '')
+        }
+
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        query = """
+            UPDATE Proveedores SET 
+                Nombre_Empresa = %(nombre_empresa)s,
+                Contacto_Principal = %(contacto_principal)s,
+                Telefono = %(telefono)s,
+                Correo_Electronico = %(correo_electronico)s,
+                Direccion = %(direccion)s,
+                Tipo_Proveedor = %(tipo_proveedor)s,
+                RFC = %(rfc)s,
+                Plazo_Entrega = %(plazo_entrega)s,
+                Terminos_Pago = %(terminos_pago)s,
+                Cuenta_Bancaria = %(cuenta_bancaria)s,
+                Banco = %(banco)s,
+                Estatus = %(estatus)s,
+                Notas = %(notas)s,
+                Fecha_Creacion = %(fecha_registro)s
+            WHERE ID = %(id)s
+        """
+        cursor.execute(query, datos)
+        conn.commit()
+        flash("Proveedor actualizado exitosamente", "success")
+    except Error as e:
+        app.logger.error(f"Error al actualizar proveedor ID {id}: {str(e)}")
+        flash("Error al actualizar el proveedor", "error")
+    finally:
+        if cursor is not None:
+            cursor.close()
+        if conn is not None:
+            conn.close()
+    return redirect(url_for('gestion_proveedores'))
+
+################################################################################
+# Gesión de inventario
+################################################################################
+@app.route('/gestion_inventario')
+def gestion_inventario():
+    """Muestra la lista de inventario"""
+    conn = None
+    cursor = None
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM Inventario")
+        inventario = cursor.fetchall()
+        return render_template('gestion_inventario.html', inventario=inventario)
+    except Error as e:
+        app.logger.error(f"Error en gestion_inventario: {e}")
+        flash("Error al cargar el inventario", "error")
+        return redirect(url_for('inicio'))
+    finally:
+        if cursor: cursor.close()
+        if conn: conn.close()
+
+################################################################################
+# Formulario de inventario
+################################################################################
+
+@app.route('/formulario_inventario')
+def formulario_inventario():
+    """Muestra el formulario para agregar un nuevo proveedor"""
+    tipos_proveedor = [
+        'Carnes y Aves', 'Pescados y Mariscos', 'Frutas y Verduras',
+        'Lácteos y Huevos', 'Panadería y Repostería', 'Alimentos Secos y Enlatados',
+        'Especias y Condimentos', 'Aceites y Vinagres', 'Vinos y Licores',
+        'Cervezas', 'Bebidas no Alcohólicas', 'Café y Té', 'Equipo de Cocina',
+        'Maquinaria para Restaurante', 'Mobiliario', 'Vajilla y Cristalería',
+        'Servicios de Limpieza', 'Servicios de Seguridad', 'Menaje Desechable'
+    ]
+    return render_template('formulario_inventario.html', tipos_proveedor=tipos_proveedor)
+
+@app.route('/guardar_inventario', methods=['POST'])
+def guardar_inventario():
+    """Procesa el formulario y guarda el nuevo proveedor"""
+    conn = None
+    cursor = None
+    try:
+        # Obtener datos del formulario
+        datos = {
+            'Nombre': request.form['Nombre'].strip(),
+            'Cantidad': request.form['Cantidad'],
+            'Unidad': request.form['Unidad'].strip(),
+            'Precio': request.form['Precio'],
+            'Tipo': request.form['Tipo'].strip(),
+            'Estatus': request.form['Estatus'].strip(),
+            'Notas': request.form['Notas'].strip(),
+            'Fecha_Registro': request.form['Fecha_Registro'].strip()
+        }
+
+        # Validación de campos obligatorios
+        campos_requeridos = ['Nombre', 'Cantidad', 'Unidad', 'Precio', 'Tipo', 'Estatus', 'Notas', 'Fecha_Registro']
+        if not all(datos[campo] for campo in campos_requeridos):
+            flash("Todos los campos obligatorios deben completarse", "error")
+            return render_template('formulario_inventario.html', datos=datos, tipos_proveedor=tipos_proveedor)
+
+        # Conexión y consulta SQL
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        query = """
+            INSERT INTO Inventario (
+                Nombre,
+                Cantidad,
+                Unidad,
+                Precio,
+                Tipo,
+                Estatus,
+                Notas,
+                Fecha_Creacion
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, NOW())
+        """
+
+        params = (
+            datos['Nombre'],
+            datos['Cantidad'],
+            datos['Unidad'],
+            datos['Precio'],
+            datos['Tipo'],
+            datos['Estatus'],
+            datos['Notas']
+        )
+
+
+        
+        cursor.execute(query, params)
+        conn.commit()
+        
+        flash("Inventario registrado exitosamente", "success")
+        return redirect(url_for('gestion_inventario'))        
+        
+    except Error as e:
+        if conn: conn.rollback()
+        flash(f"Error de base de datos: {e.msg}", "error")
+        app.logger.error(f"Error SQL: {e}")
+        # Recargar tipos de proveedor para mostrar el formulario nuevamente
+        tipos_proveedor = [
+            'Carnes y Aves', 'Pescados y Mariscos', 'Frutas y Verduras',
+            'Lácteos y Huevos', 'Panadería y Repostería', 'Alimentos Secos y Enlatados',
+            'Especias y Condimentos', 'Aceites y Vinagres', 'Vinos y Licores',
+            'Cervezas', 'Bebidas no Alcohólicas', 'Café y Té', 'Equipo de Cocina',
+            'Maquinaria para Restaurante', 'Mobiliario', 'Vajilla y Cristalería',
+            'Servicios de Limpieza', 'Servicios de Seguridad', 'Menaje Desechable'
+        ]        
+        return render_template('formulario_inventario.html', datos=request.form, tipos_proveedor=tipos_proveedor)
+        
+    except Exception as e:
+        if conn: conn.rollback()
+        flash("Error inesperado al registrar el inventario", "error")
+        app.logger.error(f"Error en guardar_inventario: {str(e)}")
+        return render_template('formulario_inventario.html', datos=request.form, tipos_proveedor=tipos_proveedor)
+        
+    finally:
+        if cursor: cursor.close()
+        if conn: conn.close()
+
+################################################################################
+# Eliminar inventario
+################################################################################
+@app.route('/eliminar/<int:id>')
+def eliminar_inventario(id):
+    """Elimina un inventario por ID"""
+    conn = None
+    cursor = None
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM Inventario WHERE ID = %s", (id,))
+        conn.commit()
+        flash("Inventario eliminado exitosamente", "success")
+    except Error as e:
+        app.logger.error(f"Error al eliminar inventario ID {id}: {str(e)}")
+        flash("Error al eliminar el inventario", "error")
+    finally:
+        if cursor is not None:
+            cursor.close()
+        if conn is not None:
+            conn.close()
+    return redirect(url_for('gestion_inventario'))
+
+################################################################################
+# Actualizar inventario
+################################################################################
+@app.route('/actualizar/<int:id>', methods=['POST'])
+def actualizar_inventario(id):
+    """Actualiza un inventario existente"""
+    conn = None
+    cursor = None
+    try:
+        datos = {
+            'id': id,
+            'nombre': request.form['Nombre'].strip(),
+            'cantidad': request.form['Cantidad'],
+            'unidad': request.form['Unidad'].strip(),
+            'precio': request.form['Precio'],
+            'tipo': request.form['Tipo'].strip(),
+            'estatus': request.form['Estatus'].strip(),
+            'notas': request.form['Notas'].strip(),
+            'fecha_registro': request.form['Fecha_Registro'].strip()
+        }
+
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        query = """
+            UPDATE Inventario SET 
+                Nombre = %(nombre)s,
+                Cantidad = %(cantidad)s,
+                Unidad = %(unidad)s,
+                Precio = %(precio)s,
+                Tipo = %(tipo)s,
+                Estatus = %(estatus)s,
+                Notas = %(notas)s,
+                Fecha_Creacion = %(fecha_registro)s
+            WHERE ID = %(id)s
+        """
+        cursor.execute(query, datos)
+        conn.commit()
+        flash("Inventario actualizado exitosamente", "success")
+    except Error as e:
+        app.logger.error(f"Error al actualizar inventario ID {id}: {str(e)}")
+        flash("Error al actualizar el inventario", "error")
+    finally:
+        if cursor is not None:
+            cursor.close()
+        if conn is not None:
+            conn.close()
+    return redirect(url_for('gestion_inventario'))
+
+################################################################################
+# Gestión de reservaciones
+################################################################################
+@app.route('/gestion_reservaciones')
+def gestion_reservaciones():
+    """Muestra la gestión de reservaciones"""
+    conn = None
+    cursor = None
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        
+        # Cargar opciones para los selects
+        cursor.execute("SELECT ID, CONCAT(Nombre, ' ', Apellido_P) AS Nombre FROM Clientes")
+        clientes = cursor.fetchall()
+
+        cursor.execute("SELECT ID, CONCAT(Nombre, ' ', Apellido_P) AS Nombre FROM Empleados")
+        empleados = cursor.fetchall()
+
+        cursor.execute("SELECT ID, Numero_Mesa FROM Mesas")
+        mesas = cursor.fetchall()
+
+        cursor.execute("SELECT ID, Nombre FROM Eventos")
+        eventos = cursor.fetchall()
+
+        cursor.execute("SELECT ID, Nombre FROM Sucursales")
+        sucursales = cursor.fetchall()
+
+        # Historial
+        cursor.execute("""
+            SELECT R.ID, C.Nombre, M.Numero_Mesa, R.Numero_Personas, R.Fecha_Hora 
+            FROM Reservaciones R 
+            JOIN Clientes C ON R.Cliente_ID = C.ID 
+            JOIN Mesas M ON R.Mesa_ID = M.ID
+            ORDER BY R.Fecha_Hora DESC
+        """)
+        reservas_mesas = cursor.fetchall()
+
+        cursor.execute("""
+            SELECT E.ID, C.Nombre, EV.Nombre AS Evento, E.Numero_Personas, E.Fecha_Reserva 
+            FROM Eventos_Reservaciones E 
+            JOIN Clientes C ON E.Cliente_ID = C.ID 
+            JOIN Eventos EV ON E.Evento_ID = EV.ID
+            ORDER BY E.Fecha_Reserva DESC
+        """)
+        reservas_eventos = cursor.fetchall()
+
+        return render_template("gestion_reservaciones.html", 
+                            clientes=clientes, 
+                            empleados=empleados, 
+                            mesas=mesas, 
+                            eventos=eventos, 
+                            sucursales=sucursales, 
+                            reservas_mesas=reservas_mesas, 
+                            reservas_eventos=reservas_eventos)
+    except Error as e:
+        app.logger.error(f"Error en gestion_reservaciones: {e}")
+        flash("Error al cargar la gestión de reservaciones", "error")
+        return redirect(url_for('inicio'))
+    finally:
+        if cursor is not None:
+            cursor.close()
+        if conn is not None:
+            conn.close()
+
+@app.route('/guardar_reserva', methods=['POST'])
+def guardar_reserva():
+    """Guarda una nueva reservación"""
+    conn = None
+    cursor = None
+    try:
+        tipo = request.form.get('tipo')
+        cliente = request.form.get('cliente')
+        personas = request.form.get('personas')
+        fecha = request.form.get('fecha')        
+        notas = request.form.get('notas', '')
+
+        if not all([tipo, cliente, personas, fecha]):
+            flash("Todos los campos obligatorios deben ser completados", "error")
+            return redirect(url_for('gestion_reservaciones'))
+        
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        if tipo == "mesa":
+            sucursal = request.form.get('sucursal')
+            mesa = request.form.get('mesa')
+            empleado = request.form.get('empleado')
+
+            cursor.execute("""
+                INSERT INTO Reservaciones 
+                (Cliente_ID, Sucursal_ID, Mesa_ID, Fecha_Hora, Numero_Personas, Notas, Empleado_ID)
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
+            """, (cliente, sucursal, mesa, fecha, personas, notas, empleado))
+        else:
+            evento = request.form.get('evento')
+            monto = request.form.get('monto', 0)
+
+            cursor.execute("""
+                INSERT INTO Eventos_Reservaciones 
+                (Evento_ID, Cliente_ID, Numero_Personas, Monto_Pagado, Notas)
+                VALUES (%s, %s, %s, %s, %s)
+            """, (evento, cliente, personas, monto, notas))
+
+        conn.commit()
+        flash("Reservación guardada exitosamente", "success")
+        return redirect(url_for('gestion_reservaciones'))
+    except Exception as e:
+        app.logger.error(f"Error al guardar reserva: {str(e)}")
+        flash("Error al guardar la reservación", "error")
+        return redirect(url_for('gestion_reservaciones'))
+    finally:
+        if cursor is not None:
+            cursor.close()
+        if conn is not None:
+            conn.close()
 
 if __name__ == '__main__':
     app.run(debug=True, port=2001)
