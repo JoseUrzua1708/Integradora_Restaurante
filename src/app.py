@@ -235,7 +235,7 @@ def gestion_sucursales():
     try:
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
-        cursor.execute("SELECT ID, Nombre, Direccion, Telefono, Responsable, Estatus FROM Sucursales")
+        cursor.execute("SELECT ID, Nombre, Direccion, Telefono, Responsable_ID as Responsable, Estatus FROM Sucursales")
         sucursales = cursor.fetchall()
         return render_template('gestion_sucursales.html', sucursales=sucursales)
     except Exception as e:
@@ -261,7 +261,14 @@ def formulario_sucursales():
         cursor = conn.cursor(dictionary=True)
         cursor.execute("SELECT ID, Nombre FROM Ciudades")
         ciudades = cursor.fetchall()
-        return render_template('formulario_sucursales.html', ciudades=ciudades)
+        
+        # Obtener lista de responsables disponibles
+        cursor.execute("SELECT ID, Nombre FROM Configuracion_Restaurante WHERE Rol = 'Responsable'")
+        responsables = cursor.fetchall()
+        
+        return render_template('formulario_sucursales.html', 
+                            ciudades=ciudades, 
+                            responsables=responsables)
     except Exception as e:
         app.logger.error(f"Error en formulario_sucursales: {str(e)}")
         flash("Error al cargar el formulario de sucursales", "error")
@@ -282,16 +289,16 @@ def guardar_sucursal():
             'Nombre': request.form['Nombre'].strip(),
             'Direccion': request.form['Direccion'].strip(),
             'Telefono': request.form['Telefono'].strip(),
-            'Responsable': request.form['Responsable'].strip(),
+            'Responsable_ID': int(request.form['Responsable']),
             'Horario_Apertura': request.form['Horario_Apertura'],
             'Horario_Cierre': request.form['Horario_Cierre'],
             'Estatus': request.form['Estatus'],
             'Fecha_Apertura': request.form['Fecha_Apertura']
         }
 
-        campos_requeridos = ['Nombre', 'Direccion', 'Telefono', 'Responsable',
+        campos_requeridos = ['Nombre', 'Direccion', 'Telefono', 'Responsable_ID',
                             'Horario_Apertura', 'Horario_Cierre', 'Estatus', 'Fecha_Apertura']        
-        if not all(datos[campo] for campo in campos_requeridos):
+        if not all(datos.get(campo) for campo in campos_requeridos):
             flash("Todos los campos obligatorios deben completarse", "error")
             return redirect(url_for('formulario_sucursales'))
 
@@ -299,18 +306,21 @@ def guardar_sucursal():
         cursor = conn.cursor()
         query = """
             INSERT INTO Sucursales (
-                Nombre, Direccion, Telefono, Responsable, Horario_Apertura,
+                Nombre, Direccion, Telefono, Responsable_ID, Horario_Apertura,
                 Horario_Cierre, Estatus, Fecha_Apertura
             ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
         """
         params = (
-            datos['Nombre'], datos['Direccion'], datos['Telefono'], datos['Responsable'],
+            datos['Nombre'], datos['Direccion'], datos['Telefono'], datos['Responsable_ID'],
             datos['Horario_Apertura'], datos['Horario_Cierre'], datos['Estatus'], datos['Fecha_Apertura']
         )
         cursor.execute(query, params)
         conn.commit()
         flash("Sucursal registrada exitosamente", "success")
         return redirect(url_for('gestion_sucursales'))
+    except ValueError:
+        flash("El responsable seleccionado no es válido", "error")
+        return redirect(url_for('formulario_sucursales'))
     except Exception as e:
         app.logger.error(f"Error al guardar sucursal: {str(e)}")
         flash("Error al guardar la sucursal", "error")
@@ -361,7 +371,7 @@ def actualizar_sucursal(id):
             'nombre': request.form['Nombre'].strip(),
             'direccion': request.form['Direccion'].strip(),
             'telefono': request.form['Telefono'].strip(),
-            'responsable': request.form['Responsable'].strip(),
+            'responsable_id': int(request.form['Responsable']),
             'horario_apertura': request.form['Horario_Apertura'],
             'horario_cierre': request.form['Horario_Cierre'],
             'estatus': request.form['Estatus'],
@@ -375,7 +385,7 @@ def actualizar_sucursal(id):
                 Nombre = %(nombre)s,
                 Direccion = %(direccion)s,
                 Telefono = %(telefono)s,
-                Responsable = %(responsable)s,
+                Responsable_ID = %(responsable_id)s,
                 Horario_Apertura = %(horario_apertura)s,
                 Horario_Cierre = %(horario_cierre)s,
                 Estatus = %(estatus)s,
@@ -385,6 +395,8 @@ def actualizar_sucursal(id):
         cursor.execute(query, datos)
         conn.commit()
         flash("Sucursal actualizada exitosamente", "success")
+    except ValueError:
+        flash("El responsable seleccionado no es válido", "error")
     except Exception as e:
         app.logger.error(f"Error al actualizar sucursal ID {id}: {str(e)}")
         flash("Error al actualizar la sucursal", "error")

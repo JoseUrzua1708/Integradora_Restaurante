@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Inventarios</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/gestion_invenarios.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/gestion_inventario.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
@@ -15,7 +15,9 @@
             <div class="table-container">
                 <h1><i class="fas fa-boxes"></i> Gestión de Inventarios</h1>
                 <div class="table-actions">
-                    <a href="#" class="btn btn-primary"><i class="fas fa-plus"></i> Añadir Producto</a>
+                    <a href="{{ url_for('formulario_inventario') }}" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Añadir Producto
+                    </a>
                 </div>
                 <div class="table-responsive">
                     <table class="table">
@@ -30,29 +32,23 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {# Example Data - Replace with actual data from backend #}
+                            {% for item in inventario %}
                             <tr>
-                                <td>1</td>
-                                <td>Tomates</td>
-                                <td>Verduras</td>
-                                <td>10 kg</td>
-                                <td>Proveedor A</td>
+                                <td>{{ item.ID }}</td>
+                                <td>{{ item.Nombre }}</td>
+                                <td>{{ item.Tipo }}</td>
+                                <td>{{ item.Cantidad }} {{ item.Unidad }}</td>
+                                <td>{{ item.Proveedor or 'N/A' }}</td>
                                 <td class="actions">
-                                    <a href="#" class="btn-action btn-edit"><i class="fas fa-edit"></i></a>
-                                    <a href="#" class="btn-action btn-delete"><i class="fas fa-trash"></i></a>
+                                    <a href="{{ url_for('editar_inventario', id=item.ID) }}" class="btn-action btn-edit">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="{{ url_for('eliminar_inventario', id=item.ID) }}" class="btn-action btn-delete">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
                                 </td>
                             </tr>
-                            <tr>
-                                <td>2</td>
-                                <td>Leche</td>
-                                <td>Lácteos</td>
-                                <td>20 L</td>
-                                <td>Proveedor B</td>
-                                <td class="actions">
-                                    <a href="#" class="btn-action btn-edit"><i class="fas fa-edit"></i></a>
-                                    <a href="#" class="btn-action btn-delete"><i class="fas fa-trash"></i></a>
-                                </td>
-                            </tr>
+                            {% endfor %}
                         </tbody>
                     </table>
                 </div>
