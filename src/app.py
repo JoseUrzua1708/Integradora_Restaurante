@@ -24,7 +24,7 @@ app.secret_key = os.getenv('SECRET_KEY', 'your-secret-key-here')
 db_config = {
     'host': os.getenv('DB_HOST', 'localhost'),
     'user': os.getenv('DB_USER', 'root'),
-    'password': os.getenv('DB_PASSWORD', 'Jose1708$'),
+    'password': os.getenv('DB_PASSWORD', '12345'),
     'database': os.getenv('DB_NAME', 'administracion'),
     'pool_name': 'restaurante_pool',
     'pool_size': 5,
@@ -1215,7 +1215,7 @@ def gestion_reservaciones():
 
         # Historial
         cursor.execute("""
-            SELECT R.ID, C.Nombre, M.Numero_Mesa, R.Numero_Personas, R.Fecha_Hora 
+            SELECT R.ID, CONCAT(C.Nombre, ' ', C.Apellido_P) AS Cliente, M.Numero_Mesa, R.Numero_Personas, R.Fecha_Hora 
             FROM Reservaciones R 
             JOIN Clientes C ON R.Cliente_ID = C.ID 
             JOIN Mesas M ON R.Mesa_ID = M.ID
@@ -1224,7 +1224,7 @@ def gestion_reservaciones():
         reservas_mesas = cursor.fetchall()
 
         cursor.execute("""
-            SELECT E.ID, C.Nombre, EV.Nombre AS Evento, E.Numero_Personas, E.Fecha_Reserva 
+            SELECT E.ID, CONCAT(C.Nombre, ' ', C.Apellido_P) AS Cliente, EV.Nombre AS Evento, E.Numero_Personas, E.Fecha_Reserva 
             FROM Eventos_Reservaciones E 
             JOIN Clientes C ON E.Cliente_ID = C.ID 
             JOIN Eventos EV ON E.Evento_ID = EV.ID
@@ -1240,15 +1240,21 @@ def gestion_reservaciones():
                             sucursales=sucursales, 
                             reservas_mesas=reservas_mesas, 
                             reservas_eventos=reservas_eventos)
-    except Error as e:
-        app.logger.error(f"Error en gestion_reservaciones: {e}")
-        flash("Error al cargar la gestión de reservaciones", "error")
-        return redirect(url_for('inicio'))
+    except Exception as e:
+        print(f"Error al cargar gestión de reservaciones: {e}")
+        flash("Error al cargar la gestión de reservaciones. Inténtalo más tarde.", "error")
+        # Aquí cargamos plantilla principal con listas vacías para evitar error
+        return render_template("gestion_reservaciones.html", 
+            clientes=[],
+            empleados=[],
+            mesas=[],
+            eventos=[],
+            sucursales=[],
+            reservas_mesas=[],
+            reservas_eventos=[])
     finally:
-        if cursor is not None:
-            cursor.close()
-        if conn is not None:
-            conn.close()
+        if cursor: cursor.close()
+        if conn: conn.close()
 
 @app.route('/guardar_reserva', methods=['POST'])
 def guardar_reserva():
