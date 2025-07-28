@@ -381,7 +381,7 @@ CREATE TABLE Pedidos (
     Total DECIMAL(10,2),
     Notas TEXT,
     Tipo ENUM('Presencial', 'Domicilio', 'Recoger') NOT NULL,
-    Metodo_Pago ENUM('Efectivo', 'Tarjeta Crédito', 'Tarjeta Débito', 'Transferencia', 'App', 'Otro') NOT NULL,
+    Metodo_Pago ENUM('Efectivo', 'Tarjeta Crédito', 'Tarjeta Débito', 'Transferencia', 'Vale', 'Otro') NOT NULL,
     Direccion_Entrega TEXT,
     Telefono_Contacto VARCHAR(15),
     Tiempo_Estimado INT COMMENT 'Tiempo estimado en minutos',
@@ -411,13 +411,23 @@ CREATE TABLE Caja (
     FOREIGN KEY (Sucursal_ID) REFERENCES Sucursales(ID)
 );
 
+CREATE TABLE Detalle_Pedido (
+    ID INT AUTO_INCREMENT PRIMARY KEY,
+    Pedido_ID INT NOT NULL,
+    ProductoID INT NOT NULL,
+    Cantidad INT NOT NULL,
+    PrecioUnitario DECIMAL(10,2) NOT NULL,
+    FOREIGN KEY (Pedido_ID) REFERENCES Pedidos(ID) ON DELETE CASCADE,
+    FOREIGN KEY (ProductoID) REFERENCES Menu(ID)
+);
+
 CREATE TABLE Transacciones (
     ID INT PRIMARY KEY AUTO_INCREMENT,
     Caja_ID INT NOT NULL,
     Pedido_ID INT,
     Tipo ENUM('Ingreso', 'Egreso', 'Apertura', 'Cierre') NOT NULL,
     Monto DECIMAL(10,2) NOT NULL,
-    Metodo_Pago ENUM('Efectivo', 'Tarjeta Crédito', 'Tarjeta Débito', 'Transferencia', 'App', 'Otro') NOT NULL,
+    Metodo_Pago ENUM('Efectivo', 'Tarjeta Crédito', 'Tarjeta Débito', 'Transferencia', 'Vale', 'Otro') NOT NULL,
     Descripcion TEXT,
     Fecha_Hora DATETIME DEFAULT CURRENT_TIMESTAMP,
     Empleado_ID INT NOT NULL,
