@@ -1,0 +1,145 @@
+* {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    background-color: #f4f7fa;
+  }
+
+  .comprobante-container {
+    max-width: 550px;
+    margin: 3rem auto;
+    padding: 1.5rem;
+    background: #a0bccf33;
+    border-radius: 16px;
+    color: #333;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  }
+
+  .logo-container {
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+
+  .logo-container img {
+    max-height: 80px;
+  }
+
+  .titulo {
+    text-align: center;
+    font-size: 1.6rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: #2c3e50;
+  }
+
+  .info-gral, .productos, .totales {
+    margin-bottom: 1.8rem;
+  }
+
+  .linea {
+    border-bottom: 1px solid #ddd;
+    margin: 1.2rem 0;
+  }
+
+  .dato {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.4rem;
+    font-size: 0.95rem;
+  }
+
+  .producto {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.2rem 0;
+    border-bottom: 1px solid #eee;
+  }
+
+  .producto-nombre {
+    font-weight: 500;
+    color: #444;
+    flex: 1;
+  }
+
+  .producto-total {
+    min-width: 80px;
+    text-align: right;
+    font-weight: 600;
+  }
+
+  .totales .dato strong {
+    font-size: 1.05rem;
+  }
+
+  .nota {
+    text-align: center;
+    font-size: 0.85rem;
+    color: #888;
+    margin-top: 2rem;
+  }
+
+  .qr-container {
+    text-align: center;
+    margin-top: 2rem;
+  }
+
+  .qr-container img {
+    width: 120px;
+    height: 120px;
+  }
+
+  .qr-container div {
+    font-size: 0.75rem;
+    color: #888;
+  }
+
+  .botones {
+    text-align: center;
+    margin-top: 2rem;
+  }
+
+  .btn {
+    display: inline-block;
+    padding: 0.4rem 1rem;
+    margin: 0 0.5rem;
+    font-size: 0.9rem;
+    color: #fff;
+    background-color: #007BFF;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.3s;
+  }
+
+  .btn-secondary {
+    background-color: #6c757d;
+  }
+
+  .btn:hover {
+    background-color: #0056b3;
+  }
+
+  .btn-secondary:hover {
+    background-color: #545b62;
+  }
+
+  @media print {
+    .botones {
+      display: none;
+    }
+
+    body {
+      background: white;
+    }
+
+    .comprobante-container {
+      box-shadow: none;
+      margin: 0;
+      border-radius: 0;
+    }
+  }

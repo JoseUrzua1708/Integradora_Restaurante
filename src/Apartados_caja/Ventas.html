@@ -1,0 +1,150 @@
+{% extends 'base.html' %}
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/punto_venta.css') }}">
+
+<div class="container">
+    <h3>Punto de Venta</h3>
+    <div class="contenedor-flex">
+        <div class="productos">
+            <div class="card">
+                <div class="card-header">Menú de Productos</div>
+                <div class="card-body">
+
+                    <div class="promociones-eventos" aria-label="Promociones activas">
+                        <strong>Promociones activas:</strong>
+                        {% if promociones %}
+                            {% for promo in promociones %}
+                            <div class="promocion" tabindex="0">
+                                <strong>{{ promo.Codigo }}</strong>: {{ promo.Descripcion }} ({{ promo.Tipo }}: {{ promo.Valor }})
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <p>No hay promociones activas actualmente.</p>
+                        {% endif %}
+                    </div>
+
+                    <div class="promociones-eventos" aria-label="Eventos activos">
+                        <strong>Eventos activos:</strong>
+                        {% if eventos %}
+                            {% for ev in eventos %}
+                            <div class="evento" tabindex="0">
+                                <strong>{{ ev.Nombre }}</strong>: {{ ev.Descripcion }}
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <p>No hay eventos activos actualmente.</p>
+                        {% endif %}
+                    </div>
+
+                    <label class="form-label" for="filtro-categoria">Filtrar por categoría:</label>
+                    <select id="filtro-categoria" class="form-select" onchange="filtrarCategoria()">
+                        <option value="todos">Todas</option>
+                        {% for cat in categorias %}
+                            <option value="{{ cat|lower|replace(' ', '-') }}">{{ cat }}</option>
+                        {% endfor %}
+                    </select>
+
+                    <div class="row-productos" role="list" aria-label="Lista de productos">
+                        {% for item in menu %}
+                        {% set categoria_class = item.Categoria|lower|replace(' ', '-') %}
+                        {% set promos_producto = promos_dict.get(item.ID, []) %}
+                        <div class="producto-card categoria-{{ categoria_class }} {% if item.Es_Destacado %}destacado{% endif %}" tabindex="0" role="listitem">
+
+                            {% if item.Es_Destacado %}
+                                <div class="etiqueta-destacado">Destacado</div>
+                            {% endif %}
+
+                            {% for promo in promos_producto %}
+                                <div class="etiqueta-promo">{{ promo.Descripcion }}</div>
+                            {% endfor %}
+
+                            <h6>{{ item.Nombre }}</h6>
+                            <p>$ {{ '%.2f'|format(item.Precio) }}</p>
+                            <div class="info-extra">
+                                {% for i in range(item.Nivel_Picante|int) %}
+                                    <span class="icono-picante">🌶</span>
+                                {% endfor %}
+                            </div>
+                            <div class="info-extra">
+                                ⏱ {{ item.Tiempo_Preparacion }} min
+                            </div>
+                            <button class="btn btn-primary agregar-producto"
+                                type="button"
+                                data-id="{{ item.ID }}"
+                                data-nombre="{{ item.Nombre }}"
+                                data-precio="{{ item.Precio }}">
+                                Agregar
+                            </button>
+                        </div>
+                        {% else %}
+                        <p>No hay productos disponibles.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="pedido">
+            <div class="card">
+                <div class="card-header">Pedido Actual</div>
+                <div class="card-body">
+                    <label class="form-label" for="codigo-promocion">Código de promoción</label>
+                    <div class="input-group">
+                        <input type="text" id="codigo-promocion" class="form-control" placeholder="Ingresa código" autocomplete="off">
+                        <button type="button" class="btn btn-primary" onclick="aplicarPromocion()">Aplicar</button>
+                    </div>
+                    <p id="descuento-aplicado" role="alert" aria-live="polite"></p>
+                    <p id="mensaje-error" role="alert" aria-live="assertive">Código inválido o expirado.</p>
+
+                    <ul class="list-group" id="lista-pedido" aria-live="polite" aria-relevant="additions"></ul>
+                    <p><strong>Subtotal: $<span id="subtotal">0.00</span></strong></p>
+                    <p><strong>IVA (16%): $<span id="iva">0.00</span></strong></p>
+                    <p><strong>Total: $<span id="total">0.00</span></strong></p>
+
+                    <form method="POST" action="/ventas/guardar" onsubmit="return validarVenta();">
+                        <input type="hidden" name="items" id="input-items" required>
+
+                        <label class="form-label" for="tipo-pedido">Tipo de pedido</label>
+                        <select name="tipo" id="tipo-pedido" class="form-select" required onchange="mostrarCamposAdicionales()">
+                            <option value="" disabled selected>Seleccione tipo de pedido</option>
+                            <option value="Presencial">Presencial</option>
+                            <option value="Domicilio">Domicilio</option>
+                            <option value="Recoger">Recoger</option>
+                        </select>
+
+                        <div id="campo-direccion" style="display: none;">
+                            <label class="form-label" for="direccion">Dirección de entrega</label>
+                            <input type="text" name="direccion" id="direccion" class="form-control" placeholder="Ej. Calle 123, Ciudad">
+                            <label class="form-label" for="telefono">Teléfono de contacto</label>
+                            <input type="tel" name="telefono" id="telefono" class="form-control" placeholder="Ej. 5512345678" pattern="[0-9]{7,15}">
+                        </div>
+
+                        <div id="campo-mesa" style="display: none;">
+                            <label class="form-label" for="mesa">Número de mesa</label>
+                            <select name="mesa" id="mesa" class="form-select">
+                                <option value="" selected>Seleccione mesa</option>
+                                {% for mesa in mesas %}
+                                    <option value="{{ mesa.ID }}">{{ mesa.Numero_Mesa }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <label class="form-label" for="metodo-pago">Método de pago</label>
+                        <select name="metodo_pago" id="metodo-pago" class="form-select" required>
+                            <option value="" disabled selected>Seleccione método de pago</option>
+                            {% for mp in metodos_pago %}
+                                <option value="{{ mp }}">{{ mp }}</option>
+                            {% endfor %}
+                        </select>
+
+                        <button type="submit" class="btn btn-success">Finalizar Venta</button>
+                        <button type="button" class="btn btn-danger" onclick="cancelarVenta()">Cancelar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/punto_venta.js') }}"></script>
+{% endblock %}

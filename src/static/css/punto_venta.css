@@ -1,0 +1,266 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 0 15px;
+}
+
+h3 {
+    color: #005187;
+    margin-bottom: 20px;
+}
+
+.contenedor-flex {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
+
+.productos {
+    flex: 2;
+    min-width: 300px;
+}
+
+.pedido {
+    flex: 1;
+    min-width: 280px;
+}
+
+.card {
+    background-color: #d6e4f5;
+    border-radius: 6px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+}
+
+.card-header {
+    background-color: #4d82be;
+    color: white;
+    font-weight: bold;
+    padding: 10px 15px;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+}
+
+.card-body {
+    padding: 10px 15px;
+}
+
+.row-productos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.producto-card {
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 10px;
+    margin-bottom: 10px;
+    text-align: center;
+    user-select: none;
+    position: relative;
+    cursor: pointer;
+    flex: 1 1 calc(25% - 10px);
+}
+
+.producto-card.destacado {
+    border-color: #007bff;
+    box-shadow: 0 0 6px #007bff88;
+}
+
+.etiqueta-destacado,
+.etiqueta-promo {
+    position: absolute;
+    top: 6px;
+    padding: 2px 6px;
+    font-size: 0.7rem;
+    font-weight: bold;
+    color: white;
+    border-radius: 3px;
+}
+
+.etiqueta-destacado {
+    left: 6px;
+    background-color: #007bff;
+}
+
+.etiqueta-promo {
+    right: 6px;
+    background-color: #28a745;
+}
+
+.producto-card h6 {
+    margin: 0 0 5px;
+    font-weight: 600;
+}
+
+.producto-card p {
+    margin: 0 0 6px;
+    color: #4d82be;
+    font-weight: bold;
+}
+
+.info-extra {
+    font-size: 0.85rem;
+    color: #555;
+    margin-bottom: 6px;
+}
+
+.icono-picante {
+    color: #d9534f;
+    user-select: none;
+}
+
+.btn {
+    display: block;
+    width: 100%;
+    padding: 6px 10px;
+    margin-top: 5px;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+    text-align: center;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+}
+
+.btn-success {
+    background-color: #28a745;
+    color: white;
+}
+
+.btn-success:hover {
+    background-color: #1e7e34;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    color: white;
+}
+
+.btn-danger:hover {
+    background-color: #c82333;
+}
+
+.btn-xs {
+    font-size: 12px;
+    padding: 2px 6px;
+    line-height: 1;
+    border-radius: 3px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.form-label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.form-select,
+.form-control {
+    width: 100%;
+    padding: 6px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    margin-bottom: 10px;
+    background-color: #ffffff;
+    color: #3a3f44;
+    font-size: 0.9rem;
+}
+
+.input-group {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 10px;
+}
+
+.input-group input {
+    flex: 1;
+}
+
+#descuento-aplicado {
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: green;
+}
+
+#mensaje-error {
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: red;
+    display: none;
+}
+
+.list-group {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 10px;
+    max-height: 280px;
+    overflow-y: auto;
+}
+
+.list-group-item {
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 6px 10px;
+    margin-bottom: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.9rem;
+    user-select: none;
+}
+
+.promociones-eventos {
+    background: white;
+    border-radius: 6px;
+    padding: 10px 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+.promocion,
+.evento {
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 4px;
+}
+
+.promocion:last-child,
+.evento:last-child {
+    border-bottom: none;
+}
+
+@media (max-width: 768px) {
+    .contenedor-flex {
+        flex-direction: column;
+    }
+    .productos,
+    .pedido {
+        width: 100%;
+    }
+    .row-productos {
+        flex-direction: column;
+    }
+}

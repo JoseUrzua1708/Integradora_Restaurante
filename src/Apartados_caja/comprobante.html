@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}Comprobante de Venta{% endblock %}
+
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/comprobante.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="comprobante-container">
+
+  <div class="logo-container">
+    <img src="{{ url_for('static', filename='Logotipo del proyecto.jpg') }}" alt="Logo">
+  </div>
+
+  <div class="titulo">Comprobante de Venta</div>
+
+  <div class="info-gral">
+    <div class="dato"><span><strong>ID Pedido:</strong></span> <span>#{{ pedido.ID }}</span></div>
+    <div class="dato"><span><strong>Fecha:</strong></span> <span>{{ pedido.Fecha_Hora }}</span></div>
+    <div class="dato"><span><strong>Tipo de Pedido:</strong></span> <span>{{ pedido.Tipo }}</span></div>
+    {% if pedido.Metodo_Pago %}
+    <div class="dato"><span><strong>Método de Pago:</strong></span> <span>{{ pedido.Metodo_Pago }}</span></div>
+    {% endif %}
+    {% if pedido.Cliente %}
+    <div class="dato"><span><strong>Cliente:</strong></span> <span>{{ pedido.Cliente }}</span></div>
+    {% endif %}
+    {% if pedido.Numero_Mesa %}
+    <div class="dato"><span><strong>Mesa:</strong></span> <span>{{ pedido.Numero_Mesa }}</span></div>
+    {% endif %}
+    {% if pedido.Direccion_Entrega %}
+    <div class="dato"><span><strong>Dirección:</strong></span> <span>{{ pedido.Direccion_Entrega }}</span></div>
+    {% endif %}
+    {% if pedido.Telefono_Contacto %}
+    <div class="dato"><span><strong>Teléfono:</strong></span> <span>{{ pedido.Telefono_Contacto }}</span></div>
+    {% endif %}
+  </div>
+
+  <div class="linea"></div>
+
+  <div class="productos">
+    {% for item in detalles %}
+    <div class="producto">
+      <div class="producto-nombre">
+        {{ item.Nombre }}<br>
+        <small style="color: #666;">{{ item.Cantidad }} x ${{ '%.2f' % item.PrecioUnitario }}</small>
+      </div>
+      <div class="producto-total">
+        ${{ '%.2f' % (item.Cantidad * item.PrecioUnitario) }}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="linea"></div>
+
+  <div class="totales">
+    <div class="dato"><span>Subtotal</span> <span>${{ '%.2f' % pedido.Subtotal }}</span></div>
+    <div class="dato"><span>Impuestos</span> <span>${{ '%.2f' % pedido.Impuestos }}</span></div>
+    <div class="dato"><strong>Total</strong> <strong>${{ '%.2f' % pedido.Total }}</strong></div>
+  </div>
+
+  <div class="nota">
+    ¡Gracias por tu compra!<br>
+    Esperamos verte pronto
+  </div>
+
+  <div class="qr-container">
+    <img src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data={{ request.url_root ~ 'ventas/comprobante/' ~ pedido.ID }}" alt="QR Código">
+    <div>Escanea para ver este comprobante</div>
+  </div>
+
+  <div class="botones">
+    <button class="btn" id="btn-imprimir">Imprimir</button>
+    <a href="{{ url_for('ventas') }}" class="btn btn-secondary">Volver</a>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+  <script src="{{ url_for('static', filename='js/comprobante.js') }}"></script>
+{% endblock %}
