@@ -24,7 +24,7 @@ app.secret_key = os.getenv('SECRET_KEY', 'your-secret-key-here')
 db_config = {
     'host': os.getenv('DB_HOST', 'localhost'),
     'user': os.getenv('DB_USER', 'root'),
-    'password': os.getenv('DB_PASSWORD', 'Jose1708$'),
+    'password': os.getenv('DB_PASSWORD', '12345'),
     'database': os.getenv('DB_NAME', 'administracion'),
     'pool_name': 'restaurante_pool',
     'pool_size': 5,
@@ -418,7 +418,7 @@ def gestion_roles():
     try:
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
-        cursor.execute("SELECT ID, Nombre, Descripcion FROM Roles")
+        cursor.execute("SELECT ID, Nombre, Descripcion, Fecha_Creacion, Fecha_Actualizacion  FROM Roles")
         roles = cursor.fetchall()
         return render_template('gestion_roles.html', roles=roles)
     except Exception as e:
@@ -442,9 +442,10 @@ def formulario_roles():
     try:
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
-        cursor.execute("SELECT ID, Nombre FROM Sucursales WHERE Estatus = 'Activa'")
-        sucursales = cursor.fetchall()
-        return render_template('formulario_roles.html', sucursales=sucursales)
+        cursor.execute("SELECT ID, Nombre, Descripcion, Fecha_Creacion, Fecha_Actualizacion FROM Roles")
+        roles = cursor.fetchall() 
+        fecha_actual = datetime.now().strftime('%Y-%m-%d')
+        return render_template('formulario_roles.html', fecha_actual=fecha_actual, roles=roles)
     except Exception as e:
         app.logger.error(f"Error en formulario_roles: {str(e)}")
         flash("Error al cargar el formulario de roles", "error")
@@ -466,10 +467,10 @@ def guardar_rol():
             'Descripcion': request.form['Descripcion'].strip(),
             'Fecha_Creacion': request.form['Fecha_Creacion'],
             'Fecha_Actualizacion': request.form['Fecha_Actualizacion'],
-            'Sucursal_ID': request.form['Sucursal_ID']
+            
         }
 
-        campos_requeridos = ['Nombre', 'Descripcion', 'Fecha_Creacion', 'Fecha_Actualizacion', 'Sucursal_ID']
+        campos_requeridos = ['Nombre', 'Descripcion', 'Fecha_Creacion', 'Fecha_Actualizacion', ]
         if not all(datos[campo] for campo in campos_requeridos):
             flash("Todos los campos obligatorios deben completarse", "error")
             return redirect(url_for('formulario_roles'))
@@ -478,16 +479,16 @@ def guardar_rol():
         cursor = conn.cursor()
         query = """
             INSERT INTO Roles (
-                Nombre, Descripcion, Fecha_Creacion, Fecha_Actualizacion, Sucursal_ID
+                Nombre, Descripcion, Fecha_Creacion, Fecha_Actualizacion
             ) VALUES (%s, %s, %s, %s, %s)
         """
         params = (
             datos['Nombre'], datos['Descripcion'], datos['Fecha_Creacion'],
-            datos['Fecha_Actualizacion'], datos['Sucursal_ID']
+            datos['Fecha_Actualizacion']
         )
         cursor.execute(query, params)
         conn.commit()
-        flash("Rol registrado exitosamente", "success")
+        flash("Rol registrado exitosamente")
         return redirect(url_for('gestion_roles'))
     except Exception as e:
         app.logger.error(f"Error al guardar rol: {str(e)}")
