@@ -1,6 +1,6 @@
-from flask import Flask, render_template, request, redirect, jsonify, url_for, flash
+from flask import Flask, render_template, request, redirect, jsonify, url_for, flash, abort
 import mysql.connector
-from datetime import datetime
+from datetime import datetime, date
 from contextlib import closing
 import os
 from dotenv import load_dotenv
@@ -1307,6 +1307,158 @@ def guardar_reserva():
             cursor.close()
         if conn is not None:
             conn.close()
+
+################################################################################
+# Gestión de Clientes
+################################################################################
+@app.route('/gestion_clientes')
+def gestion_clientes():
+    """Muestra la lista de clientes"""
+    conn = None
+    cursor = None
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM Clientes")
+        clientes = cursor.fetchall()
+        return render_template('gestion_clientes.html', clientes=clientes)
+    except Exception as e:
+        app.logger.error(f"Error en gestion_clientes: {e}")
+        flash("Error al cargar los clientes", "error")
+        return redirect(url_for('inicio'))
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
+################################################################################
+# Formulario de clientes (nuevo o editar)
+################################################################################
+@app.route('/formulario_clientes', methods=['GET'])
+@app.route('/formulario_clientes/<int:id>', methods=['GET'])
+def formulario_cliente(id=None):
+    """Muestra el formulario para registrar o editar un cliente"""
+    cliente = None
+    if id:
+        try:
+            conn = get_db_connection()
+            cursor = conn.cursor(dictionary=True)
+            cursor.execute("SELECT * FROM Clientes WHERE ID = %s", (id,))
+            cliente = cursor.fetchone()
+        except Exception as e:
+            app.logger.error(f"Error al obtener cliente: {e}")
+            flash("Error al cargar el cliente", "error")
+        finally:
+            if cursor:
+                cursor.close()
+            if conn:
+                conn.close()
+    return render_template('formulario_cliente.html', cliente=cliente)
+
+################################################################################
+# Guardar cliente (crear o actualizar)
+################################################################################
+@app.route('/guardar_cliente', methods=['POST'])
+def guardar_cliente():
+    conn = None
+    cursor = None
+    try:
+        id_cliente = request.form.get('id')
+
+        datos = {
+            'nombre': request.form['nombre'].strip(),
+            'apellido_p': request.form['apellido_p'].strip(),
+            'apellido_m': request.form.get('apellido_m', '').strip(),
+            'correo': request.form['correo'].strip(),
+            'telefono': request.form.get('telefono', '').strip(),
+            'fecha_nacimiento': request.form['fecha_nacimiento'],
+            'genero': request.form['genero'],
+            'preferencias': request.form['preferencias'],
+            'restricciones': request.form['restricciones'],
+            'estatus': request.form.get('estatus', 'Activo'),
+            'sucursal': request.form.get('sucursal', '')
+        }
+
+        campos_requeridos = ['nombre', 'apellido_p', 'correo', 'telefono', 'fecha_nacimiento', 'genero',
+                             'preferencias', 'restricciones', 'estatus']
+        if not all(datos[campo] for campo in campos_requeridos):
+            flash("Todos los campos obligatorios deben completarse", "error")
+            return redirect(url_for('formulario_cliente'))
+
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        if id_cliente:
+            datos['id'] = id_cliente
+            query = """
+                UPDATE Clientes SET 
+                    Nombre = %(nombre)s,
+                    Apellido_P = %(apellido_p)s,
+                    Apellido_M = %(apellido_m)s,
+                    Correo = %(correo)s,
+                    Telefono = %(telefono)s,
+                    Fecha_Nacimiento = %(fecha_nacimiento)s,
+                    Genero = %(genero)s,
+                    Preferencias = %(preferencias)s,
+                    Restricciones_Alimenticias = %(restricciones)s,
+                    Estatus = %(estatus)s,
+                    Sucursal_ID = %(sucursal)s
+                WHERE ID = %(id)s
+            """
+            cursor.execute(query, datos)
+            flash("Cliente actualizado exitosamente", "success")
+        else:
+            query = """
+                INSERT INTO Clientes (
+                    Nombre, Apellido_P, Apellido_M, Correo, Telefono, Fecha_Nacimiento, Genero, Preferencias, 
+                    Restricciones_Alimenticias, Estatus, Sucursal_ID
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """
+            cursor.execute(query, (
+                datos['nombre'], datos['apellido_p'], datos['apellido_m'], datos['correo'],
+                datos['telefono'], datos['fecha_nacimiento'], datos['genero'], datos['preferencias'],
+                datos['restricciones'], datos['estatus'], datos['sucursal']
+            ))
+            flash("Cliente registrado exitosamente", "success")
+
+        conn.commit()
+        return redirect(url_for('gestion_clientes'))
+
+    except Exception as e:
+        logging.error(f"Error en guardar_cliente: {str(e)}")
+        flash("Error técnico al guardar el cliente", "error")
+        return redirect(url_for('formulario_cliente'))
+
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
+################################################################################
+# Eliminar cliente
+################################################################################
+@app.route('/eliminar/<int:id>')
+def eliminar_cliente(id):
+    """Elimina un cliente por ID"""
+    conn = None
+    cursor = None
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM Clientes WHERE ID = %s", (id,))
+        conn.commit()
+        flash("Cliente eliminado exitosamente", "success")
+    except Exception as e:
+        logging.error(f"Error al eliminar cliente: {str(e)}")
+        flash("Error técnico al eliminar el cliente", "error")
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+    return redirect(url_for('gestion_clientes'))
 
 if __name__ == '__main__':
     app.run(debug=True, port=2001)
