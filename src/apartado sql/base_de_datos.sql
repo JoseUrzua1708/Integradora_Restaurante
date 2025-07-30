@@ -256,18 +256,46 @@ CREATE TABLE Reservaciones (
 
 -- pao pao
 
-CREATE TABLE almacen (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(150) NOT NULL,
-    categoria VARCHAR(100) NOT NULL,
-    unidad_medida VARCHAR(30),
-    costo_unitario DECIMAL(10,2) DEFAULT NULL,
-    costo_total DECIMAL(12,2) NOT NULL,
-    fecha_entrada DATE NOT NULL,
-    fecha_caducidad DATE DEFAULT NULL,
-    estatus ENUM('activo','agotado','descontinuado') DEFAULT 'activo',
-    fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+CREATE TABLE CATEGORIA_ALMACEN (
+    ID INT PRIMARY KEY AUTO_INCREMENT,
+    Nombre VARCHAR(50) NOT NULL,
+    Descripcion TEXT,
+    Estatus ENUM('Activo', 'Inactivo') DEFAULT 'Activo',
+    Fecha_Creacion DATETIME DEFAULT CURRENT_TIMESTAMP
 );
+
+SELECT * FROM CATEGORIA_ALMACEN ORDER BY Fecha_Creacion DESC;
+
+CREATE TABLE SUBCATEGORIA_ALMACEN (
+    ID INT PRIMARY KEY AUTO_INCREMENT,
+    CategoriaID INT NOT NULL,
+    Nombre VARCHAR(50) NOT NULL,
+    Descripcion TEXT,
+    Estatus ENUM('Activo', 'Inactivo') DEFAULT 'Activo',
+    Fecha_Creacion DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (CategoriaID) REFERENCES CATEGORIA_ALMACEN(ID)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+);
+
+
+CREATE TABLE Almacen (
+    ID INT PRIMARY KEY AUTO_INCREMENT,
+    Nombre VARCHAR(100) NOT NULL,
+    Descripcion TEXT,
+    CATEGORIA_ALMACEN_ID INT NOT NULL,
+    Cantidad DECIMAL(10,2) NOT NULL,
+    Unidad_Medida VARCHAR(20) NOT NULL,
+    Costo_Unitario DECIMAL(10,2) DEFAULT NULL,
+    Costo_Total DECIMAL(12,2) NOT NULL,
+    Fecha_Entrada DATE NOT NULL,
+    Fecha_Caducidad DATE DEFAULT NULL,
+    Estatus ENUM('Activo', 'Agotado', 'Descontinuado') DEFAULT 'Activo',
+    Fecha_Registro DATETIME DEFAULT CURRENT_TIMESTAMP
+    FOREIGN KEY (CATEGORIA_ALMACEN_ID) REFERENCES CATEGORIA_ALMACEN(ID) ON DELETE CASCADE
+);
+
+
 
 CREATE TABLE inventario (
     id INT AUTO_INCREMENT PRIMARY KEY,

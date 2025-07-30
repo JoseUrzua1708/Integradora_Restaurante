@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nuevo Proveedor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/formulario_subcategoria_almacen.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>Formulario de Subcategoría de Almacén</h1>
+        
+        <form method="POST" action="{{ url_for('guardar_subcategoria_almacen') }}">
+          
+            <label for="CategoriaID">Categoría*</label>
+            <select id="CategoriaID" name="CategoriaID" required>
+                {% for categoria in categorias %}
+                    <option value="{{ categoria.ID }}">{{ categoria.Nombre }}</option>
+                {% endfor %}
+            </select>
+
+            <label for="Nombre">Nombre de la Subcategoría*</label>
+            <input type="text" id="Nombre" name="Nombre" required>
+            
+            <label for="Descripcion">Descripción</label>
+            <textarea id="Descripcion" name="Descripcion"></textarea>
+
+            <label for="Estatus">Estatus</label>
+            <select id="Estatus" name="Estatus" required>
+                <option value="Activo">Activo</option>
+                <option value="Inactivo">Inactivo</option>
+            </select>
+            
+            <label for="fecha_creacion">Fecha de Registro:</label>
+            <input type="text" id="fecha_creacion" value="{{ fecha_actual }}" readonly />
+
+            <button type="submit">Guardar Subcategoría</button>
+        
+        </form>
+    </div>
+</body>
