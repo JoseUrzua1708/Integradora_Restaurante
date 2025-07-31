@@ -1,5 +1,7 @@
+/* formulario_categoria_almacen.css */
+
 body {
-  font-family: 'Segoe UI', 'sans-serif';
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background-color: #f7fafc;
   margin: 0;
   padding: 0;
@@ -30,7 +32,7 @@ form label {
   color: #4a5568;
 }
 
-input,
+input[type="text"],
 textarea,
 select {
   width: 100%;
@@ -43,13 +45,13 @@ select {
   font-family: inherit;
   resize: vertical;
   min-height: 40px;
- box-sizing: border-box;
 }
+
 textarea {
   min-height: 80px;
 }
 
-input:focus,
+input[type="text"]:focus,
 textarea:focus,
 select:focus {
   outline: none;
@@ -57,24 +59,10 @@ select:focus {
   box-shadow: 0 0 8px rgba(49, 130, 206, 0.4);
 }
 
-.input-group {
-    display: flex;
-    gap: 1rem;
-}
-
-.input-group .form-group {
-    flex: 1;
-}
-
-.readonly-input {
-    background-color: #f0f0f0;
-    cursor: not-allowed;
-}
-
-.form-actions {
-    display: flex;
-    justify-content: center;
-    margin-top: 2rem;
+input[readonly] {
+  background-color: #edf2f7;
+  color: #718096;
+  cursor: default;
 }
 
 button[type="submit"] {
@@ -94,17 +82,6 @@ button[type="submit"] {
 button[type="submit"]:hover {
   background-color: #1e4e8c;
   box-shadow: 0 6px 14px rgba(30, 78, 140, 0.6);
-}
-
-/* Responsive Grid */
-@media (min-width: 768px) {
-    .form-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .full-width {
-        grid-column: 1 / -1;
-    }
 }
 
 @media (max-width: 480px) {

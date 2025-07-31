@@ -1,18 +1,30 @@
-.form-container {
-    background-color: #fff;
-    padding: 2rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+body {
+  font-family: 'Segoe UI', 'sans-serif';
+  background-color: #f7fafc;
+  margin: 0;
+  padding: 0;
+  color: #2d3748;
 }
 
-.form-container h1 {
-    text-align: center;
-    color: var(--primary-color);
-    margin-bottom: 2rem;
-    font-size: 1.8rem;
+.container {
+  max-width: 900px;
+  margin: 50px auto;
+  background: #ffffff;
+  padding: 30px 25px;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.1);
 }
 
-.form-section h2 {
+h1 {
+  text-align: center;
+  color: #3b9c97;
+  margin-bottom: 25px;
+  font-weight: 700;
+  font-size: 1.8rem;
+}
+
+
+ h2 {
     font-size: 1.3rem;
     color: var(--primary-color);
     margin-bottom: 1.5rem;
@@ -25,30 +37,36 @@
     gap: 1.5rem;
 }
 
-.form-group label {
+form label {
     display: block;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.6rem;
+    margin-top: 0.6rem;
     font-weight: 600;
     color: var(--secondary-color);
 }
 
-.form-group input,
-.form-group select,
-.form-group textarea {
+input,
+select,
+textarea {
     width: 100%;
     padding: 0.8rem 1rem;
     border: 1px solid #ccc;
     border-radius: 4px;
     font-size: 1rem;
     transition: all 0.3s ease;
+    box-sizing: border-box;
 }
 
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus {
+input:focus,
+select:focus,
+textarea:focus {
     outline: none;
     border-color: var(--hover-color);
     box-shadow: 0 0 0 3px rgba(26, 188, 156, 0.2);
+}
+
+textarea {
+  min-height: 80px;
 }
 
 .form-actions {
@@ -74,12 +92,12 @@
 }
 
 .btn-primary {
-    background-color: var(--accent-color);
-    color: white;
+    background-color: rgb(129, 211, 202);
+    color: var(--primary-color);
 }
 
 .btn-primary:hover {
-    background-color: #c0392b;
+    background-color: #2fc9ac;
 }
 
 .btn-secondary {
@@ -88,12 +106,12 @@
 }
 
 .btn-secondary:hover {
-    background-color: #95a5a6;
+    background-color:#c0392b;
 }
 
 .required-info {
-    text-align: center;
-    margin-top: 1.5rem;
+    text-align: initial;
+    margin-top: 0rem;
     font-style: italic;
     color: #666;
 }

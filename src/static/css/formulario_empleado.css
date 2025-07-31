@@ -74,7 +74,7 @@
 }
 
 .btn-submit:hover {
-    background-color: #c0392b;
+    background-color: #3b9c97;
     transform: translateY(-2px);
 }
 
@@ -102,7 +102,7 @@
 
 .alert-danger {
     background-color: #f8d7da;
-    color: #721c24;
+    color: #289e98;
     border: 1px solid #f5c6cb;
 }
 

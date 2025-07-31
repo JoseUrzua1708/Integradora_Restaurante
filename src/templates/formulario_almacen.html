@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>formulario de almacen</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/formulario_almacen.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="almacen">
+        <h1>Formulario de Almacén</h1>
+        <form class="formulario" method="POST" action="#">
+            <label for="nombre">Nombre del Almacén</label>
+            <input type="text" id="nombre" name="Nombre_Almacen" required/>
+
+            <label for="Direccion_Almacen">Dirección del Almacén</label>
+            <textarea id="Direccion_Almacen" name="Direccion_Almacen" required></textarea>
+
+            <label for="Telefono_Almacen">Teléfono del Almacén</label>
+            <input type="tel" id="Telefono_Almacen" name="Telefono_Almacen" pattern="[0-9]{7,15}" placeholder="Número de teléfono" required/>
+
+            <label for="Correo_Contacto">Correo de Contacto</label>
+            <input type="email" id="Correo_Contacto" name="Correo_Contacto" required/>
+
+            <button type="submit">Guardar Almacén</button>
+        </form>
+    </div>
+    
+</body>
+</html>

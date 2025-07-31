@@ -10,18 +10,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>Nuevo Proveedor</h1>
-        
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                <div class="flash-messages">
-                    {% for category, message in messages %}
-                        <div class="flash {{ category }}">{{ message }}</div>
-                    {% endfor %}
-                </div>
-            {% endif %}
-        {% endwith %}
-        
+        <h1>Nuevo Proveedor</h1>  
         <form method="POST" action="{{ url_for('guardar_proveedor') }}">
             <div class="form-section">
                 <h2>Información Básica</h2>
@@ -166,13 +155,14 @@
                     <textarea id="Notas" name="Notas">{{ datos.notas if datos else '' }}</textarea>
                 </div>
             </div>
+            <div class="required-info">* Campos obligatorios</div>
             
             <div class="form-actions">
                 <button type="submit" class="btn btn-primary">Guardar Proveedor</button>
                 <a href="{{ url_for('gestion_proveedores') }}" class="btn btn-secondary">Cancelar</a>
             </div>
             
-            <div class="required-info">* Campos obligatorios</div>
+           
         </form>
     </div>
 </body>

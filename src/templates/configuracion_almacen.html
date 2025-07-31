@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuración de almacenamiento</title>
+     <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/configuracion_almacen.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+  {% include 'navbar.html' %}
+  <div class="container">
+    <main class="main-content">
+        <h1 class="main-title"><i class="fas fa-utensils"></i> Configuración de almacenamiento</h1>
+
+        <div class="table-container">
+            <h2 class="table-title"><i class="fas fa-boxes"></i> Categorías</h2>
+            <div class="table-actions">
+                <a href="{{url_for('formulario_categoria_almacen')}}" class="btn btn-primary"><i class="fas fa-plus"></i> Agregar categoria de almacenamiento</a>
+            </div>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Descripcion</th>
+                            <th>Estatus</th>
+                            <th>Fecha de creación</th>
+                            <th>Opciones</th>
+                            
+                        </tr>
+                    </thead>
+                    <tbody>
+                       {% for item in data %}
+                        <tr>
+                            <td> {{item.ID}} </td>
+                            <td>{{ item.Nombre }}</td>
+                            <td>{{ item.Descripcion }}</td>
+                            <td>{{ item.Estatus }}</td>
+                            <td>{{ item.Fecha_Creacion.strftime('%Y-%m-%d') }}</td>
+                            <td>
+                                <select onchange="manejarOpcion(this.value, '{{ item.ID }}', '{{ item.Nombre }}', '{{ item.Descripcion }}', '{{ item.Estatus }}')">
+                                    <option selected disabled>Opciones</option>
+                                    <option value="editar">Editar</option>
+                                    <option value="eliminar">Eliminar</option>
+                                </select>
+                            </td>
+
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+   <!-- Tabla de Subcategorías -->
+        <div class="table-container">
+            <h2 class="table-title"><i class="fas fa-layer-group"></i> Subcategorías de almacenamiento</h2>
+            <div class="table-actions">
+                <a href="{{ url_for('formulario_subcategoria_almacen') }}" class="btn btn-secondary">
+                    <i class="fas fa-plus"></i> Agregar subcategoría
+                </a>
+            </div>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Categoría</th>
+                            <th>Nombre</th>
+                            <th>Descripción</th>
+                            <th>Estatus</th>
+                            <th>Fecha</th>
+                            
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for sub in subcategorias %}
+                        <tr>
+                            <td>{{ sub.ID }}</td>
+                            <td>{{ sub.CategoriaNombre }}</td>
+                            <td>{{ sub.Nombre }}</td>
+                            <td>{{ sub.Descripcion }}</td>
+                            <td>{{ sub.Estatus }}</td>
+                            <td>{{ sub.Fecha_Creacion.strftime('%Y-%m-%d') }}</td>
+                            
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+
+
+    </main>
+  </div>
+  
+  <!-- Modal de edición -->
+  <div id="modal-editar" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="cerrarModalEditar()">&times;</span>
+      <h2>Editar Categoría</h2>
+      <form method="POST" action="{{ url_for('editar_categoria_almacen') }}">
+        <input type="hidden" name="ID" id="edit-id">
+        <label for="edit-nombre">Nombre:</label>
+        <input type="text" name="Nombre" id="edit-nombre" required>
+        <label for="edit-descripcion">Descripción:</label>
+        <input type="text" name="Descripcion" id="edit-descripcion">
+        <label for="edit-estatus">Estatus:</label>
+        <select name="Estatus" id="edit-estatus" required>
+          <option value="Activo">Activo</option>
+          <option value="Inactivo">Inactivo</option>
+        </select>
+        <button type="submit" class="btn btn-guardar">Guardar Cambios</button>
+      </form>
+    </div>
+  </div>
+ </div>
+
+ <!-- Modal de eliminación -->
+ <div id="modal-eliminar" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="cerrarModalEliminar()">&times;</span>
+    <h2>Confirmar Eliminación</h2>
+    <p>¿Estás segura(o) de que deseas eliminar esta categoría?</p>
+    <form id="form-eliminar" method="POST">
+      <input type="hidden" name="ID" id="delete-id">
+      <button type="submit" class="btn btn-danger">Sí, eliminar</button>
+      <button type="button" class="btn btn-cancelar" onclick="cerrarModalEliminar()">Cancelar</button>
+    </form>
+  </div>
+</div>
+ <script src="{{ url_for('static', filename='js/configuracion_almacen.js') }}"></script>
+</body>
+</html>
