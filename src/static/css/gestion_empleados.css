@@ -31,34 +31,60 @@
     gap: 1rem;
 }
 
+/* Nuevo estilo buscador tipo "rombo largo" */
 .search-box {
     display: flex;
     align-items: center;
-    background-color: #f5f5f5;
-    border-radius: 4px;
+    background-color: #fff;
+    border: 1.5px solid #ccc;
+    border-radius: 9999px; 
+    box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+    width: 320px;
+    max-width: 100%;
     overflow: hidden;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    height: 32px; 
+}
+
+.search-box:hover,
+.search-box:focus-within {
+    border-color: var(--primary-color, #007bff);
+    box-shadow: 0 0 6px rgba(0, 123, 255, 0.3);
 }
 
 .search-box input {
-    padding: 0.6rem 1rem;
+    flex: 1;
     border: none;
-    background-color: transparent;
+    padding: 0 1rem;
+    font-size: 0.85rem;
     outline: none;
-    width: 250px;
-    font-size: 0.9rem;
+    background-color: transparent;
+    color: #222;
+    border-radius: 9999px;
+    height: 100%; 
+    line-height: 1.2;
+}
+
+.search-box input::placeholder {
+    color: #999;
 }
 
 .btn-search {
-    padding: 0.6rem 1rem;
-    background-color: var(--secondary-color);
-    color: white;
+    background-color: transparent;
     border: none;
+    padding: 0 0.75rem;
+    color: #666;
     cursor: pointer;
-    transition: background-color 0.2s;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.3s ease;
+    height: 100%;
 }
 
 .btn-search:hover {
-    background-color: var(--hover-color);
+    color: var(--primary-color, #007bff);
 }
 
 .table-responsive {
@@ -234,4 +260,23 @@
         gap: 1rem;
         align-items: flex-start;
     }
+}
+
+.btn-verde {
+    background-color: #28a745;
+    color: white;
+    padding: 0.6rem 1.2rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.btn-verde:hover {
+    background-color: #218838;
+    box-shadow: 0 0 8px rgba(40, 167, 69, 0.5);
 }

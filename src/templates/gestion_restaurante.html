@@ -13,10 +13,13 @@
   <div class="container">
     <main class="main-content">
         <div class="table-container">
-            <h1><i class="fas fa-utensils"></i> Gestión de Restaurantes</h1>
-            <div class="table-actions">
-                <a href="{{url_for('formulario_restaurante')}}" class="btn btn-primary"><i class="fas fa-plus"></i> Agregar Restaurante</a>
-            </div>
+    <h1><i class="fas fa-utensils"></i> Gestión de Restaurantes</h1>
+    <div class="table-actions">
+        <a href="{{ url_for('formulario_restaurante') }}" class="btn-verde">
+            <i class="fas fa-plus"></i> Agregar Restaurante
+        </a>
+    </div>
+</div>
             <div class="table-responsive">
                 <table class="table">
                     <thead>
