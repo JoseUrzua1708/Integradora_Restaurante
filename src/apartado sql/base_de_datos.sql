@@ -1,9 +1,6 @@
 CREATE DATABASE administracion CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE administracion;
 
-
-
-
 CREATE TABLE Configuracion_Restaurante (
     ID INT PRIMARY KEY AUTO_INCREMENT,
     Nombre_Restaurante VARCHAR(100) NOT NULL,
@@ -98,6 +95,8 @@ CREATE TABLE Roles (
     Descripcion TEXT,
     Fecha_Creacion DATETIME DEFAULT CURRENT_TIMESTAMP,
     Fecha_Actualizacion DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    Sucursal_ID INT,
+    FOREIGN KEY (Sucursal_ID) REFERENCES Sucursales(ID) ON DELETE SET NULL
 );
 
 SELECT * FROM Roles;
@@ -221,6 +220,8 @@ CREATE TABLE Clientes (
     Fecha_Ultima_Actualizacion DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
+select * from Clientes;
+
 CREATE TABLE Clientes_Direcciones (
     ID INT PRIMARY KEY AUTO_INCREMENT,
     Cliente_ID INT NOT NULL,
@@ -253,64 +254,6 @@ CREATE TABLE Reservaciones (
     FOREIGN KEY (Empleado_ID) REFERENCES Empleados(ID),
     FOREIGN KEY (Sucursal_ID) REFERENCES Sucursales(ID)
 );
-
--- pao pao
-
-CREATE TABLE CATEGORIA_ALMACEN (
-    ID INT PRIMARY KEY AUTO_INCREMENT,
-    Nombre VARCHAR(50) NOT NULL,
-    Descripcion TEXT,
-    Estatus ENUM('Activo', 'Inactivo') DEFAULT 'Activo',
-    Fecha_Creacion DATETIME DEFAULT CURRENT_TIMESTAMP
-);
-
-SELECT * FROM CATEGORIA_ALMACEN ORDER BY Fecha_Creacion DESC;
-
-CREATE TABLE SUBCATEGORIA_ALMACEN (
-    ID INT PRIMARY KEY AUTO_INCREMENT,
-    CategoriaID INT NOT NULL,
-    Nombre VARCHAR(50) NOT NULL,
-    Descripcion TEXT,
-    Estatus ENUM('Activo', 'Inactivo') DEFAULT 'Activo',
-    Fecha_Creacion DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (CategoriaID) REFERENCES CATEGORIA_ALMACEN(ID)
-        ON DELETE CASCADE
-        ON UPDATE CASCADE
-);
-
-
-CREATE TABLE Almacen (
-    ID INT PRIMARY KEY AUTO_INCREMENT,
-    Nombre VARCHAR(100) NOT NULL,
-    Descripcion TEXT,
-    CATEGORIA_ALMACEN_ID INT NOT NULL,
-    Cantidad DECIMAL(10,2) NOT NULL,
-    Unidad_Medida VARCHAR(20) NOT NULL,
-    Costo_Unitario DECIMAL(10,2) DEFAULT NULL,
-    Costo_Total DECIMAL(12,2) NOT NULL,
-    Fecha_Entrada DATE NOT NULL,
-    Fecha_Caducidad DATE DEFAULT NULL,
-    Estatus ENUM('Activo', 'Agotado', 'Descontinuado') DEFAULT 'Activo',
-    Fecha_Registro DATETIME DEFAULT CURRENT_TIMESTAMP
-    FOREIGN KEY (CATEGORIA_ALMACEN_ID) REFERENCES CATEGORIA_ALMACEN(ID) ON DELETE CASCADE
-);
-
-
-
-CREATE TABLE inventario (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    producto_id INT NOT NULL,
-    tipo_movimiento ENUM('entrada','salida','ajuste','devolución') NOT NULL,
-    cantidad DECIMAL(10,2) NOT NULL,
-    fecha_movimiento DATE NOT NULL,
-    documento_referencia VARCHAR(100),
-    usuario_responsable VARCHAR(100),
-    comentarios TEXT,
-    fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (producto_id) REFERENCES almacen(id) ON DELETE CASCADE
-);
-
--- a qui  termina pao pao
 
 CREATE TABLE Categorias_Menu (
     ID INT PRIMARY KEY AUTO_INCREMENT,
@@ -361,23 +304,58 @@ CREATE TABLE Menu_Ingredientes (
 
 
 
-CREATE TABLE Inventario (
+CREATE TABLE CATEGORIA_ALMACEN (
     ID INT PRIMARY KEY AUTO_INCREMENT,
-    Sucursal_ID INT NOT NULL,
-    Ingrediente_ID INT NOT NULL,
-    Cantidad_Actual DECIMAL(10,3) NOT NULL,
-    Stock_Minimo DECIMAL(10,3) NOT NULL,
-    Stock_Maximo DECIMAL(10,3),
-    Ultimo_Precio DECIMAL(10,2),
-    Proveedor_ID INT,
-    Fecha_Ultima_Entrada DATETIME,
-    Fecha_Ultima_Salida DATETIME,
-    Estatus ENUM('Disponible', 'Agotado', 'En Espera', 'Caducado') DEFAULT 'Disponible',
-    Fecha_Caducidad DATE,
-    Lote VARCHAR(50),
-    FOREIGN KEY (Sucursal_ID) REFERENCES Sucursales(ID) ON DELETE CASCADE,
-    FOREIGN KEY (Ingrediente_ID) REFERENCES Ingredientes(ID),
-    FOREIGN KEY (Proveedor_ID) REFERENCES Proveedores(ID)
+    Nombre VARCHAR(50) NOT NULL,
+    Descripcion TEXT,
+    Estatus ENUM('Activo', 'Inactivo') DEFAULT 'Activo',
+    Fecha_Creacion DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+SELECT * FROM CATEGORIA_ALMACEN ORDER BY Fecha_Creacion DESC;
+
+CREATE TABLE SUBCATEGORIA_ALMACEN (
+    ID INT PRIMARY KEY AUTO_INCREMENT,
+    CategoriaID INT NOT NULL,
+    Nombre VARCHAR(50) NOT NULL,
+    Descripcion TEXT,
+    Estatus ENUM('Activo', 'Inactivo') DEFAULT 'Activo',
+    Fecha_Creacion DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (CategoriaID) REFERENCES CATEGORIA_ALMACEN(ID)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+);
+
+
+CREATE TABLE Almacen (
+    ID INT PRIMARY KEY AUTO_INCREMENT,
+    Nombre VARCHAR(100) NOT NULL,
+    Descripcion TEXT,
+    CATEGORIA_ALMACEN_ID INT NOT NULL,
+    Cantidad DECIMAL(10,2) NOT NULL,
+    Unidad_Medida VARCHAR(20) NOT NULL,
+    Costo_Unitario DECIMAL(10,2) DEFAULT NULL,
+    Costo_Total DECIMAL(12,2) NOT NULL,
+    Fecha_Entrada DATE NOT NULL,
+    Fecha_Caducidad DATE DEFAULT NULL,
+    Estatus ENUM('Activo', 'Agotado', 'Descontinuado') DEFAULT 'Activo',
+    Fecha_Registro DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (CATEGORIA_ALMACEN_ID) REFERENCES CATEGORIA_ALMACEN(ID) ON DELETE CASCADE
+);
+
+
+
+CREATE TABLE inventario (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    producto_id INT NOT NULL,
+    tipo_movimiento ENUM('entrada','salida','ajuste','devolución') NOT NULL,
+    cantidad DECIMAL(10,2) NOT NULL,
+    fecha_movimiento DATE NOT NULL,
+    documento_referencia VARCHAR(100),
+    usuario_responsable VARCHAR(100),
+    comentarios TEXT,
+    fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (producto_id) REFERENCES almacen(id) ON DELETE CASCADE
 );
 
 CREATE TABLE Inventario_Movimientos (
