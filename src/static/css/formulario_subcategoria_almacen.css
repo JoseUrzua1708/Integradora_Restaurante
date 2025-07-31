@@ -1,0 +1,100 @@
+/* formulario_categoria_almacen.css */
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f7fafc;
+  margin: 0;
+  padding: 0;
+  color: #2d3748;
+}
+
+.container {
+  max-width: 480px;
+  margin: 50px auto;
+  background: #ffffff;
+  padding: 30px 25px;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+}
+
+h1 {
+  text-align: center;
+  color: #2b6cb0;
+  margin-bottom: 25px;
+  font-weight: 700;
+  font-size: 1.8rem;
+}
+
+form label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #4a5568;
+}
+
+input[type="text"],
+textarea,
+select {
+  width: 100%;
+  padding: 10px 14px;
+  margin-bottom: 20px;
+  border: 1.8px solid #cbd5e0;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 40px;
+  box-sizing: border-box;
+}
+
+textarea {
+  min-height: 80px;
+}
+
+input[type="text"]:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: #3182ce;
+  box-shadow: 0 0 8px rgba(49, 130, 206, 0.4);
+}
+
+input[readonly] {
+  background-color: #edf2f7;
+  color: #718096;
+  cursor: default;
+}
+
+button[type="submit"] {
+  width: 100%;
+  background-color: #2b6cb0;
+  color: #fff;
+  border: none;
+  padding: 14px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  box-shadow: 0 4px 10px rgba(43, 108, 176, 0.4);
+}
+
+button[type="submit"]:hover {
+  background-color: #1e4e8c;
+  box-shadow: 0 6px 14px rgba(30, 78, 140, 0.6);
+}
+
+@media (max-width: 480px) {
+  .container {
+    margin: 20px;
+    padding: 20px 15px;
+  }
+  h1 {
+    font-size: 1.5rem;
+  }
+  button[type="submit"] {
+    padding: 12px;
+    font-size: 1rem;
+  }
+}
