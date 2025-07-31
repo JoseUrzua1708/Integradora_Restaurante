@@ -1,247 +1,182 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Gestión de Clientes</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/gestion_clientes.css') }}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-
 <body>
     {% include 'navbar.html' %}
     <div class="container">
         <main class="main-content">
             <div class="table-container">
-                <h1><i class="fas fa-users"></i> Gestión de Empleados</h1>
+                <h1><i class="fas fa-users"></i> Gestión de Clientes</h1>
 
                 <div class="table-actions">
                     <div class="actions-left">
                         <a href="{{ url_for('formulario_cliente') }}" class="btn btn-primary">
-                            <i class="fas fa-plus"></i> Añadir Empleado
+                            <i class="fas fa-plus"></i> Añadir Cliente
                         </a>
                     </div>
-                    div class="actions-right">
-                    <div class="search-box">
-                        <input type="text" placeholder="Buscar cliente..." id="searchInput">
-                        <button class="btn-search" id="searchButton">
-                            <i class="fas fa-search"></i>
+                    <div class="actions-right">
+                        <div class="search-box">
+                            <input type="text" placeholder="Buscar cliente..." id="searchInput">
+                            <button class="btn-search" id="searchButton">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table" id="clientesTable">
+                        <thead>
+                            <tr>
+                                <th data-column="id">ID <i class="fas fa-sort sort-icon"></i></th>
+                                <th data-column="nombre">Nombre <i class="fas fa-sort sort-icon"></i></th>
+                                <th data-column="apellido_p">Apellido P <i class="fas fa-sort sort-icon"></i></th>
+                                <th data-column="apellido_m">Apellido M <i class="fas fa-sort sort-icon"></i></th>
+                                <th data-column="correo">Correo <i class="fas fa-sort sort-icon"></i></th>
+                                <th data-column="telefono">Teléfono</th>
+                                <th data-column="genero">Género</th>
+                                <th data-column="fecha_registro">Registro</th>
+                                <th data-column="sucursal">Sucursal</th>
+                                <th data-column="estatus">Estatus</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="clientesBody">
+                            {% for cliente in clientes %}
+                            <tr data-id="{{ cliente.ID }}">
+                                <td>{{ cliente.ID }}</td>
+                                <td>{{ cliente.Nombre }}</td>
+                                <td>{{ cliente.Apellido_P }}</td>
+                                <td>{{ cliente.Apellido_M if cliente.Apellido_M else '-' }}</td>
+                                <td>{{ cliente.Correo }}</td>
+                                <td>{{ cliente.Telefono if cliente.Telefono else '-' }}</td>
+                                <td>{{ cliente.Genero }}</td>
+                                <td>{{ cliente.Fecha_Registro }}</td>
+                                <td>{{ cliente.sucursal_nombre if cliente.sucursal_nombre else (cliente.Sucursal_ID if cliente.Sucursal_ID else '-') }}</td>
+                                <td>
+                                    <span class="status status-{{ cliente.Estatus.lower() }}">
+                                        {{ cliente.Estatus }}
+                                    </span>
+                                </td>
+                                <td class="actions">
+                                    <i class="fas fa-edit action-icon" title="Editar"></i>
+                                    <i class="fas fa-eye action-icon" title="Ver"></i>
+                                    {% if cliente.Estatus == 'Activo' %}
+                                    <i class="fas fa-user-slash action-icon" title="Desactivar"></i>
+                                    {% else %}
+                                    <i class="fas fa-user-check action-icon" title="Activar"></i>
+                                    {% endif %}
+                                    <i class="fas fa-trash action-icon" title="Eliminar"></i>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="table-footer">
+                    <div class="pagination-info" id="paginationInfo">
+                        Mostrando {{ clientes|length }} de {{ total_clientes }} clientes
+                    </div>
+                    <div class="pagination-controls">
+                        <button class="btn-pagination" id="prevPage" disabled>
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <span class="page-number" id="currentPage">1</span>
+                        <button class="btn-pagination" id="nextPage">
+                            <i class="fas fa-chevron-right"></i>
                         </button>
                     </div>
                 </div>
             </div>
-
-            <div class="table-responsive">
-                <table class="table" id="empleadosTable">
-                    <thead>
-                        <tr>
-                            <th data-column="id">ID <i class="fas fa-sort sort-icon"></i></th>
-                            <th data-column="nombre">Nombre <i class="fas fa-sort sort-icon"></i></th>
-                            <th data-column="apellido_p">Apellido P <i class="fas fa-sort sort-icon"></i></th>
-                            <th data-column="apellido_m">Apellido M <i class="fas fa-sort sort-icon"></i></th>
-                            <th data-column="correo">Correo <i class="fas fa-sort sort-icon"></i></th>
-                            <th data-column="telefono">Teléfono</th>
-                            <th data-column="rol">Rol <i class="fas fa-sort sort-icon"></i></th>
-                            <th data-column="sucursal">Sucursal <i class="fas fa-sort sort-icon"></i></th>
-                            <th data-column="estatus">Estatus <i class="fas fa-sort sort-icon"></i></th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody id="empleadosBody">
-                        {% for empleado in empleados %}
-                        <tr data-id="{{ empleado.ID }}">
-                            <td>{{ cliente.ID }}</td>
-                            <td>{{ cliente.Nombre }}</td>
-                            <td>{{ cliente.Apellido_P }}</td>
-                            <td>{{ cliente.Apellido_M if cliente.Apellido_M else '-' }}</td>
-                            <td>{{ cliente.Correo }}</td>
-                            <td>{{ cliente.Telefono if cliente.Telefono else '-' }}</td>
-                            <td>{{ cliente.Genero }}</td>
-                            <td>{{ cliente.Fecha_Registro }}</td>
-                            <td>{{ cliente.Fecha_Ultima_Actualizacion }}</td>
-                            <td>{{ cliente.sucursal_nombre if cliente.sucursal_nombre else (cliente.Sucursal_ID if
-                                cliente.Sucursal_ID else '-') }}</td>
-                            <td>
-                                <span class="status status-{{ cliente.Estatus.lower() }}">
-                                    {{ cliente.Estatus }}
-                                    <i class="fas fa-edit"></i>
-                                    <i class="fas fa-eye"></i>
-                                    {% if cliente.Estatus == 'Activo' %}
-                                    <i class="fas fa-user-slash"></i>
-                                    {% else %}
-                                    <i class="fas fa-user-check"></i>
-                                    {% endif %}
-                                    <i class="fas fa-trash"></i>
-
-                                    <i class="fas fa-user-edit"></i>
-                                </span>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="table-footer">
-                <div class="pagination-info" id="paginationInfo">
-                    Mostrando {{ clientes|length }} de {{ total_clientes }} clientes
-                </div>
-                <div class="pagination-controls">
-                    <button class="btn-pagination" id="prevPage" disabled>
-                        <i class="fas fa-chevron-left"></i>
-                    </button>
-                    <span class="page-number" id="currentPage">1</span>
-                    <button class="btn-pagination" id="nextPage">
-                        <i class="fas fa-chevron-right"></i>
-                    </button>
-                </div>
-            </div>
+        </main>
     </div>
-    </main>
-    </div>
-
 
     <!-- Modal para agregar cliente -->
-    <div class="modal fade" id="addClientModal" tabindex="-1" aria-labelledby="addClientModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addClientModalLabel">Agregar Cliente</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form>
-                        <div class="mb-3">
-                            <label for="nombre" class="form-label">Nombre</label>
-                            <input type="text" class="form-control" id="nombre" placeholder="Nombre">
-                        </div>
-                        <div class="mb-3">
-                            <label for="apellido_p" class="form-label">Apellido P</label>
-                            <input type="text" class="form-control" id="apellido_p" placeholder="Apellido P">
-                        </div>
-                        <div class="mb-3">
-                            <label for="apellido_m" class="form-label">Apellido M</label>
-                            <input type="text" class="form-control" id="apellido_m" placeholder="Apellido M">
-                        </div>
-                        <div class="mb-3">
-                            <label for="correo" class="form-label">Correo</label>
-                            <input type="text" class="form-control" id="correo" placeholder="Correo">
-                        </div>
-                        <div class="mb-3">
-                            <label for="telefono" class="form-label">Telefono</label>
-                            <input type="text" class="form-control" id="telefono" placeholder="Telefono">
-                        </div>
-                        <div class="mb-3">
-                            <label for="genero" class="form-label">Genero</label>
-                            <select class="form-select" id="genero">
-                                <option value="Masculino">Masculino</option>
-                                <option value="Femenino">Femenino</option>
-                                <option value="Otro">Otro</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="preferencias" class="form-label">Preferencias</label>
-                            <textarea class="form-control" id="preferencias" rows="3"></textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label for="sucursal" class="form-label">Sucursal</label>
-                            <select class="form-select" id="sucursal">
-                                <option value="0">Seleccionar</option>
-                                {% for sucursal in sucursales %}
-                                <option value="{{ sucursal.ID }}">{{ sucursal.Nombre }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="button" class="btn btn-primary" id="addClientButton">Agregar</button>
-                </div>
+    <div class="modal" id="addClientModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Agregar Cliente</h5>
+                <button type="button" class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="addClientForm">
+                    <div class="form-group">
+                        <label for="nombre">Nombre</label>
+                        <input type="text" id="nombre" placeholder="Nombre" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="apellido_p">Apellido Paterno</label>
+                        <input type="text" id="apellido_p" placeholder="Apellido Paterno" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="apellido_m">Apellido Materno</label>
+                        <input type="text" id="apellido_m" placeholder="Apellido Materno">
+                    </div>
+                    <div class="form-group">
+                        <label for="correo">Correo</label>
+                        <input type="email" id="correo" placeholder="Correo" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="telefono">Teléfono</label>
+                        <input type="tel" id="telefono" placeholder="Teléfono">
+                    </div>
+                    <div class="form-group">
+                        <label for="genero">Género</label>
+                        <select id="genero" required>
+                            <option value="">Seleccionar</option>
+                            <option value="Masculino">Masculino</option>
+                            <option value="Femenino">Femenino</option>
+                            <option value="Otro">Otro</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="sucursal">Sucursal</label>
+                        <select id="sucursal">
+                            <option value="0">Seleccionar</option>
+                            {% for sucursal in sucursales %}
+                            <option value="{{ sucursal.ID }}">{{ sucursal.Nombre }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary close-btn">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="addClientButton">Agregar</button>
             </div>
         </div>
     </div>
 
     <!-- Modal para editar cliente -->
-    <div class="modal fade" id="editClientModal" tabindex="-1" aria-labelledby="editClientModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editClientModalLabel">Editar Cliente</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form>
-                        <div class="mb-3">
-                            <label for="nombre" class="form-label">Nombre</label>
-                            <input type="text" class="form-control" id="nombre" placeholder="Nombre">
-                        </div>
-                        <div class="mb-3">
-                            <label for="apellido_p" class="form-label">Apellido P</label>
-                            <input type="text" class="form-control" id="apellido_p" placeholder="Apellido P">
-                        </div>
-                        <div class="mb-3">
-                            <label for="apellido_m" class="form-label">Apellido M</label>
-                            <input type="text" class="form-control" id="apellido_m" placeholder="Apellido M">
-                        </div>
-                        <div class="mb-3">
-                            <label for="correo" class="form-label">Correo</label>
-                            <input type="text" class="form-control" id="correo" placeholder="Correo">
-                        </div>
-                        <div class="mb-3">
-                            <label for="telefono" class="form-label">Telefono</label>
-                            <input type="text" class="form-control" id="telefono" placeholder="Telefono">
-                        </div>
-                        <div class="mb-3">
-                            <label for="genero" class="form-label">Genero</label>
-                            <select class="form-select" id="genero">
-                                <option value="Masculino">Masculino</option>
-                                <option value="Femenino">Femenino</option>
-                                <option value="Otro">Otro</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="preferencias" class="form-label">Preferencias</label>
-                            <textarea class="form-control" id="preferencias" rows="3"></textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label for="sucursal" class="form-label">Sucursal</label>
-                            <select class="form-select" id="sucursal">
-                                <option value="0">Seleccionar</option>
-                                {% for sucursal in sucursales %}
-                                <option value="{{ sucursal.ID }}">{{ sucursal.Nombre }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="button" class="btn btn-primary" id="editClientButton">Editar</button>
-                </div>
-            </div>
-        </div>
+    <div class="modal" id="editClientModal">
+        <!-- Similar estructura al modal de agregar pero con datos precargados -->
     </div>
 
     <!-- Modal para eliminar cliente -->
-    <div class="modal fade" id="deleteClientModal" tabindex="-1" aria-labelledby="deleteClientModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="deleteClientModalLabel">Eliminar Cliente</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p>¿Está seguro de eliminar el cliente?</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-danger" id="deleteClientButton">Eliminar</button>
-                </div>
+    <div class="modal" id="deleteClientModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Eliminar Cliente</h5>
+                <button type="button" class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>¿Está seguro de eliminar este cliente?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary close-btn">Cancelar</button>
+                <button type="button" class="btn btn-danger" id="deleteClientButton">Eliminar</button>
             </div>
         </div>
     </div>
-</body>
 
+      <script src="{{ url_for('static', filename='js/gestion_clientes.js') }}"></script>
+</body>
 </html>

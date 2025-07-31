@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de Cliente</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/formulario_cliente.css') }}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="form-container">
+        <form id="clienteForm" action="{{ url_for('guardar_cliente') }}" method="POST">
+            
+            <div class="form-grid">
+                <!-- Sección 1: Información Básica -->
+                <div class="form-section">
+                    <h2><i class="fas fa-id-card"></i> Información Personal</h2>
+                    
+                    <div class="form-group">
+                        <label for="nombre">Nombre(s)*</label>
+                        <input type="text" id="nombre" name="nombre" value="{{ cliente.Nombre if cliente }}" required 
+                               maxlength="25" pattern="[A-Za-záéíóúÁÉÍÓÚñÑ\s]+" title="Solo letras y espacios">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="apellido_p">Apellido Paterno*</label>
+                        <input type="text" id="apellido_p" name="apellido_p" value="{{ cliente.Apellido_P if cliente }}" 
+                               required maxlength="20" pattern="[A-Za-záéíóúÁÉÍÓÚñÑ]+" title="Solo letras">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="apellido_m">Apellido Materno</label>
+                        <input type="text" id="apellido_m" name="apellido_m" value="{{ cliente.Apellido_M if cliente }}" 
+                               maxlength="20" pattern="[A-Za-záéíóúÁÉÍÓÚñÑ]+" title="Solo letras">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="fecha_nacimiento">Fecha de Nacimiento</label>
+                        <input type="date" id="fecha_nacimiento" name="fecha_nacimiento" 
+                               value="{{ cliente.Fecha_Nacimiento if cliente and cliente.Fecha_Nacimiento }}">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="genero">Género</label>
+                        <select id="genero" name="genero">
+                            <option value="">Seleccionar...</option>
+                            <option value="Masculino" {{ 'selected' if cliente and cliente.Genero == 'Masculino' }}>Masculino</option>
+                            <option value="Femenino" {{ 'selected' if cliente and cliente.Genero == 'Femenino' }}>Femenino</option>
+                            <option value="Otro" {{ 'selected' if cliente and cliente.Genero == 'Otro' }}>Otro</option>
+                            <option value="Prefiero no decir" {{ 'selected' if cliente and cliente.Genero == 'Prefiero no decir' }}>Prefiero no decir</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- Sección 2: Contacto -->
+                <div class="form-section">
+                    <h2><i class="fas fa-address-book"></i> Información de Contacto</h2>
+                    
+                    <div class="form-group">
+                        <label for="correo">Correo Electrónico</label>
+                        <input type="email" id="correo" name="correo" value="{{ cliente.Correo if cliente }}" 
+                               maxlength="30" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$">
+                        <div class="error-message" id="email-error"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="telefono">Teléfono</label>
+                        <input type="tel" id="telefono" name="telefono" value="{{ cliente.Telefono if cliente }}" 
+                               maxlength="10" pattern="[0-9]{10}" title="10 dígitos numéricos">
+                    </div>
+                    
+                    {% if not cliente %}
+                    <div class="form-group">
+                        <label for="contrasena">Contraseña*</label>
+                        <div class="password-container">
+                            <input type="password" id="contrasena" name="contrasena" required 
+                                   maxlength="12" minlength="6" pattern="^(?=.*[A-Za-z])(?=.*\d).{6,12}$"
+                                   title="6-12 caracteres, al menos una letra y un número">
+                            <i class="fas fa-eye toggle-password" onclick="togglePassword('contrasena')"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="confirmar_contrasena">Confirmar Contraseña*</label>
+                        <div class="password-container">
+                            <input type="password" id="confirmar_contrasena" name="confirmar_contrasena" required
+                                   maxlength="12" minlength="6">
+                            <i class="fas fa-eye toggle-password" onclick="togglePassword('confirmar_contrasena')"></i>
+                        </div>
+                        <div class="error-message" id="password-error"></div>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Sección 3: Preferencias -->
+                <div class="form-section">
+                    <h2><i class="fas fa-heart"></i> Preferencias</h2>
+                    
+                    <div class="form-group">
+                        <label for="preferencias">Preferencias Alimenticias</label>
+                        <textarea id="preferencias" name="preferencias" rows="3">{{ cliente.Preferencias if cliente }}</textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="restricciones">Restricciones Alimenticias</label>
+                        <textarea id="restricciones" name="restricciones" rows="3">{{ cliente.Restricciones_Alimenticias if cliente }}</textarea>
+                    </div>
+                    
+                    {% if cliente %}
+                    <div class="form-group">
+                        <label for="estatus">Estatus</label>
+                        <select id="estatus" name="estatus">
+                            <option value="Activo" {{ 'selected' if cliente.Estatus == 'Activo' }}>Activo</option>
+                            <option value="Inactivo" {{ 'selected' if cliente.Estatus == 'Inactivo' }}>Inactivo</option>
+                            <option value="Bloqueado" {{ 'selected' if cliente.Estatus == 'Bloqueado' }}>Bloqueado</option>
+                        </select>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" onclick="window.history.back()">
+                    <i class="fas fa-times"></i> Cancelar
+                </button>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Guardar Cliente
+                </button>
+            </div>
+            
+            {% if cliente %}
+            <input type="hidden" name="id" value="{{ cliente.ID }}">
+            {% endif %}
+        </form>
+    </div>
+    <script src="{{ url_for('static', filename='js/formulario_cliente.js') }}"></script>
+</body>
+</html>
