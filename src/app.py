@@ -24,7 +24,7 @@ app.secret_key = os.getenv('SECRET_KEY', 'your-secret-key-here')
 db_config = {
     'host': os.getenv('DB_HOST', 'localhost'),
     'user': os.getenv('DB_USER', 'root'),
-    'password': os.getenv('DB_PASSWORD', '12345'),
+    'password': os.getenv('DB_PASSWORD', 'Jose1708$'),
     'database': os.getenv('DB_NAME', 'administracion'),
     'pool_name': 'restaurante_pool',
     'pool_size': 5,
@@ -1711,8 +1711,6 @@ def eliminar_subcategoria_almacen(id):
         cursor.close()
         conn.close()
     return redirect(url_for('mostrar_categorias_almacen'))
-
-
 
 ################################################################################
 # corer la aplicación
