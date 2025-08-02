@@ -456,9 +456,13 @@ def formulario_roles():
         if conn is not None:
             conn.close()
 
+################################################################################
+# Guardar de roles
+################################################################################
+
 @app.route('/guardar_rol', methods=['POST'])
 def guardar_rol():
-    """Guarda un nuevo rol"""
+    """Guarda un nuevo rol""" 
     conn = None
     cursor = None
     try:
@@ -470,7 +474,7 @@ def guardar_rol():
             
         }
 
-        campos_requeridos = ['Nombre', 'Descripcion', 'Fecha_Creacion', 'Fecha_Actualizacion', ]
+        campos_requeridos = ['Nombre', 'Descripcion', 'Fecha_Creacion', 'Fecha_Actualizacion' ]
         if not all(datos[campo] for campo in campos_requeridos):
             flash("Todos los campos obligatorios deben completarse", "error")
             return redirect(url_for('formulario_roles'))
@@ -480,7 +484,7 @@ def guardar_rol():
         query = """
             INSERT INTO Roles (
                 Nombre, Descripcion, Fecha_Creacion, Fecha_Actualizacion
-            ) VALUES (%s, %s, %s, %s, %s)
+            ) VALUES (%s, %s, %s, %s)
         """
         params = (
             datos['Nombre'], datos['Descripcion'], datos['Fecha_Creacion'],
