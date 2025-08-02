@@ -82,3 +82,36 @@
     background-color: #218838;
     box-shadow: 0 0 8px rgba(40, 167, 69, 0.5);
 }
+
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 999;
+  left: 0; top: 0;
+  width: 100%; height: 100%;
+  background-color: rgba(0,0,0,0.6);
+}
+
+.modal-content {
+  background-color: #fff;
+  margin: 10% auto;
+  padding: 20px;
+  border-radius: 10px;
+  width: 400px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.btn-guardar, .btn-cancelar, .btn-eliminar {
+  padding: 8px 16px;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-guardar { background-color: #4CAF50; color: white; }
+.btn-cancelar { background-color: #ccc; }
+.btn-eliminar { background-color: #e74c3c; color: white; }

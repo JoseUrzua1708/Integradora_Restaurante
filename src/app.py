@@ -8,6 +8,8 @@ import logging
 from datetime import time
 import re
 from mysql.connector import Error
+import pymysql
+
 
 
 ###############################################################################
@@ -418,7 +420,14 @@ def gestion_roles():
     try:
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
-        cursor.execute("SELECT ID, Nombre, Descripcion, Fecha_Creacion, Fecha_Actualizacion  FROM Roles")
+        # Obtener roles con información de sucursal (LEFT JOIN por si Sucursal_ID es NULL) 
+        cursor.execute("""
+            SELECT r.ID, r.Nombre, r.Descripcion, r.Sucursal_ID, r.Fecha_Creacion,
+                r.Fecha_Actualizacion, s.Nombre as Sucursal
+            FROM Roles r
+            LEFT JOIN Sucursales s ON r.Sucursal_ID = s.ID
+            ORDER BY r.Fecha_Actualizacion DESC
+        """)
         roles = cursor.fetchall()
         return render_template('gestion_roles.html', roles=roles)
     except Exception as e:
@@ -459,56 +468,79 @@ def formulario_roles():
 ################################################################################
 # Guardar de roles
 ################################################################################
-
 @app.route('/guardar_rol', methods=['POST'])
 def guardar_rol():
-    """Guarda un nuevo rol""" 
+    """Guarda un nuevo rol con ID automático""" 
     conn = None
     cursor = None
     try:
+        # Obtener y limpiar datos
         datos = {
             'Nombre': request.form['Nombre'].strip(),
             'Descripcion': request.form['Descripcion'].strip(),
-            'Fecha_Creacion': request.form['Fecha_Creacion'],
-            'Fecha_Actualizacion': request.form['Fecha_Actualizacion'],
-            
         }
 
-        campos_requeridos = ['Nombre', 'Descripcion', 'Fecha_Creacion', 'Fecha_Actualizacion' ]
-        if not all(datos[campo] for campo in campos_requeridos):
-            flash("Todos los campos obligatorios deben completarse", "error")
+        # Validación de campos
+        if not all(datos.values()):
+            flash("Nombre y Descripción son campos obligatorios", "error")
+            return redirect(url_for('formulario_roles'))
+            
+        if len(datos['Nombre']) > 25:
+            flash("El nombre del rol no puede superar los 25 caracteres", "error")
+            return redirect(url_for('formulario_roles'))
+            
+        # Validar caracteres permitidos en el nombre
+        if not re.match(r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s]+$', datos['Nombre']):
+            flash("El nombre solo puede contener letras, números y espacios", "error")
             return redirect(url_for('formulario_roles'))
 
         conn = get_db_connection()
         cursor = conn.cursor()
-        query = """
-            INSERT INTO Roles (
-                Nombre, Descripcion, Fecha_Creacion, Fecha_Actualizacion
-            ) VALUES (%s, %s, %s, %s)
-        """
-        params = (
-            datos['Nombre'], datos['Descripcion'], datos['Fecha_Creacion'],
-            datos['Fecha_Actualizacion']
-        )
-        cursor.execute(query, params)
-        conn.commit()
-        flash("Rol registrado exitosamente")
-        return redirect(url_for('gestion_roles'))
+        
+        try:
+            query = """INSERT INTO Roles (
+                Nombre, Descripcion
+                ) VALUES (%s, %s)
+            """
+            cursor.execute(query, (datos['Nombre'], datos['Descripcion']))
+            
+            # Obtener el ID generado automáticamente
+            nuevo_id = cursor.lastrowid
+            
+            conn.commit()
+            flash(f"Rol registrado exitosamente con ID: {nuevo_id}", "success")
+            return redirect(url_for('gestion_roles'))
+            
+        except pymysql.err.IntegrityError as e:
+            conn.rollback()
+            if 'Duplicate entry' in str(e):
+                flash("Ya existe un rol con ese nombre", "error")
+            else:
+                flash("Error de base de datos al guardar el rol", "error")
+            return redirect(url_for('formulario_roles'))
+            
     except Exception as e:
-        app.logger.error(f"Error al guardar rol: {str(e)}")
-        flash("Error al guardar el rol", "error")
+        if conn: conn.rollback()
+        app.logger.error(f"Error al guardar rol: {str(e)}", exc_info=True)
+        flash("Error inesperado al procesar la solicitud", "error")
         return redirect(url_for('formulario_roles'))
+        
     finally:
-        if cursor is not None:
-            cursor.close()
-        if conn is not None:
-            conn.close()
+        try:
+            if cursor: cursor.close()
+        except Exception as e:
+            app.logger.error(f"Error al cerrar cursor: {str(e)}")
+            
+        try:
+            if conn: conn.close()
+        except Exception as e:
+            app.logger.error(f"Error al cerrar conexión: {str(e)}")
 
 ################################################################################
 # Eliminar rol
 ################################################################################
 
-@app.route('/eliminar/<int:id>')
+@app.route('/eliminar/<int:id>', methods=['POST'])
 def eliminar_rol(id):
     """Elimina un rol por ID"""
     conn = None
@@ -535,42 +567,33 @@ def eliminar_rol(id):
 
 @app.route('/actualizar/<int:id>', methods=['POST'])
 def actualizar_rol(id):
-    """Actualiza un rol existente"""
     conn = None
     cursor = None
     try:
-        datos = {
-            'id': id,
-            'nombre': request.form['Nombre'].strip(),
-            'descripcion': request.form['Descripcion'].strip(),
-            'fecha_creacion': request.form['Fecha_Creacion'],
-            'fecha_actualizacion': request.form['Fecha_Actualizacion'],
-            'sucursal_id': request.form['Sucursal_ID']
-        }
+        nombre = request.form['Nombre'].strip()
+        descripcion = request.form['Descripcion'].strip()
+
+        if not nombre or not descripcion:
+            flash("Todos los campos son obligatorios", "error")
+            return redirect(url_for('gestion_roles'))
 
         conn = get_db_connection()
         cursor = conn.cursor()
-        query = """
-            UPDATE Roles SET 
-                Nombre = %(nombre)s,
-                Descripcion = %(descripcion)s,
-                Fecha_Creacion = %(fecha_creacion)s,
-                Fecha_Actualizacion = %(fecha_actualizacion)s,
-                Sucursal_ID = %(sucursal_id)s
-            WHERE ID = %(id)s
-        """
-        cursor.execute(query, datos)
+        cursor.execute("""
+            UPDATE Roles
+            SET Nombre = %s, Descripcion = %s
+            WHERE ID = %s
+        """, (nombre, descripcion, id))
         conn.commit()
-        flash("Rol actualizado exitosamente", "success")        
+        flash("Rol actualizado exitosamente", "success")
     except Exception as e:
         app.logger.error(f"Error al actualizar rol ID {id}: {str(e)}")
         flash("Error al actualizar el rol", "error")
     finally:
-        if cursor is not None:
-            cursor.close()
-        if conn is not None:
-            conn.close()
+        if cursor: cursor.close()
+        if conn: conn.close()
     return redirect(url_for('gestion_roles'))
+
 
 ################################################################################
 # Gestión de empleados

@@ -43,9 +43,12 @@
                             <td>{{ rol.Descripcion }}</td>
                             <td>{{ rol.Fecha_Creacion }}</td>
                             <td>{{ rol.Fecha_Actualizacion }}</td>
-                            <td class="actions">
-                                <a href="#" class="btn-action btn-edit"><i class="fas fa-edit"></i></a>
-                                <a href="#" class="btn-action btn-delete"><i class="fas fa-trash"></i></a>
+                            <td>
+                                <select onchange="manejarRol(this.value, '{{ rol.ID }}', '{{ rol.Nombre }}', '{{ rol.Descripcion }}')">
+                                    <option selected disabled>Opciones</option>
+                                    <option value="Editar">Editar</option>
+                                    <option value="Eliminar">Eliminar</option>
+                                </select>
                             </td>
                         </tr>
                         {% endfor %}
@@ -53,7 +56,50 @@
                 </table>
             </div>
         </main>
+    </div>   
+    
+    <!-- Modal Editar Rol-->
+
+    <div id="modal-editarRol" class="modal">
+        <div class="modal-content">
+            <h2>Editar Rol</h2>
+            <form action="" method="post" id="form-editar">
+                <input type="hidden" name="id" id="edit-id">
+                <div class="form-group">
+                    <label for="edit-nombre">Nombre:</label>
+                    <input type="text" name="Nombre" id="edit-nombre" required>
+                </div>
+
+                <div class="form-group">
+                <label for="edit-descripcion">Descripción:</label>
+                <textarea name="Descripcion" id="edit-descripcion" required></textarea>
+
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-guardar">Guardar</button>
+                    <button type="button" class="btn-cancelar" onclick="cerrarEditar()">Cancelar</button>
+                </div>
+            </form>
+        </div>
     </div>
 
+    <!-- Modal Eliminar Rol -->
+
+    <div id="modal-eliminarRol" class="modal">
+        <div class="modal-content">
+            <h2>¿Eliminar Rol?</h2>
+            <p>Esta acción no se puede deshacer.</p>
+            <form method="POST" id="form-eliminar">
+                <input type="hidden" id="delete-id" name="id">
+                <div class="form-actions">
+                    <button type="submit" class="btn-eliminar">Sí, eliminar</button>
+                    <button type="button" class="btn-cancelar" onclick="cerrarEliminar()">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/gestion_roles.js') }}"></script>
 </body>
 </html>
