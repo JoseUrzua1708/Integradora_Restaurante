@@ -179,3 +179,52 @@ select {
 .close:hover {
   color: #000;
 }
+
+/* Botón editar dentro de tabla (opciones) */
+.btn-editar {
+  background-color: #2980b9;
+  color: white;
+}
+
+.btn-editar:hover {
+  background-color: #1c5985;
+}
+
+/* Botón guardar en modal */
+.btn-guardar {
+  background-color: #27ae60;
+  color: white;
+}
+
+.btn-guardar:hover {
+  background-color: #1e8449;
+}
+
+/* Botón cancelar en modal */
+.btn-cancel {
+  background-color: #95a5a6;
+  color: white;
+}
+
+.btn-cancel:hover {
+  background-color: #7f8c8d;
+}
+
+/* Botón eliminar en modal */
+.btn-modal-danger {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.btn-modal-danger:hover {
+  background-color: #c0392b;
+}
+
+/* Form actions dentro del modal */
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+

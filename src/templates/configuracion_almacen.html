@@ -43,8 +43,8 @@
                             <td>
                                 <select onchange="manejarOpcion(this.value, '{{ item.ID }}', '{{ item.Nombre }}', '{{ item.Descripcion }}', '{{ item.Estatus }}')">
                                     <option selected disabled>Opciones</option>
-                                    <option value="editar">Editar</option>
-                                    <option value="eliminar">Eliminar</option>
+                                    <option value="Editar">Editar</option>
+                                    <option value="Eliminar">Eliminar</option>
                                 </select>
                             </td>
 
@@ -73,6 +73,7 @@
                             <th>Descripción</th>
                             <th>Estatus</th>
                             <th>Fecha</th>
+                            <th>Opciones</th>
                             
                         </tr>
                     </thead>
@@ -85,6 +86,13 @@
                             <td>{{ sub.Descripcion }}</td>
                             <td>{{ sub.Estatus }}</td>
                             <td>{{ sub.Fecha_Creacion.strftime('%Y-%m-%d') }}</td>
+                            <td>
+                                <select onchange="manejarOpcionSubcategoria(this.value, '{{ sub.ID }}', '{{ sub.CategoriaNombre }}', '{{ sub.Nombre }}', '{{ sub.Descripcion }}', '{{ sub.Estatus }}')">
+                                    <option selected disabled>Opciones</option>
+                                    <option value="Editar">Editar</option>
+                                    <option value="Eliminar">Eliminar</option>
+                                </select>
+                            </td>
                             
                         </tr>
                         {% endfor %}
@@ -101,38 +109,96 @@
   <!-- Modal de edición -->
   <div id="modal-editar" class="modal">
     <div class="modal-content">
-      <span class="close" onclick="cerrarModalEditar()">&times;</span>
       <h2>Editar Categoría</h2>
       <form method="POST" action="{{ url_for('editar_categoria_almacen') }}">
         <input type="hidden" name="ID" id="edit-id">
+
         <label for="edit-nombre">Nombre:</label>
         <input type="text" name="Nombre" id="edit-nombre" required>
+
         <label for="edit-descripcion">Descripción:</label>
         <input type="text" name="Descripcion" id="edit-descripcion">
+
         <label for="edit-estatus">Estatus:</label>
         <select name="Estatus" id="edit-estatus" required>
           <option value="Activo">Activo</option>
           <option value="Inactivo">Inactivo</option>
         </select>
+        
+        <div class="form-actions">
         <button type="submit" class="btn btn-guardar">Guardar Cambios</button>
+        <button type="button" class="btn cancel" onclick="cerrarModalEditarCategoria()">Cancelar</button>
+      </div>
       </form>
     </div>
   </div>
  </div>
 
- <!-- Modal de eliminación -->
+<!-- Modal de eliminación -->
  <div id="modal-eliminar" class="modal">
   <div class="modal-content">
-    <span class="close" onclick="cerrarModalEliminar()">&times;</span>
     <h2>Confirmar Eliminación</h2>
     <p>¿Estás segura(o) de que deseas eliminar esta categoría?</p>
     <form id="form-eliminar" method="POST">
       <input type="hidden" name="ID" id="delete-id">
-      <button type="submit" class="btn btn-danger">Sí, eliminar</button>
-      <button type="button" class="btn btn-cancelar" onclick="cerrarModalEliminar()">Cancelar</button>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-modal-danger">Sí, eliminar</button>
+        <button type="button" class="btn btn-cancel" onclick="cerrarModalEliminarCategoria()">Cancelar</button>
+      </div>
     </form>
   </div>
-</div>
+ </div>
+
+
+<!-- MODAL EDITAR SUBCATEGORIA -->
+ <div id="modalEditarSubcategoria" class="modal">
+  <div class="modal-content">
+    <form method="POST" action="{{ url_for('editar_subcategoria_almacen') }}">
+      <input type="hidden" name="ID" id="edit-sub-id">
+
+      <label for="edit-sub-categoria">Categoría*</label>
+      <select id="edit-sub-categoria" name="CategoriaID" required>
+          {% for categoria in categorias %}
+              <option value="{{ categoria.ID }}">{{ categoria.Nombre }}</option>
+          {% endfor %}
+      </select>
+
+      <label for="edit-sub-nombre">Nombre de la Subcategoría*</label>
+      <input type="text" id="edit-sub-nombre" name="Nombre" required>
+
+      <label for="edit-sub-descripcion">Descripción</label>
+      <textarea id="edit-sub-descripcion" name="Descripcion"></textarea>
+
+      <label for="edit-sub-estatus">Estatus</label>
+      <select id="edit-sub-estatus" name="Estatus" required>
+          <option value="Activo">Activo</option>
+          <option value="Inactivo">Inactivo</option>
+      </select>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-guardar">Guardar Cambios</button>
+        <button type="button" class="btn cancel" onclick="cerrarModalEditarSubcategoria()">Cancelar</button>
+      </div>
+    </form>
+  </div>
+ </div>
+
+
+<!-- MODAL ELIMINAR SUBCATEGORIA -->
+ <div id="modalEliminarSubcategoria" class="modal">
+  <div class="modal-content">
+    <h2>Confirmar Eliminación</h2>
+    <p>¿Estás segura(o) de que deseas eliminar esta categoría?</p>
+    <form id="form-eliminar-sub" method="POST" action="">
+     <input type="hidden" name="ID" id="delete-sub-id">
+        <div class="form-actions">
+            <button type="submit" class="btn btn-modal-danger">Sí, eliminar</button>
+            <button type="button" class="btn cancel" onclick="cerrarModalEliminarSubcategoria()">Cancelar</button>
+        </div>
+    </form>
+  </div>
+ </div>
+
  <script src="{{ url_for('static', filename='js/configuracion_almacen.js') }}"></script>
 </body>
 </html>

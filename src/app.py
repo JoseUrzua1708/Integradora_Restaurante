@@ -24,7 +24,7 @@ app.secret_key = os.getenv('SECRET_KEY', 'your-secret-key-here')
 db_config = {
     'host': os.getenv('DB_HOST', 'localhost'),
     'user': os.getenv('DB_USER', 'root'),
-    'password': os.getenv('DB_PASSWORD', 'Jose1708$'),
+    'password': os.getenv('DB_PASSWORD', '12345'),
     'database': os.getenv('DB_NAME', 'administracion'),
     'pool_name': 'restaurante_pool',
     'pool_size': 5,
@@ -1487,7 +1487,7 @@ def mostrar_categorias_almacen():
         cursor.execute(sql_subcategorias)
         subcategorias = cursor.fetchall()
 
-        return render_template('configuracion_almacen.html', data=categorias, subcategorias=subcategorias)
+        return render_template('configuracion_almacen.html', data=categorias, categorias=categorias, subcategorias=subcategorias)
 
     except Exception as e:
         print(f"Error al obtener datos: {e}")
@@ -1597,6 +1597,8 @@ def eliminar_categoria_almacen(id):
 # formulario sub categoria almacenamiento
 ################################################################################
 
+
+
 @app.route('/subcategoria_almacen', methods=['GET'])
 def formulario_subcategoria_almacen():
     conn = None
@@ -1666,6 +1668,51 @@ def guardar_subcategoria_almacen():
         if conn: conn.close()
 
     return redirect(url_for('mostrar_categorias_almacen'))
+
+@app.route('/editar_subcategoria_almacen', methods=['POST'])
+def editar_subcategoria_almacen():
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        id = request.form['id']
+        categoria_id = request.form['categoria_id']
+        nombre = request.form['nombre']
+        descripcion = request.form['descripcion']
+        estatus = request.form['estatus']
+
+        sql = """
+        UPDATE SUBCATEGORIA_ALMACEN
+        SET CategoriaID=%s, Nombre=%s, Descripcion=%s, Estatus=%s
+        WHERE ID=%s
+        """
+        cursor.execute(sql, (categoria_id, nombre, descripcion, estatus, id))
+        conn.commit()
+        flash("Subcategoría actualizada exitosamente", "success")
+    except Exception as e:
+        print("Error al editar subcategoría:", e)
+        flash("Error al actualizar la subcategoría", "error")
+    finally:
+        cursor.close()
+        conn.close()
+    return redirect(url_for('mostrar_categorias_almacen'))
+
+@app.route('/eliminar_subcategoria_almacen/<int:id>', methods=['POST'])
+def eliminar_subcategoria_almacen(id):
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM SUBCATEGORIA_ALMACEN WHERE ID = %s", (id,))
+        conn.commit()
+        flash("Subcategoría eliminada exitosamente", "success")
+    except Exception as e:
+        print(f"Error al eliminar subcategoría ID {id}: {e}")
+        flash("Error al eliminar la subcategoría", "error")
+    finally:
+        cursor.close()
+        conn.close()
+    return redirect(url_for('mostrar_categorias_almacen'))
+
+
 
 ################################################################################
 # corer la aplicación
