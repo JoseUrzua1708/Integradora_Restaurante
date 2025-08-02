@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <head>
     <meta charset="UTF-8"/>
     <title>Formulario de roles</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
@@ -10,9 +9,9 @@
 </head>
 <body>
 
-    <div class="roles" action="{{ url_for('guardar_rol') }}" method="POST">
+    <div class="roles">
         <h1>Registro Roles</h1>
-        <form class="roles">
+        <form action="{{ url_for('guardar_rol') }}" method="POST">
 
             <label for="Nombre">Nombre del rol</label>
             <input type="text" id="Nombre" name="Name" required/>
@@ -20,20 +19,10 @@
             <label for="Descripcion">Descripción del rol</label>
             <input type="text" id="Descripcion" name="Descripcion" required/>
 
-            <label for="Fecha_Creacion">Fecha de creación:</label>
-            <span>{{ rol.Fecha_Creacion if rol else fecha_actual}}</span>
-
-            {% if not rol %}
-            <input type="hidden" name="Fecha_Creacion" value="{{ fecha_actual}} ">
-            {% endif}
-
-            
-
-            <label for="Fecha_Actualizacion">Fecha de actualización</label>
-            <input type="date" id="Fecha_Actualizacion" name="Fecha_Actualizacion" required/>
+            <label for="fecha_creacion">Fecha de Registro:</label>
+            <input type="text" id="fecha_creacion" value="{{ fecha_actual }}" readonly />
 
             <button type="submit">Guardar Rol</button>
-
         </form>
     </div>
     
