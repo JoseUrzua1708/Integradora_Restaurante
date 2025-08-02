@@ -14,13 +14,15 @@
         <form action="{{ url_for('guardar_rol') }}" method="POST">
 
             <label for="Nombre">Nombre del rol</label>
-            <input type="text" id="Nombre" name="Nonbre" required/>
+            <input type="text" id="Nombre" name="Nombre" required/>
 
             <label for="Descripcion">Descripción del rol</label>
             <input type="text" id="Descripcion" name="Descripcion" required/>
 
             <label for="fecha_creacion">Fecha de Registro:</label>
             <input type="text" id="fecha_creacion" value="{{ fecha_actual }}" readonly />
+
+            <input type="hidden" name="Fecha_Actualizacion" value="{{ fecha_actual }}">
 
             <button type="submit">Guardar Rol</button>
         </form>
