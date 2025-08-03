@@ -9,24 +9,92 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <div class="almacen">
-        <h1>Formulario de Almacén</h1>
-        <form class="formulario" method="POST" action="#">
-            <label for="nombre">Nombre del Almacén</label>
-            <input type="text" id="nombre" name="Nombre_Almacen" required/>m
+    <div class="form-container">
+        <h2>Registrar Ingrediente en Almacén</h2>
+        <form method="POST" action="/registrar_almacen">
+            <div class="form-group">
+                <label for="nombre">Nombre del Ingrediente:</label>
+                <input type="text" id="nombre" name="nombre" required>
+            </div>
 
-            <label for="Direccion_Almacen">Dirección del Almacén</label>
-            <textarea id="Direccion_Almacen" name="Direccion_Almacen" required></textarea>
+            <div class="form-group">
+                <label for="descripcion">Descripción:</label>
+                <textarea id="descripcion" name="descripcion"></textarea>
+            </div>
 
-            <label for="Telefono_Almacen">Teléfono del Almacén</label>
-            <input type="tel" id="Telefono_Almacen" name="Telefono_Almacen" pattern="[0-9]{7,15}" placeholder="Número de teléfono" required/>
+            <div class="form-group">
+                <label for="categoria">Categoría:</label>
+                <select id="categoria" name="categoria" required onchange="cargarSubcategorias(this.value)">
+                    <option value="">Selecciona una categoría</option>
+                    {% for cat in categorias %}
+                        <option value="{{ cat.ID }}">{{ cat.Nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
 
-            <label for="Correo_Contacto">Correo de Contacto</label>
-            <input type="email" id="Correo_Contacto" name="Correo_Contacto" required/>
+            <div class="form-group">
+                <label for="subcategoria">Subcategoría:</label>
+                <select id="subcategoria" name="subcategoria" required>
+                    <option value="">Selecciona una subcategoría</option>
+                </select>
+            </div>
 
-            <button type="submit">Guardar Almacén</button>
+            <div class="form-group">
+                <label for="cantidad">Cantidad:</label>
+                <input type="number" id="cantidad" name="cantidad" step="0.01" required>
+            </div>
+
+            <div class="form-group">
+                <label for="unidad_medida">Unidad de Medida:</label>
+                <input type="text" id="unidad_medida" name="unidad_medida" required>
+            </div>
+
+            <div class="form-group">
+                <label for="costo_unitario">Costo Unitario:</label>
+                <input type="number" id="costo_unitario" name="costo_unitario" step="0.01">
+            </div>
+
+            <div class="form-group">
+                <label for="costo_total">Costo Total:</label>
+                <input type="number" id="costo_total" name="costo_total" step="0.01" required>
+            </div>
+
+            <div class="form-group">
+                <label for="fecha_entrada">Fecha de Entrada:</label>
+                <input type="date" id="fecha_entrada" name="fecha_entrada" required>
+            </div>
+
+            <div class="form-group">
+                <label for="fecha_caducidad">Fecha de Caducidad:</label>
+                <input type="date" id="fecha_caducidad" name="fecha_caducidad">
+            </div>
+
+            <div class="form-group">
+                <label for="estatus">Estatus:</label>
+                <select id="estatus" name="estatus">
+                    <option value="Activo">Activo</option>
+                    <option value="Agotado">Agotado</option>
+                    <option value="Descontinuado">Descontinuado</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="proveedor">Proveedor:</label>
+                <select id="proveedor" name="proveedor" required>
+                    <option value="">Selecciona un proveedor</option>
+                    {% for proveedor in proveedores %}
+                        <option value="{{ proveedor.ID }}" {% if proveedor.ID == proveedor_seleccionado %}selected{% endif %}>{{ proveedor.Nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit">Guardar</button>
+            </div>
         </form>
     </div>
+
+    <script src="{{ url_for('static', filename='js/formulario_almacen.js') }}"></script>
     
 </body>
 </html>

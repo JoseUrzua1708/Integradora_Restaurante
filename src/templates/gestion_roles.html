@@ -30,6 +30,7 @@
                             <th>ID</th>
                             <th>Nombre</th>
                             <th>Descripción</th>
+                            <th>Sucursal</th>
                             <th>Fecha de creación</th>
                             <th>Fecha de actualización</th>
                             <th>Acciones</th>
@@ -37,14 +38,16 @@
                     </thead>
                     <tbody>
                         {% for rol in roles %}
-                        <tr>
+                        <tr data-rol-id="{{ rol.ID }}">
                             <td>{{ rol.ID }}</td>
-                            <td>{{ rol.Nombre }}</td>
-                            <td>{{ rol.Descripcion }}</td>
-                            <td>{{ rol.Fecha_Creacion }}</td>
-                            <td>{{ rol.Fecha_Actualizacion }}</td>
+                            <td data-nombre>{{ rol.Nombre }}</td>
+                            <td data-descripcion>{{ rol.Descripcion }}</td>
+                            <td>{{ rol.Sucursal }}</td>
+                            <td>{{ rol.Fecha_Creacion.strftime('%Y-%m-%d %H:%M:%S') if rol.Fecha_Creacion else '' }}</td>
+                            <td>{{ rol.Fecha_Actualizacion.strftime('%Y-%m-%d %H:%M:%S') if rol.Fecha_Actualizacion else '' }}</td>
                             <td>
-                                <select onchange="manejarRol(this.value, '{{ rol.ID }}', '{{ rol.Nombre }}', '{{ rol.Descripcion }}')">
+                                <select class="accion-rol" data-id="{{ rol.ID }}" data-nombre="{{ rol.Nombre }}" 
+                                        data-descripcion="{{ rol.Descripcion }}" data-sucursal-id="{{ rol.Sucursal_ID }}">
                                     <option selected disabled>Opciones</option>
                                     <option value="Editar">Editar</option>
                                     <option value="Eliminar">Eliminar</option>
@@ -58,34 +61,47 @@
         </main>
     </div>   
     
-    <!-- Modal Editar Rol-->
-
+    <!-- Modal Editar Rol -->
     <div id="modal-editarRol" class="modal">
         <div class="modal-content">
             <h2>Editar Rol</h2>
-            <form action="" method="post" id="form-editar">
+            <form id="form-editar" method="POST">
                 <input type="hidden" name="id" id="edit-id">
+                
                 <div class="form-group">
                     <label for="edit-nombre">Nombre:</label>
-                    <input type="text" name="Nombre" id="edit-nombre" required>
+                    <input type="text" name="Nombre" id="edit-nombre" required maxlength="25">
                 </div>
 
                 <div class="form-group">
-                <label for="edit-descripcion">Descripción:</label>
-                <textarea name="Descripcion" id="edit-descripcion" required></textarea>
+                    <label for="edit-descripcion">Descripción:</label>
+                    <textarea name="Descripcion" id="edit-descripcion" required></textarea>
+                </div>
 
+                <div class="form-group">
+                    <label for="edit-sucursal">Sucursal:</label>
+                    <div class="select-wrapper">
+                        <select name="Sucursal_ID" id="edit-sucursal" required>
+                            <option value="">-- Seleccione una sucursal --</option>
+                            {% for sucursal in sucursales %}
+                                <option value="{{ sucursal.ID }}">{{ sucursal.Nombre }}</option>
+                            {% endfor %}
+                        </select>
+                        <div class="select-arrow">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="form-actions">
-                    <button type="submit" class="btn-guardar">Guardar</button>
                     <button type="button" class="btn-cancelar" onclick="cerrarEditar()">Cancelar</button>
+                    <button type="submit" class="btn-guardar">Guardar Cambios</button>
                 </div>
             </form>
         </div>
     </div>
 
     <!-- Modal Eliminar Rol -->
-
     <div id="modal-eliminarRol" class="modal">
         <div class="modal-content">
             <h2>¿Eliminar Rol?</h2>

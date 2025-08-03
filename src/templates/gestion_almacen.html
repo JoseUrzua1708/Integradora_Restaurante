@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Gestión de Almacén</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/gestion_almacen.css') }}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+<body>
+    {% include 'navbar.html' %}
+    <div class="container">
+        <main class="main-content">
+            <h1><i class="fas fa-boxes"></i> Gestión de Almacén</h1>
+
+            <div class="table-actions">
+                <a href="{{ url_for('formulario_almacen') }}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Nuevo Producto
+                </a>
+
+                <input type="text" id="searchInput" placeholder="Buscar producto..." onkeyup="filtrarTabla()" />
+            </div>
+
+            <table class="almacen-table" id="almacenTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Categoría</th>
+                        <th>Subcategoría</th>
+                        <th>Unidad</th>
+                        <th>Existencias</th>
+                        <th>Costo Unitario</th>
+                        <th>Fecha Ingreso</th>
+                        <th>Fecha Caducidad</th>
+                        <th>Estatus</th>
+                        <th>Proveedor</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for producto in productos %}
+                    <tr>
+                        <td>{{ producto.ID }}</td>
+                        <td>{{ producto.Nombre }}</td>
+                        <td>{{ producto.Categoria }}</td>
+                        <td>{{ producto.Subcategoria }}</td>
+                        <td>{{ producto.Unidad_Medida }}</td>
+                        <td>{{ producto.Cantidad }}</td>
+                        <td>${{ "%.2f"|format(producto.Costo_Unitario) }}</td>
+                        <td>{{ producto.Fecha_Entrada.strftime('%Y-%m-%d') }}</td>
+                        <td>{{ producto.Fecha_Caducidad.strftime('%Y-%m-%d') if producto.Fecha_Caducidad else '—' }}</td>
+                        <td>
+                            {% if producto.Estatus == 'Activo' %}
+                                <span class="estatus activo">Activo</span>
+                            {% elif producto.Estatus == 'Agotado' %}
+                                <span class="estatus agotado">Agotado</span>
+                            {% else %}
+                                <span class="estatus descontinuado">Descontinuado</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ producto.proveedor_id }}</td>
+                        <td>
+                            <a href="{{ url_for('editar_almacen', id=producto.ID) }}" class="btn-accion editar" title="Editar">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <form method="POST" action="{{ url_for('eliminar_almacen', id=producto.ID) }}" style="display:inline;">
+                                <button type="submit" class="btn-accion eliminar" title="Eliminar" onclick="return confirm('¿Seguro de eliminar?');">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </main>
+    </div>
+
+
+    <script src="{{ url_for('static', filename='js/gestion_almacen.js') }}"></script>
+</body>
+</html>

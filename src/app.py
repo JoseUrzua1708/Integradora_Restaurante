@@ -451,14 +451,29 @@ def formulario_roles():
     try:
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
-        cursor.execute("SELECT ID, Nombre, Descripcion, Fecha_Creacion, Fecha_Actualizacion FROM Roles")
-        roles = cursor.fetchall() 
+        
+        # Obtener la lista de roles
+        cursor.execute("SELECT ID, Nombre, Descripcion, Sucursal_ID, Fecha_Creacion, Fecha_Actualizacion FROM Roles")
+        roles = cursor.fetchall()
+        
+        # Obtener la lista de sucursales para el dropdown
+        cursor.execute("SELECT ID, Nombre FROM Sucursales")
+        sucursales = cursor.fetchall()
+        
         fecha_actual = datetime.now().strftime('%Y-%m-%d')
-        return render_template('formulario_roles.html', fecha_actual=fecha_actual, roles=roles)
+        
+        return render_template(
+            'formulario_roles.html',
+            fecha_actual=fecha_actual,
+            roles=roles,
+            sucursales=sucursales  # Pasar las sucursales a la plantilla
+        )
+        
     except Exception as e:
         app.logger.error(f"Error en formulario_roles: {str(e)}")
         flash("Error al cargar el formulario de roles", "error")
         return redirect(url_for('inicio'))
+        
     finally:
         if cursor is not None:
             cursor.close()
@@ -478,10 +493,11 @@ def guardar_rol():
         datos = {
             'Nombre': request.form['Nombre'].strip(),
             'Descripcion': request.form['Descripcion'].strip(),
+            'Sucursal_ID': request.form.get('Sucursal_ID')  # Using get() in case it's missing
         }
 
         # Validación de campos
-        if not all(datos.values()):
+        if not all([datos['Nombre'], datos['Descripcion']]):
             flash("Nombre y Descripción son campos obligatorios", "error")
             return redirect(url_for('formulario_roles'))
             
@@ -494,15 +510,35 @@ def guardar_rol():
             flash("El nombre solo puede contener letras, números y espacios", "error")
             return redirect(url_for('formulario_roles'))
 
+        # Validate Sucursal_ID is provided and is a number
+        if not datos['Sucursal_ID'] or not datos['Sucursal_ID'].isdigit():
+            flash("Debe seleccionar una sucursal válida", "error")
+            return redirect(url_for('formulario_roles'))
+
         conn = get_db_connection()
         cursor = conn.cursor()
+
+        # seleccionar la sucursal para el rol
+        cursor.execute("SELECT Nombre FROM Sucursales WHERE ID = %s", (datos['Sucursal_ID'],))
+
+        sucursal = cursor.fetchone()
+        if not sucursal:
+            flash("La sucursal seleccionada no existe", "error")
+            return redirect(url_for('formulario_roles'))
+        datos['Sucursal_ID'] = int(datos['Sucursal_ID'])  # Convert to integer for SQL
+        datos['Sucursal'] = sucursal[0]  # Store the name of the selected branch
+        # Insertar el nuevo rol en la base de datos
         
         try:
             query = """INSERT INTO Roles (
-                Nombre, Descripcion
-                ) VALUES (%s, %s)
+                Nombre, Descripcion, Sucursal_ID
+                ) VALUES (%s, %s, %s)
             """
-            cursor.execute(query, (datos['Nombre'], datos['Descripcion']))
+            cursor.execute(query, (
+                datos['Nombre'], 
+                datos['Descripcion'],
+                datos['Sucursal_ID']
+            ))
             
             # Obtener el ID generado automáticamente
             nuevo_id = cursor.lastrowid
@@ -515,6 +551,8 @@ def guardar_rol():
             conn.rollback()
             if 'Duplicate entry' in str(e):
                 flash("Ya existe un rol con ese nombre", "error")
+            elif 'foreign key constraint fails' in str(e):
+                flash("La sucursal seleccionada no existe", "error")
             else:
                 flash("Error de base de datos al guardar el rol", "error")
             return redirect(url_for('formulario_roles'))
@@ -526,15 +564,8 @@ def guardar_rol():
         return redirect(url_for('formulario_roles'))
         
     finally:
-        try:
-            if cursor: cursor.close()
-        except Exception as e:
-            app.logger.error(f"Error al cerrar cursor: {str(e)}")
-            
-        try:
-            if conn: conn.close()
-        except Exception as e:
-            app.logger.error(f"Error al cerrar conexión: {str(e)}")
+        if cursor: cursor.close()
+        if conn: conn.close()
 
 ################################################################################
 # Eliminar rol
@@ -564,36 +595,78 @@ def eliminar_rol(id):
 ################################################################################
 # actualizar rol
 ################################################################################
-
 @app.route('/actualizar/<int:id>', methods=['POST'])
 def actualizar_rol(id):
+    """Actualiza un rol existente"""
     conn = None
     cursor = None
     try:
-        nombre = request.form['Nombre'].strip()
-        descripcion = request.form['Descripcion'].strip()
+        datos = {
+            'id': id,
+            'Nombre': request.form['Nombre'].strip(),
+            'Descripcion': request.form['Descripcion'].strip(),
+            'Sucursal_ID': request.form.get('Sucursal_ID')  # Using get() in case it's missing
+        }
 
-        if not nombre or not descripcion:
-            flash("Todos los campos son obligatorios", "error")
-            return redirect(url_for('gestion_roles'))
+        # Validación de campos
+        if not all([datos['Nombre'], datos['Descripcion']]):
+            flash("Nombre y Descripción son campos obligatorios", "error")
+            return redirect(url_for('formulario_roles'))
+
+        if len(datos['Nombre']) > 25:
+            flash("El nombre del rol no puede superar los 25 caracteres", "error")
+            return redirect(url_for('formulario_roles'))
+
+        # Validar caracteres permitidos en el nombre
+        if not re.match(r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s]+$', datos['Nombre']):
+            flash("El nombre solo puede contener letras, números y espacios", "error")
+            return redirect(url_for('formulario_roles'))
+
+        # Validate Sucursal_ID is provided and is a number
+        if not datos['Sucursal_ID'] or not datos['Sucursal_ID'].isdigit():
+            flash("Debe seleccionar una sucursal válida", "error")
+            return redirect(url_for('formulario_roles'))
 
         conn = get_db_connection()
         cursor = conn.cursor()
-        cursor.execute("""
-            UPDATE Roles
-            SET Nombre = %s, Descripcion = %s
+
+        # seleccionar la sucursal para el rol
+        cursor.execute("SELECT Nombre FROM Sucursales WHERE ID = %s", (datos['Sucursal_ID'],))
+
+        sucursal = cursor.fetchone()
+        if not sucursal:
+            flash("La sucursal seleccionada no existe", "error")
+            return redirect(url_for('formulario_roles'))
+        
+        datos['Sucursal_ID'] = int(datos['Sucursal_ID'])  # Convert to integer for SQL
+        datos['Sucursal'] = sucursal[0]  # Store the name of the selected branch
+        
+        # Actualizar el rol en la base de datos
+        query = """
+            UPDATE Roles SET 
+                Nombre = %s, 
+                Descripcion = %s, 
+                Sucursal_ID = %s 
             WHERE ID = %s
-        """, (nombre, descripcion, id))
+        """
+        
+        cursor.execute(query, (
+            datos['Nombre'], 
+            datos['Descripcion'],
+            datos['Sucursal_ID'],
+            datos['id']
+        ))
         conn.commit()
         flash("Rol actualizado exitosamente", "success")
     except Exception as e:
         app.logger.error(f"Error al actualizar rol ID {id}: {str(e)}")
         flash("Error al actualizar el rol", "error")
     finally:
-        if cursor: cursor.close()
-        if conn: conn.close()
+        if cursor is not None:
+            cursor.close()
+        if conn is not None:
+            conn.close()
     return redirect(url_for('gestion_roles'))
-
 
 ################################################################################
 # Gestión de empleados
@@ -1738,6 +1811,191 @@ def eliminar_subcategoria_almacen(id):
         cursor.close()
         conn.close()
     return redirect(url_for('mostrar_categorias_almacen'))
+
+################################################################################
+# Gestion de almacen
+################################################################################
+
+
+# Ruta para mostrar productos almacen
+@app.route('/almacen')
+def mostrar_almacen():
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    query = """
+        SELECT a.ID, a.Nombre, a.Descripcion, a.Cantidad, a.Unidad_Medida, a.Costo_Unitario,
+               a.Costo_Total, a.Fecha_Entrada, a.Fecha_Caducidad, a.Estatus, a.Fecha_Registro,
+               s.Nombre AS Subcategoria, c.Nombre AS Categoria
+        FROM Almacen a
+        JOIN SUBCATEGORIA_ALMACEN s ON a.SUBCATEGORIA_ALMACEN_ID = s.ID
+        JOIN CATEGORIA_ALMACEN c ON s.CategoriaID = c.ID
+        ORDER BY a.Fecha_Registro DESC
+    """
+    cursor.execute(query)
+    productos = cursor.fetchall()
+
+    cursor.execute("SELECT ID, Nombre FROM CATEGORIA_ALMACEN WHERE Estatus='Activo' ORDER BY Nombre")
+    categorias = cursor.fetchall()
+
+    cursor.execute("SELECT ID, Nombre, CategoriaID FROM SUBCATEGORIA_ALMACEN WHERE Estatus='Activo' ORDER BY Nombre")
+    subcategorias = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+    return render_template('gestion_almacen.html', productos=productos, categorias=categorias, subcategorias=subcategorias)
+
+
+# Ruta para formulario nuevo producto
+@app.route('/formulario_almacen')
+def formulario_almacen():
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT ID, Nombre FROM CATEGORIA_ALMACEN WHERE Estatus='Activo' ORDER BY Nombre")
+    categorias = cursor.fetchall()
+
+    cursor.execute("SELECT ID, Nombre, CategoriaID FROM SUBCATEGORIA_ALMACEN WHERE Estatus='Activo' ORDER BY Nombre")
+    subcategorias = cursor.fetchall()
+
+    cursor.execute("SELECT ID, Nombre FROM Proveedores WHERE Estatus='Activo' ORDER BY Nombre")
+    proveedores = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+    return render_template('formulario_almacen.html', categorias=categorias, subcategorias=subcategorias, proveedores=proveedores)
+
+
+# Ruta para guardar nuevo producto
+@app.route('/registrar_almacen', methods=['POST'])
+def registrar_almacen():
+    try:
+        nombre = request.form['nombre']
+        descripcion = request.form.get('descripcion')
+        subcategoria_id = request.form['subcategoria']
+        cantidad = float(request.form['cantidad'])
+        unidad_medida = request.form['unidad_medida']
+        costo_unitario = request.form.get('costo_unitario')
+        costo_unitario = float(costo_unitario) if costo_unitario else None
+        costo_total = float(request.form['costo_total'])
+        fecha_entrada = request.form['fecha_entrada']
+        fecha_caducidad = request.form.get('fecha_caducidad') or None
+        estatus = request.form['estatus']
+        proveedor_id = request.form['proveedor']
+
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        query = """
+            INSERT INTO Almacen 
+            (Nombre, Descripcion, SUBCATEGORIA_ALMACEN_ID, Cantidad, Unidad_Medida,
+             Costo_Unitario, Costo_Total, Fecha_Entrada, Fecha_Caducidad, Estatus, Fecha_Registro, proveedor_id)
+            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,NOW(),%s)
+        """
+        cursor.execute(query, (nombre, descripcion, subcategoria_id, cantidad, unidad_medida,
+                               costo_unitario, costo_total, fecha_entrada, fecha_caducidad, estatus, proveedor_id))
+        conn.commit()
+        flash('Producto registrado exitosamente', 'success')
+    except Exception as e:
+        flash(f'Error al registrar producto: {e}', 'error')
+    finally:
+        cursor.close()
+        conn.close()
+    return redirect(url_for('mostrar_almacen'))
+
+
+# Ruta para formulario editar producto
+@app.route('/editar_almacen/<int:id>')
+def editar_almacen(id):
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    cursor.execute("SELECT * FROM Almacen WHERE ID = %s", (id,))
+    producto = cursor.fetchone()
+
+    cursor.execute("SELECT ID, Nombre FROM CATEGORIA_ALMACEN WHERE Estatus='Activo' ORDER BY Nombre")
+    categorias = cursor.fetchall()
+
+    cursor.execute("SELECT ID, Nombre, CategoriaID FROM SUBCATEGORIA_ALMACEN WHERE Estatus='Activo' ORDER BY Nombre")
+    subcategorias = cursor.fetchall()
+
+    cursor.execute("SELECT ID, Nombre FROM Proveedores WHERE Estatus='Activo' ORDER BY Nombre")
+    proveedores = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    if not producto:
+        flash('Producto no encontrado', 'error')
+        return redirect(url_for('mostrar_almacen'))
+
+    return render_template('formulario_almacen.html', producto=producto, categorias=categorias,
+                           subcategorias=subcategorias, proveedores=proveedores)
+
+
+# Ruta para actualizar producto
+@app.route('/actualizar_almacen/<int:id>', methods=['POST'])
+def actualizar_almacen(id):
+    try:
+        nombre = request.form['nombre']
+        descripcion = request.form.get('descripcion')
+        subcategoria_id = request.form['subcategoria']
+        cantidad = float(request.form['cantidad'])
+        unidad_medida = request.form['unidad_medida']
+        costo_unitario = request.form.get('costo_unitario')
+        costo_unitario = float(costo_unitario) if costo_unitario else None
+        costo_total = float(request.form['costo_total'])
+        fecha_entrada = request.form['fecha_entrada']
+        fecha_caducidad = request.form.get('fecha_caducidad') or None
+        estatus = request.form['estatus']
+        proveedor_id = request.form['proveedor']
+
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        query = """
+            UPDATE Almacen SET Nombre=%s, Descripcion=%s, SUBCATEGORIA_ALMACEN_ID=%s, Cantidad=%s,
+             Unidad_Medida=%s, Costo_Unitario=%s, Costo_Total=%s, Fecha_Entrada=%s,
+             Fecha_Caducidad=%s, Estatus=%s, proveedor_id=%s WHERE ID=%s
+        """
+        cursor.execute(query, (nombre, descripcion, subcategoria_id, cantidad, unidad_medida,
+                               costo_unitario, costo_total, fecha_entrada, fecha_caducidad, estatus, proveedor_id, id))
+        conn.commit()
+        flash('Producto actualizado correctamente', 'success')
+    except Exception as e:
+        flash(f'Error al actualizar producto: {e}', 'error')
+    finally:
+        cursor.close()
+        conn.close()
+    return redirect(url_for('mostrar_almacen'))
+
+
+# Ruta para eliminar producto
+@app.route('/eliminar_almacen/<int:id>', methods=['POST'])
+def eliminar_almacen(id):
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM Almacen WHERE ID = %s", (id,))
+        conn.commit()
+        flash('Producto eliminado correctamente', 'success')
+    except Exception as e:
+        flash(f'Error al eliminar producto: {e}', 'error')
+    finally:
+        cursor.close()
+        conn.close()
+    return redirect(url_for('mostrar_almacen'))
+
+
+# Ruta para obtener subcategorías por categoría (JSON para JS)
+@app.route('/subcategorias_por_categoria/<int:categoria_id>')
+def subcategorias_por_categoria(categoria_id):
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT ID, Nombre FROM SUBCATEGORIA_ALMACEN WHERE CategoriaID = %s AND Estatus='Activo' ORDER BY Nombre", (categoria_id,))
+    subcategorias = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return jsonify(subcategorias)
+
+
+
 
 ################################################################################
 # corer la aplicación
