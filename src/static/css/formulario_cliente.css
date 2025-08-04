@@ -1,82 +1,89 @@
-/* Estilos generales */
+:root {
+    --primary-color: #2c3e50;
+    --secondary-color: #34495e;
+    --accent-color: #2ecc71;
+    --hover-color: #27ae60;
+    --border-color: #acacac;
+    --background-light: #f5f7fa;
+    --background-card: #fff;
+    --shadow-color: rgba(0, 0, 0, 0.08);
+}
+
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f5f7fa;
+    background-color: var(--background-light);
     margin: 0;
     padding: 20px;
-    color: #333;
+    color: var(--primary-color);
 }
 
 .form-container {
     max-width: 1000px;
     margin: 30px auto;
-    padding: 25px;
-    background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    background-color: var(--background-card);
+    border-radius: 8px;
+    box-shadow: 0 4px 20px var(--shadow-color);
 }
 
 h1 {
-    color: #2c3e50;
-    margin-bottom: 25px;
-    font-size: 28px;
+    color: var(--primary-color);
+    margin-bottom: 2rem;
+    font-size: 1.8rem;
     text-align: center;
-    padding-bottom: 15px;
-    border-bottom: 1px solid #eee;
+    padding-bottom: 0;
+    border-bottom: none;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 10px;
 }
 
-/* Estructura del formulario */
 .form-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 25px;
+    gap: 1.5rem;
 }
 
 .form-section {
-    background-color: #f9f9f9;
-    padding: 20px;
-    border-radius: 8px;
-    border: 1px solid #eee;
+    padding: 0;
+    border-radius: 0;
+    border: none;
+    background-color: transparent;
 }
 
 .form-section h2 {
-    font-size: 18px;
-    color: #3498db;
-    margin-top: 0;
-    margin-bottom: 20px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid #ddd;
+    font-size: 1.2rem;
+    color: var(--secondary-color);
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border-color);
     display: flex;
     align-items: center;
     gap: 8px;
 }
 
-/* Estilos para los campos del formulario */
 .form-group {
-    margin-bottom: 18px;
+    margin-bottom: 1rem;
 }
 
 .form-group label {
     display: block;
-    margin-bottom: 6px;
-    font-weight: 500;
-    color: #2c3e50;
-    font-size: 14px;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--secondary-color);
+    font-size: 1rem;
 }
 
 .form-group input,
 .form-group select,
 .form-group textarea {
     width: 100%;
-    padding: 10px 12px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
+    padding: 0.8rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
     font-family: inherit;
-    font-size: 15px;
+    font-size: 1rem;
     transition: all 0.3s ease;
 }
 
@@ -84,8 +91,8 @@ h1 {
 .form-group select:focus,
 .form-group textarea:focus {
     outline: none;
-    border-color: #3498db;
-    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+    border-color: var(--hover-color);
+    box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.2);
 }
 
 .form-group textarea {
@@ -103,93 +110,90 @@ h1 {
     top: 50%;
     transform: translateY(-50%);
     cursor: pointer;
-    color: #7f8c8d;
+    color: var(--secondary-color);
     transition: color 0.2s;
 }
 
 .toggle-password:hover {
-    color: #3498db;
+    color: var(--accent-color);
 }
 
 .error-message {
     color: #e74c3c;
-    font-size: 13px;
-    margin-top: 5px;
+    font-size: 0.8rem;
+    margin-top: 0.5rem;
     display: none;
 }
 
-/* Estilos para validación */
 input:invalid, select:invalid {
-    border-color: #f8d7da;
+    border-color: #acacac;
 }
 
 input:valid, select:valid {
-    border-color: #d4edda;
+    border-color: var(--border-color);
 }
 
 input:invalid:focus, select:invalid:focus {
     border-color: #e74c3c;
-    box-shadow: 0 0 0 2px rgba(231, 76, 60, 0.2);
+    box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.2);
 }
 
-/* Estilos para botones */
 .form-actions {
     display: flex;
-    justify-content: flex-end;
-    gap: 15px;
-    margin-top: 25px;
-    padding-top: 20px;
-    border-top: 1px solid #eee;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 0;
+    border-top: none;
+    flex-wrap: wrap;
 }
 
 .btn {
-    padding: 10px 20px;
+    padding: 0.8rem 1.5rem;
     border: none;
-    border-radius: 5px;
+    border-radius: 4px;
     cursor: pointer;
-    font-weight: 500;
+    font-weight: 600;
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: 0.5rem;
     transition: all 0.3s ease;
-    font-size: 15px;
+    font-size: 1rem;
 }
 
 .btn-primary {
-    background-color: #3498db;
+    background-color: var(--accent-color);
     color: white;
 }
 
 .btn-primary:hover {
-    background-color: #2980b9;
+    background-color: var(--hover-color);
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .btn-secondary {
-    background-color: #95a5a6;
-    color: white;
+    background-color: #bdc3c7;
+    color: var(--primary-color);
 }
 
 .btn-secondary:hover {
-    background-color: #7f8c8d;
+    background-color: #95a5a6;
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Estilos para mensajes de error */
 .is-invalid {
     border-color: #e74c3c !important;
 }
 
 .invalid-feedback {
     color: #e74c3c;
-    font-size: 13px;
-    margin-top: 5px;
+    font-size: 0.8rem;
+    margin-top: 0.5rem;
     display: block;
 }
 
-/* Animaciones */
 @keyframes shake {
     0%, 100% { transform: translateX(0); }
     20%, 60% { transform: translateX(-5px); }
@@ -200,22 +204,27 @@ input:invalid:focus, select:invalid:focus {
     animation: shake 0.5s;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
+@media (min-width: 768px) {
+    .form-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .form-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 767px) {
     .form-container {
         padding: 15px;
         margin: 15px;
     }
-    
-    .form-grid {
-        grid-template-columns: 1fr;
-    }
-    
     .form-actions {
         flex-direction: column-reverse;
         gap: 10px;
     }
-    
     .btn {
         width: 100%;
         justify-content: center;

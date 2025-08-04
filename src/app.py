@@ -686,17 +686,24 @@ def gestion_empleados():
         LEFT JOIN Sucursales s ON e.Sucursal_ID = s.ID
         ORDER BY e.ID DESC
     """
+    cursor.execute(query)  
     empleados = cursor.fetchall()
-
-    cursor.execute("SELECT ID, Nombre FROM Roles WHERE Estatus = 'Activo'")
-    roles = cursor.fetchall()
-
-    cursor.execute("SELECT ID, Nombre FROM Sucursales WHERE Estatus = 'Activo'")
-    sucursales = cursor.fetchall()
-
     cursor.close()
     conn.close()
-    return render_template('gestion_empleados.html', empleados=empleados, roles=roles, sucursales=sucursales)
+    return render_template('gestion_empleados.html', empleados=empleados)
+
+
+@app.route('/empleados/<int:id>/data')
+def obtener_empleado_data(id):
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT * FROM Empleados WHERE ID = %s", (id,))
+    empleado = cursor.fetchone()
+    cursor.close()
+    conn.close()
+    if empleado:
+        return jsonify(empleado)
+    return jsonify({'message': 'Empleado no encontrado'}), 404
 
 ################################################################################
 # Formulario de empleados ----no quitar-----
