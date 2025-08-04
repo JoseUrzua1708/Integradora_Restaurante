@@ -23,12 +23,13 @@
                     </button>
                 </div>
             </div>
-            </header>
-        
-            <!-- Nav lateral prueba -->
+        </header>
+
+        <div class="admin-layout">
+
             <nav class="main-nav">
                 <ul class="nav-menu">
-                     <li>
+                    <li>
                         <a href="{{ url_for('gestion_reservaciones') }}" class="nav-link">
                             <svg class="icon" viewBox="0 0 24 24">
                                 <path fill="currentColor" d="M19 3h-1V1h-2v2H8V1H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2m0 16H5V9h14v10m0-12H5V5h14M7 11h5v5H7v-5z"/>
@@ -55,8 +56,8 @@
                     <li>
                         <a href="{{ url_for('gestion_sucursales') }}" class="nav-link">
                             <svg class="icon" viewBox="0 0 24 24">
-            <path fill="currentColor" d="M12 6a6 6 0 0 1 6 6c0 4.5-6 10-6 10S6 16.5 6 12a6 6 0 0 1 6-6m0 2a4 4 0 0 0-4 4c0 2.6 2.8 6 4 7.5c1.2-1.5 4-4.9 4-7.5a4 4 0 0 0-4-4m0 1.5a2.5 2.5 0 1 1 0 5a2.5 2.5 0 0 1 0-5Z"/>
-        </svg>
+                                <path fill="currentColor" d="M12 6a6 6 0 0 1 6 6c0 4.5-6 10-6 10S6 16.5 6 12a6 6 0 0 1 6-6m0 2a4 4 0 0 0-4 4c0 2.6 2.8 6 4 7.5c1.2-1.5 4-4.9 4-7.5a4 4 0 0 0-4-4m0 1.5a2.5 2.5 0 1 1 0 5a2.5 2.5 0 0 1 0-5Z"/>
+                            </svg>
                             Gestión de Sucursales
                         </a>
                     </li>
@@ -93,16 +94,17 @@
                         </a>
                     </li>
                 </ul>
-            </nav>         
+            </nav>
 
-        <!-- Seperacion -->
-        <main class="main-content">
-            <div class="dashboard-welcome">
-                <h2>Bienvenido al Sistema de Gestión</h2>
-                <p>Seleccione una opción del menú para comenzar</p>
-            </div>
-        </main>
-          
+            <main class="main-content">
+                <div class="dashboard-welcome">
+                    <h2>Bienvenido al Sistema de Gestión</h2>
+                    <p>Seleccione una opción del menú para comenzar</p>
+                </div>
+            </main>
+
+        </div> 
+
         <footer class="admin-footer">
             <div class="footer-content">
                 <div class="footer-info">
