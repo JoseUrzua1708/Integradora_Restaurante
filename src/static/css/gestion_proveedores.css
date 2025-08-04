@@ -138,4 +138,28 @@
         font-size: 0.8rem;
     }
 }
-    
+
+.btn-verde {
+    background-color: #28a745; 
+    color: white;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px; 
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.btn-verde:hover {
+    background-color: #218838; 
+    box-shadow: 0 4px 10px rgba(33, 136, 56, 0.4);
+}
+
+.btn-verde i {
+    font-size: 1.2rem; 
+}

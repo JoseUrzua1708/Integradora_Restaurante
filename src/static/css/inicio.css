@@ -2,6 +2,9 @@
     text-align: center;
     padding: 1.5rem;
     color: var(--primary-color);
+    opacity: 0;
+    transform: translateY(15px);
+    animation: elegantFadeIn 0.8s ease-out forwards;
 }
 
 .dashboard-welcome h2 {
@@ -18,8 +21,15 @@
     .dashboard-welcome {
         padding: 2rem;
     }
-    
+
     .dashboard-welcome h2 {
         font-size: 1.8rem;
+    }
+}
+
+@keyframes elegantFadeIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }
