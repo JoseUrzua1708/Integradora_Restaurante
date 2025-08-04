@@ -673,27 +673,41 @@ def actualizar_rol(id):
 ################################################################################
 @app.route('/gestion_empleados')
 def gestion_empleados():
-    """Muestra la lista de empleados"""
+    """Muestra la lista de empleados con datos de rol y sucursal"""
     conn = None
     cursor = None
     try:
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
-        cursor.execute("SELECT ID, Nombre, Apellido_p, Apellido_M, Correo, Telefono FROM Empleados")
+        query = """
+            SELECT 
+                e.ID, e.Nombre, e.Apellido_p, e.Apellido_M, e.Correo, e.Telefono,
+                e.Estatus, r.Nombre AS rol_nombre, s.Nombre AS sucursal_nombre,
+                e.Rol_ID, e.Sucursal_ID
+            FROM Empleados e
+            LEFT JOIN Roles r ON e.Rol_ID = r.ID
+            LEFT JOIN Sucursales s ON e.Sucursal_ID = s.ID
+            ORDER BY e.ID DESC
+        """
+        cursor.execute(query)
         empleados = cursor.fetchall()
-        return render_template('gestion_empleados.html', empleados=empleados)
+
+        # Total empleados (para paginación)
+        cursor.execute("SELECT COUNT(*) AS total FROM Empleados")
+        total = cursor.fetchone()['total']
+
+        return render_template('gestion_empleados.html', empleados=empleados, total_empleados=total)
     except Exception as e:
         app.logger.error(f"Error en gestion_empleados: {str(e)}")
         flash("Error al cargar los empleados", "error")
         return redirect(url_for('inicio'))
     finally:
-        if cursor is not None:
-            cursor.close()
-        if conn is not None:
-            conn.close()
+        if cursor: cursor.close()
+        if conn: conn.close()
+
 
 ################################################################################
-# Formulario de empleados
+# Formulario de empleados ----no quitar-----
 ################################################################################
 @app.route('/formulario_empleado')
 def formulario_empleado():
@@ -776,6 +790,73 @@ def guardar_empleado():
             cursor.close()
         if conn is not None:
             conn.close()
+
+
+################################################################################
+# Estatus empleado
+################################################################################
+
+@app.route('/activar_empleado/<int:id>')
+def activar_empleado(id):
+    return cambiar_estatus_empleado(id, 'Activo')
+
+@app.route('/desactivar_empleado/<int:id>')
+def desactivar_empleado(id):
+    return cambiar_estatus_empleado(id, 'Inactivo')
+
+def cambiar_estatus_empleado(id, nuevo_estatus):
+    conn = None
+    cursor = None
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("UPDATE Empleados SET Estatus = %s WHERE ID = %s", (nuevo_estatus, id))
+        conn.commit()
+        flash(f"Empleado {'activado' if nuevo_estatus == 'Activo' else 'desactivado'} exitosamente", "success")
+    except Exception as e:
+        app.logger.error(f"Error al cambiar estatus del empleado ID {id}: {str(e)}")
+        flash("Error al cambiar estatus del empleado", "error")
+    finally:
+        if cursor: cursor.close()
+        if conn: conn.close()
+    return redirect(url_for('gestion_empleados'))
+
+
+
+################################################################################
+# ver empleado
+################################################################################
+
+@app.route('/ver_empleado/<int:id>')
+def ver_empleado(id):
+    """Muestra detalles de un empleado"""
+    conn = None
+    cursor = None
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        query = """
+            SELECT 
+                e.*, r.Nombre AS rol_nombre, s.Nombre AS sucursal_nombre
+            FROM Empleados e
+            LEFT JOIN Roles r ON e.Rol_ID = r.ID
+            LEFT JOIN Sucursales s ON e.Sucursal_ID = s.ID
+            WHERE e.ID = %s
+        """
+        cursor.execute(query, (id,))
+        empleado = cursor.fetchone()
+        if not empleado:
+            flash("Empleado no encontrado", "error")
+            return redirect(url_for('gestion_empleados'))
+        return render_template('detalle_empleado.html', empleado=empleado)
+    except Exception as e:
+        app.logger.error(f"Error al cargar detalles del empleado: {str(e)}")
+        flash("Error al mostrar los detalles", "error")
+        return redirect(url_for('gestion_empleados'))
+    finally:
+        if cursor: cursor.close()
+        if conn: conn.close()
+
 
 ################################################################################
 # eliminar empleado

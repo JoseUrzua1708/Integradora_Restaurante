@@ -24,13 +24,13 @@
 
                     <div class="actions-right">
                         <div class="search-box">
-    <input type="text" placeholder="Buscar empleado..." id="searchInput">
-    <button class="btn-search" id="searchButton">
-        <i class="fas fa-search"></i>
-    </button>
-</div>
-
+                        <input type="text" placeholder="Buscar empleado..." id="searchInput">
+                        <button class="btn-search" id="searchButton">
+                            <i class="fas fa-search"></i>
+                        </button>
                     </div>
+
+        
                 </div>
                 
                 <div class="table-responsive">
@@ -86,21 +86,6 @@
                             {% endfor %}
                         </tbody>
                     </table>
-                </div>
-                
-                <div class="table-footer">
-                    <div class="pagination-info" id="paginationInfo">
-                        Mostrando {{ empleados|length }} de {{ total_empleados }} empleados
-                    </div>
-                    <div class="pagination-controls">
-                        <button class="btn-pagination" id="prevPage" disabled>
-                            <i class="fas fa-chevron-left"></i>
-                        </button>
-                        <span class="page-number" id="currentPage">1</span>
-                        <button class="btn-pagination" id="nextPage">
-                            <i class="fas fa-chevron-right"></i>
-                        </button>
-                    </div>
                 </div>
             </div>
         </main>

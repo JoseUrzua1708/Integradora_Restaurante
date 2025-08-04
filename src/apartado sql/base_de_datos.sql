@@ -138,6 +138,34 @@ CREATE TABLE Empleados (
 );
 
 
+INSERT INTO Empleados (
+    Rol_ID, Sucursal_ID, Nombre, Apellido_P, Apellido_M, Correo, Contraseña,
+    Telefono, RFC, CURP, Direccion, Fecha_Nacimiento, Genero, Estatus,
+    Ultimo_Acceso, Salario, Tipo_Contrato, Fecha_Contratacion, Fecha_Terminacion
+) VALUES (
+    1, -- Rol_ID
+    1, -- Sucursal_ID
+    'Carlos',
+    'García',
+    'López',
+    'carlos.garcia@example.com',
+    'clave123', 
+    '5512345678',
+    'GALC800101ABC', -- RFC
+    'GACL800101HDFLRR00', -- CURP
+    'Av. Siempre Viva 742, CDMX',
+    '1980-01-01',
+    'Masculino',
+    'Activo',
+    NOW(), -- Ultimo_Acceso
+    25000.00,
+    'Tiempo Completo',
+    '2020-05-01',
+    NULL
+);
+
+
+
 
 CREATE TABLE Proveedores (
     ID INT PRIMARY KEY AUTO_INCREMENT,
