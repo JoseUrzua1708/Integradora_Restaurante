@@ -4,30 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Clientes</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}" />
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/gestion_clientes.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/gestion_clientes.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     {% include 'navbar.html' %}
+    
     <div class="container">
         <main class="main-content">
             <div class="table-container">
                 <h1><i class="fas fa-users"></i> Gestión de Clientes</h1>
-
+                
                 <div class="table-actions">
-                    <div class="actions-left">
-                        <a href="{{ url_for('formulario_cliente') }}" class="btn btn-primary">
-                            <i class="fas fa-plus"></i> Añadir Cliente
-                        </a>
-                    </div>
-                    <div class="actions-right">
-                        <div class="search-box">
-                            <input type="text" placeholder="Buscar cliente..." id="searchInput">
-                            <button class="btn-search" id="searchButton">
-                                <i class="fas fa-search"></i>
-                            </button>
-                        </div>
+                    <a href="{{ url_for('formulario_cliente') }}" class="btn-verde">
+                        <i class="fas fa-plus"></i> Añadir Cliente
+                    </a>
+                    
+                    <div class="search-box">
+                        <input type="text" id="searchInput" placeholder="Buscar clientes...">
+                        <button id="searchButton"><i class="fas fa-search"></i></button>
                     </div>
                 </div>
 
@@ -35,45 +31,48 @@
                     <table class="table" id="clientesTable">
                         <thead>
                             <tr>
-                                <th data-column="id">ID <i class="fas fa-sort sort-icon"></i></th>
-                                <th data-column="nombre">Nombre <i class="fas fa-sort sort-icon"></i></th>
-                                <th data-column="apellido_p">Apellido P <i class="fas fa-sort sort-icon"></i></th>
-                                <th data-column="apellido_m">Apellido M <i class="fas fa-sort sort-icon"></i></th>
-                                <th data-column="correo">Correo <i class="fas fa-sort sort-icon"></i></th>
-                                <th data-column="telefono">Teléfono</th>
-                                <th data-column="genero">Género</th>
-                                <th data-column="fecha_registro">Registro</th>
-                                <th data-column="sucursal">Sucursal</th>
-                                <th data-column="estatus">Estatus</th>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Apellidos</th>
+                                <th>Correo</th>
+                                <th>Teléfono</th>
+                                <th>Género</th>
+                                <th>Registro</th>
+                                <th>Estatus</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
-                        <tbody id="clientesBody">
+                        <tbody>
                             {% for cliente in clientes %}
                             <tr data-id="{{ cliente.ID }}">
                                 <td>{{ cliente.ID }}</td>
                                 <td>{{ cliente.Nombre }}</td>
-                                <td>{{ cliente.Apellido_P }}</td>
-                                <td>{{ cliente.Apellido_M if cliente.Apellido_M else '-' }}</td>
+                                <td>{{ cliente.Apellido_P }} {{ cliente.Apellido_M or '' }}</td>
                                 <td>{{ cliente.Correo }}</td>
-                                <td>{{ cliente.Telefono if cliente.Telefono else '-' }}</td>
+                                <td>{{ cliente.Telefono or '-' }}</td>
                                 <td>{{ cliente.Genero }}</td>
-                                <td>{{ cliente.Fecha_Registro }}</td>
-                                <td>{{ cliente.sucursal_nombre if cliente.sucursal_nombre else (cliente.Sucursal_ID if cliente.Sucursal_ID else '-') }}</td>
+                                <td>{{ cliente.Fecha_Registro.strftime('%d/%m/%Y') }}</td>
                                 <td>
-                                    <span class="status status-{{ cliente.Estatus.lower() }}">
+                                    <span class="estatus estatus-{{ cliente.Estatus.lower() }}">
                                         {{ cliente.Estatus }}
                                     </span>
                                 </td>
-                                <td class="actions">
-                                    <i class="fas fa-edit action-icon" title="Editar"></i>
-                                    <i class="fas fa-eye action-icon" title="Ver"></i>
+                                <td class="acciones">
+                                    <a href="{{ url_for('formulario_cliente', id=cliente.ID) }}" class="btn-accion" title="Editar">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
                                     {% if cliente.Estatus == 'Activo' %}
-                                    <i class="fas fa-user-slash action-icon" title="Desactivar"></i>
+                                    <a href="{{ url_for('cambiar_estado_cliente', id=cliente.ID, estado='Inactivo') }}" class="btn-accion" title="Desactivar">
+                                        <i class="fas fa-user-slash"></i>
+                                    </a>
                                     {% else %}
-                                    <i class="fas fa-user-check action-icon" title="Activar"></i>
+                                    <a href="{{ url_for('cambiar_estado_cliente', id=cliente.ID, estado='Activo') }}" class="btn-accion" title="Activar">
+                                        <i class="fas fa-user-check"></i>
+                                    </a>
                                     {% endif %}
-                                    <i class="fas fa-trash action-icon" title="Eliminar"></i>
+                                    <a href="{{ url_for('eliminar_cliente', id=cliente.ID) }}" class="btn-accion btn-eliminar" title="Eliminar" onclick="return confirm('¿Está seguro de eliminar este cliente?')">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </a>
                                 </td>
                             </tr>
                             {% endfor %}
@@ -82,101 +81,14 @@
                 </div>
 
                 <div class="table-footer">
-                    <div class="pagination-info" id="paginationInfo">
-                        Mostrando {{ clientes|length }} de {{ total_clientes }} clientes
-                    </div>
-                    <div class="pagination-controls">
-                        <button class="btn-pagination" id="prevPage" disabled>
-                            <i class="fas fa-chevron-left"></i>
-                        </button>
-                        <span class="page-number" id="currentPage">1</span>
-                        <button class="btn-pagination" id="nextPage">
-                            <i class="fas fa-chevron-right"></i>
-                        </button>
+                    <div class="pagination-info">
+                        Mostrando {{ clientes|length }} clientes
                     </div>
                 </div>
             </div>
         </main>
     </div>
 
-    <!-- Modal para agregar cliente -->
-    <div class="modal" id="addClientModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Agregar Cliente</h5>
-                <button type="button" class="close-btn">&times;</button>
-            </div>
-            <div class="modal-body">
-                <form id="addClientForm">
-                    <div class="form-group">
-                        <label for="nombre">Nombre</label>
-                        <input type="text" id="nombre" placeholder="Nombre" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="apellido_p">Apellido Paterno</label>
-                        <input type="text" id="apellido_p" placeholder="Apellido Paterno" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="apellido_m">Apellido Materno</label>
-                        <input type="text" id="apellido_m" placeholder="Apellido Materno">
-                    </div>
-                    <div class="form-group">
-                        <label for="correo">Correo</label>
-                        <input type="email" id="correo" placeholder="Correo" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="telefono">Teléfono</label>
-                        <input type="tel" id="telefono" placeholder="Teléfono">
-                    </div>
-                    <div class="form-group">
-                        <label for="genero">Género</label>
-                        <select id="genero" required>
-                            <option value="">Seleccionar</option>
-                            <option value="Masculino">Masculino</option>
-                            <option value="Femenino">Femenino</option>
-                            <option value="Otro">Otro</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="sucursal">Sucursal</label>
-                        <select id="sucursal">
-                            <option value="0">Seleccionar</option>
-                            {% for sucursal in sucursales %}
-                            <option value="{{ sucursal.ID }}">{{ sucursal.Nombre }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary close-btn">Cancelar</button>
-                <button type="button" class="btn btn-primary" id="addClientButton">Agregar</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal para editar cliente -->
-    <div class="modal" id="editClientModal">
-        <!-- Similar estructura al modal de agregar pero con datos precargados -->
-    </div>
-
-    <!-- Modal para eliminar cliente -->
-    <div class="modal" id="deleteClientModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Eliminar Cliente</h5>
-                <button type="button" class="close-btn">&times;</button>
-            </div>
-            <div class="modal-body">
-                <p>¿Está seguro de eliminar este cliente?</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary close-btn">Cancelar</button>
-                <button type="button" class="btn btn-danger" id="deleteClientButton">Eliminar</button>
-            </div>
-        </div>
-    </div>
-
-      <script src="{{ url_for('static', filename='js/gestion_clientes.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/gestion_clientes.js') }}"></script>
 </body>
 </html>

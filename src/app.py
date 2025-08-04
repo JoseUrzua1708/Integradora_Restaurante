@@ -26,7 +26,7 @@ app.secret_key = os.getenv('SECRET_KEY', 'your-secret-key-here')
 db_config = {
     'host': os.getenv('DB_HOST', 'localhost'),
     'user': os.getenv('DB_USER', 'root'),
-    'password': os.getenv('DB_PASSWORD', '12345'),
+    'password': os.getenv('DB_PASSWORD', 'Jose1708$'),
     'database': os.getenv('DB_NAME', 'administracion'),
     'pool_name': 'restaurante_pool',
     'pool_size': 5,
@@ -669,42 +669,34 @@ def actualizar_rol(id):
     return redirect(url_for('gestion_roles'))
 
 ################################################################################
-# Gestión de empleados
+# Gestión de empleados---no quitar---
 ################################################################################
 @app.route('/gestion_empleados')
 def gestion_empleados():
-    """Muestra la lista de empleados con datos de rol y sucursal"""
-    conn = None
-    cursor = None
-    try:
-        conn = get_db_connection()
-        cursor = conn.cursor(dictionary=True)
-        query = """
-            SELECT 
-                e.ID, e.Nombre, e.Apellido_p, e.Apellido_M, e.Correo, e.Telefono,
-                e.Estatus, r.Nombre AS rol_nombre, s.Nombre AS sucursal_nombre,
-                e.Rol_ID, e.Sucursal_ID
-            FROM Empleados e
-            LEFT JOIN Roles r ON e.Rol_ID = r.ID
-            LEFT JOIN Sucursales s ON e.Sucursal_ID = s.ID
-            ORDER BY e.ID DESC
-        """
-        cursor.execute(query)
-        empleados = cursor.fetchall()
+    """Muestra la lista de empleados"""
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    query = """
+        SELECT 
+            e.ID, e.Nombre, e.Apellido_p, e.Apellido_M, e.Correo, e.Telefono,
+            e.Estatus, r.Nombre AS rol_nombre, s.Nombre AS sucursal_nombre,
+            e.Rol_ID, e.Sucursal_ID
+        FROM Empleados e
+        LEFT JOIN Roles r ON e.Rol_ID = r.ID
+        LEFT JOIN Sucursales s ON e.Sucursal_ID = s.ID
+        ORDER BY e.ID DESC
+    """
+    empleados = cursor.fetchall()
 
-        # Total empleados (para paginación)
-        cursor.execute("SELECT COUNT(*) AS total FROM Empleados")
-        total = cursor.fetchone()['total']
+    cursor.execute("SELECT ID, Nombre FROM Roles WHERE Estatus = 'Activo'")
+    roles = cursor.fetchall()
 
-        return render_template('gestion_empleados.html', empleados=empleados, total_empleados=total)
-    except Exception as e:
-        app.logger.error(f"Error en gestion_empleados: {str(e)}")
-        flash("Error al cargar los empleados", "error")
-        return redirect(url_for('inicio'))
-    finally:
-        if cursor: cursor.close()
-        if conn: conn.close()
+    cursor.execute("SELECT ID, Nombre FROM Sucursales WHERE Estatus = 'Activo'")
+    sucursales = cursor.fetchall()
 
+    cursor.close()
+    conn.close()
+    return render_template('gestion_empleados.html', empleados=empleados, roles=roles, sucursales=sucursales)
 
 ################################################################################
 # Formulario de empleados ----no quitar-----
@@ -1495,152 +1487,279 @@ def guardar_reserva():
 ################################################################################
 @app.route('/gestion_clientes')
 def gestion_clientes():
-    """Muestra la lista de clientes"""
+    """Muestra la lista de clientes con paginación y búsqueda"""
     conn = None
     cursor = None
     try:
+        # Obtener parámetros
+        page = request.args.get('page', 1, type=int)
+        per_page = 10
+        search_term = request.args.get('search', '').strip()
+
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
-        cursor.execute("SELECT * FROM Clientes")
+
+        # Consulta con búsqueda
+        query = """
+            SELECT * FROM Clientes
+            WHERE Nombre LIKE %s OR Apellido_P LIKE %s OR Correo LIKE %s
+            ORDER BY Fecha_Registro DESC
+            LIMIT %s OFFSET %s
+        """
+        search_pattern = f"%{search_term}%"
+        offset = (page - 1) * per_page
+        cursor.execute(query, (search_pattern, search_pattern, search_pattern, per_page, offset))
         clientes = cursor.fetchall()
-        return render_template('gestion_clientes.html', clientes=clientes)
+
+        # Contar total
+        count_query = """
+            SELECT COUNT(*) as total 
+            FROM Clientes
+            WHERE Nombre LIKE %s OR Apellido_P LIKE %s OR Correo LIKE %s
+        """
+        cursor.execute(count_query, (search_pattern, search_pattern, search_pattern))
+        total = cursor.fetchone()['total']
+
+        return render_template(
+            'gestion_clientes.html',
+            clientes=clientes,
+            page=page,
+            per_page=per_page,
+            total=total,
+            search_term=search_term
+        )
+
     except Exception as e:
         app.logger.error(f"Error en gestion_clientes: {e}")
         flash("Error al cargar los clientes", "error")
         return redirect(url_for('inicio'))
+    
     finally:
-        if cursor:
-            cursor.close()
-        if conn:
-            conn.close()
+        if cursor: cursor.close()
+        if conn: conn.close()
 
 ################################################################################
-# Formulario de clientes (nuevo o editar)
+# Formulario de clientes
 ################################################################################
-@app.route('/formulario_clientes', methods=['GET'])
-@app.route('/formulario_clientes/<int:id>', methods=['GET'])
+@app.route('/formulario_cliente/<int:id>', methods=['GET'])
+@app.route('/formulario_cliente', methods=['GET'])
 def formulario_cliente(id=None):
-    """Muestra el formulario para registrar o editar un cliente"""
-    cliente = None
-    if id:
-        try:
+    """Muestra el formulario para agregar o editar un cliente"""
+    conn = None
+    cursor = None
+    try:
+        cliente = None
+        if id:
             conn = get_db_connection()
             cursor = conn.cursor(dictionary=True)
             cursor.execute("SELECT * FROM Clientes WHERE ID = %s", (id,))
             cliente = cursor.fetchone()
-        except Exception as e:
-            app.logger.error(f"Error al obtener cliente: {e}")
-            flash("Error al cargar el cliente", "error")
-        finally:
-            if cursor:
-                cursor.close()
-            if conn:
-                conn.close()
-    return render_template('formulario_cliente.html', cliente=cliente)
+            if not cliente:
+                flash("Cliente no encontrado", "error")
+                return redirect(url_for('gestion_clientes'))
+
+        return render_template(
+            'formulario_cliente.html',
+            cliente=cliente,
+            generos=['Masculino', 'Femenino', 'Otro', 'Prefiero no decir'],
+            estatus_options=['Activo', 'Inactivo', 'Bloqueado']
+        )
+
+    except Exception as e:
+        app.logger.error(f"Error en formulario_cliente: {e}")
+        flash("Error al cargar el formulario", "error")
+        return redirect(url_for('gestion_clientes'))
+    
+    finally:
+        if cursor: cursor.close()
+        if conn: conn.close()
 
 ################################################################################
-# Guardar cliente (crear o actualizar)
+# Guardar cliente
 ################################################################################
 @app.route('/guardar_cliente', methods=['POST'])
 def guardar_cliente():
     conn = None
     cursor = None
     try:
-        id_cliente = request.form.get('id')
-
+        # Obtener datos del formulario
         datos = {
+            'id': request.form.get('id'),
             'nombre': request.form['nombre'].strip(),
             'apellido_p': request.form['apellido_p'].strip(),
             'apellido_m': request.form.get('apellido_m', '').strip(),
-            'correo': request.form['correo'].strip(),
+            'correo': request.form['correo'].strip().lower(),
             'telefono': request.form.get('telefono', '').strip(),
             'fecha_nacimiento': request.form['fecha_nacimiento'],
             'genero': request.form['genero'],
-            'preferencias': request.form['preferencias'],
-            'restricciones': request.form['restricciones'],
-            'estatus': request.form.get('estatus', 'Activo'),
-            'sucursal': request.form.get('sucursal', '')
+            'preferencias': request.form.get('preferencias', ''),
+            'restricciones': request.form.get('restricciones', ''),
+            'estatus': request.form.get('estatus', 'Activo')
         }
 
-        campos_requeridos = ['nombre', 'apellido_p', 'correo', 'telefono', 'fecha_nacimiento', 'genero',
-                             'preferencias', 'restricciones', 'estatus']
-        if not all(datos[campo] for campo in campos_requeridos):
-            flash("Todos los campos obligatorios deben completarse", "error")
-            return redirect(url_for('formulario_cliente'))
+        # Validaciones
+        errors = []
+        if len(datos['nombre']) > 25:
+            errors.append("Nombre no puede exceder 25 caracteres")
+        if len(datos['apellido_p']) > 20:
+            errors.append("Apellido paterno no puede exceder 20 caracteres")
+        if not datos['fecha_nacimiento']:
+            errors.append("Fecha de nacimiento es obligatoria")
+        if not datos['correo']:
+            errors.append("Correo electrónico es obligatorio")
+        elif not re.match(r"[^@]+@[^@]+\.[^@]+", datos['correo']):
+            errors.append("Correo electrónico no es válido")
+
+        if errors:
+            for error in errors:
+                flash(error, "error")
+            return redirect(url_for('formulario_cliente', id=datos['id']))
 
         conn = get_db_connection()
         cursor = conn.cursor()
 
-        if id_cliente:
-            datos['id'] = id_cliente
+        if datos['id']:  # Actualización
+            # Verificar correo único
+            cursor.execute(
+                "SELECT ID FROM Clientes WHERE Correo = %s AND ID != %s",
+                (datos['correo'], datos['id'])
+            )
+            if cursor.fetchone():
+                flash("El correo ya está registrado", "error")
+                return redirect(url_for('formulario_cliente', id=datos['id']))
+
             query = """
-                UPDATE Clientes SET 
-                    Nombre = %(nombre)s,
-                    Apellido_P = %(apellido_p)s,
-                    Apellido_M = %(apellido_m)s,
-                    Correo = %(correo)s,
-                    Telefono = %(telefono)s,
-                    Fecha_Nacimiento = %(fecha_nacimiento)s,
-                    Genero = %(genero)s,
-                    Preferencias = %(preferencias)s,
-                    Restricciones_Alimenticias = %(restricciones)s,
-                    Estatus = %(estatus)s,
-                    Sucursal_ID = %(sucursal)s
-                WHERE ID = %(id)s
-            """
-            cursor.execute(query, datos)
-            flash("Cliente actualizado exitosamente", "success")
-        else:
-            query = """
-                INSERT INTO Clientes (
-                    Nombre, Apellido_P, Apellido_M, Correo, Telefono, Fecha_Nacimiento, Genero, Preferencias, 
-                    Restricciones_Alimenticias, Estatus, Sucursal_ID
-                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                UPDATE Clientes SET
+                    Nombre = %s,
+                    Apellido_P = %s,
+                    Apellido_M = %s,
+                    Correo = %s,
+                    Telefono = %s,
+                    Fecha_Nacimiento = %s,
+                    Genero = %s,
+                    Preferencias = %s,
+                    Restricciones_Alimenticias = %s,
+                    Estatus = %s,
+                    Fecha_Ultima_Actualizacion = NOW()
+                WHERE ID = %s
             """
             cursor.execute(query, (
-                datos['nombre'], datos['apellido_p'], datos['apellido_m'], datos['correo'],
-                datos['telefono'], datos['fecha_nacimiento'], datos['genero'], datos['preferencias'],
-                datos['restricciones'], datos['estatus'], datos['sucursal']
+                datos['nombre'], datos['apellido_p'], datos['apellido_m'],
+                datos['correo'], datos['telefono'], datos['fecha_nacimiento'],
+                datos['genero'], datos['preferencias'], datos['restricciones'],
+                datos['estatus'], datos['id']
             ))
-            flash("Cliente registrado exitosamente", "success")
+            mensaje = "Cliente actualizado exitosamente"
+        else:  # Inserción
+            # Verificar correo único
+            cursor.execute("SELECT ID FROM Clientes WHERE Correo = %s", (datos['correo'],))
+            if cursor.fetchone():
+                flash("El correo ya está registrado", "error")
+                return redirect(url_for('formulario_cliente'))
+
+            query = """
+                INSERT INTO Clientes (
+                    Nombre, Apellido_P, Apellido_M, Correo, Telefono, 
+                    Fecha_Nacimiento, Genero, Preferencias, 
+                    Restricciones_Alimenticias, Estatus
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """
+            cursor.execute(query, (
+                datos['nombre'], datos['apellido_p'], datos['apellido_m'],
+                datos['correo'], datos['telefono'], datos['fecha_nacimiento'],
+                datos['genero'], datos['preferencias'], datos['restricciones'],
+                datos['estatus']
+            ))
+            mensaje = "Cliente registrado exitosamente"
 
         conn.commit()
+        flash(mensaje, "success")
         return redirect(url_for('gestion_clientes'))
 
     except Exception as e:
-        logging.error(f"Error en guardar_cliente: {str(e)}")
+        if conn: conn.rollback()
+        app.logger.error(f"Error al guardar cliente: {str(e)}")
         flash("Error técnico al guardar el cliente", "error")
-        return redirect(url_for('formulario_cliente'))
-
+        return redirect(url_for('formulario_cliente', id=request.form.get('id')))
+    
     finally:
-        if cursor:
-            cursor.close()
-        if conn:
-            conn.close()
+        if cursor: cursor.close()
+        if conn: conn.close()
+
+################################################################################
+# Cambiar estado del cliente
+################################################################################
+@app.route('/cambiar_estado/<int:id>/<string:estado>')
+def cambiar_estado_cliente(id, estado):
+    """Cambia el estado de un cliente"""
+    conn = None
+    cursor = None
+    try:
+        if estado not in ['Activo', 'Inactivo', 'Bloqueado']:
+            flash("Estado no válido", "error")
+            return redirect(url_for('gestion_clientes'))
+
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Verificar existencia
+        cursor.execute("SELECT ID FROM Clientes WHERE ID = %s", (id,))
+        if not cursor.fetchone():
+            flash("Cliente no encontrado", "error")
+            return redirect(url_for('gestion_clientes'))
+
+        cursor.execute(
+            "UPDATE Clientes SET Estatus = %s WHERE ID = %s",
+            (estado, id)
+        )
+        conn.commit()
+        
+        flash(f"Estado cambiado a {estado}", "success")
+        return redirect(url_for('gestion_clientes'))
+    
+    except Exception as e:
+        if conn: conn.rollback()
+        app.logger.error(f"Error al cambiar estado: {str(e)}")
+        flash("Error al cambiar estado", "error")
+        return redirect(url_for('gestion_clientes'))
+    
+    finally:
+        if cursor: cursor.close()
+        if conn: conn.close()
 
 ################################################################################
 # Eliminar cliente
 ################################################################################
-@app.route('/eliminar/<int:id>')
+@app.route('/eliminar_cliente/<int:id>')
 def eliminar_cliente(id):
-    """Elimina un cliente por ID"""
+    """Elimina un cliente"""
     conn = None
     cursor = None
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
+        
+        # Verificar existencia
+        cursor.execute("SELECT ID FROM Clientes WHERE ID = %s", (id,))
+        if not cursor.fetchone():
+            flash("Cliente no encontrado", "error")
+            return redirect(url_for('gestion_clientes'))
+        
         cursor.execute("DELETE FROM Clientes WHERE ID = %s", (id,))
         conn.commit()
-        flash("Cliente eliminado exitosamente", "success")
+        
+        flash("Cliente eliminado", "success")
+        return redirect(url_for('gestion_clientes'))
+    
     except Exception as e:
-        logging.error(f"Error al eliminar cliente: {str(e)}")
-        flash("Error técnico al eliminar el cliente", "error")
+        if conn: conn.rollback()
+        app.logger.error(f"Error al eliminar: {str(e)}")
+        flash("Error al eliminar cliente", "error")
+        return redirect(url_for('gestion_clientes'))
+    
     finally:
-        if cursor:
-            cursor.close()
-        if conn:
-            conn.close()
-    return redirect(url_for('gestion_clientes'))
+        if cursor: cursor.close()
+        if conn: conn.close()
 
 ################################################################################
 # Configuración categoria almacenamiento
@@ -1678,8 +1797,6 @@ def mostrar_categorias_almacen():
     finally:
         if cursor: cursor.close()
         if conn: conn.close()
-
-
 
 ################################################################################
 # Formulario categoria almacenamiento

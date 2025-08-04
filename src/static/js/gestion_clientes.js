@@ -1,275 +1,306 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Variables globales
-    let currentPage = 1;
-    const rowsPerPage = 10;
-    let allClients = [];
-    let filteredClients = [];
-    let sortColumn = 'id';
-    let sortDirection = 'asc';
+    // Configuration
+    const config = {
+        rowsPerPage: 10,
+        currentPage: 1,
+        sortColumn: 'id',
+        sortDirection: 'asc',
+        clients: [],
+        filteredClients: []
+    };
 
-    // Inicialización
-    initTable();
-    setupEventListeners();
+    // DOM Elements
+    const elements = {
+        table: document.getElementById('clientesTable'),
+        tbody: document.getElementById('clientesBody'),
+        searchInput: document.getElementById('searchInput'),
+        searchButton: document.getElementById('searchButton'),
+        prevPage: document.getElementById('prevPage'),
+        nextPage: document.getElementById('nextPage'),
+        currentPage: document.getElementById('currentPage'),
+        paginationInfo: document.getElementById('paginationInfo'),
+        addClientModal: document.getElementById('addClientModal'),
+        editClientModal: document.getElementById('editClientModal'),
+        deleteClientModal: document.getElementById('deleteClientModal')
+    };
 
-    function initTable() {
-        // Obtener todos los clientes de la tabla
-        const rows = document.querySelectorAll('#clientesBody tr');
-        allClients = Array.from(rows).map(row => {
-            return {
-                id: row.getAttribute('data-id'),
-                cells: Array.from(row.cells).map(cell => cell.textContent.trim()),
-                element: row
-            };
-        });
+    // Initialize the application
+    init();
+
+    function init() {
+        loadClients();
+        setupEventListeners();
+    }
+
+    function loadClients() {
+        // In a real app, this would be an AJAX call to your Flask endpoint
+        const rows = elements.tbody.querySelectorAll('tr');
+        config.clients = Array.from(rows).map(row => ({
+            id: row.dataset.id,
+            cells: Array.from(row.cells).map(cell => cell.textContent.trim()),
+            element: row,
+            status: row.querySelector('.status').textContent.trim()
+        }));
         
-        filteredClients = [...allClients];
+        config.filteredClients = [...config.clients];
         updateTable();
     }
 
     function setupEventListeners() {
-        // Búsqueda
-        const searchButton = document.getElementById('searchButton');
-        const searchInput = document.getElementById('searchInput');
-        
-        searchButton.addEventListener('click', performSearch);
-        searchInput.addEventListener('keyup', function(event) {
-            if (event.key === 'Enter') performSearch();
+        // Search functionality
+        elements.searchButton.addEventListener('click', performSearch);
+        elements.searchInput.addEventListener('keyup', (e) => {
+            if (e.key === 'Enter') performSearch();
         });
 
-        // Ordenación
+        // Sorting
         document.querySelectorAll('#clientesTable th[data-column]').forEach(header => {
             header.addEventListener('click', () => {
-                const column = header.getAttribute('data-column');
+                const column = header.dataset.column;
                 
-                // Cambiar dirección si es la misma columna
-                if (sortColumn === column) {
-                    sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+                if (config.sortColumn === column) {
+                    config.sortDirection = config.sortDirection === 'asc' ? 'desc' : 'asc';
                 } else {
-                    sortColumn = column;
-                    sortDirection = 'asc';
+                    config.sortColumn = column;
+                    config.sortDirection = 'asc';
                 }
                 
-                // Actualizar iconos
-                document.querySelectorAll('.sort-icon').forEach(icon => {
-                    icon.className = 'fas fa-sort sort-icon';
-                });
-                
-                const icon = header.querySelector('.sort-icon');
-                icon.className = `fas fa-sort-${sortDirection === 'asc' ? 'up' : 'down'} sort-icon`;
-                
+                updateSortIcons(header);
                 sortClients();
                 updateTable();
             });
         });
 
-        // Paginación
-        document.getElementById('prevPage').addEventListener('click', () => {
-            if (currentPage > 1) {
-                currentPage--;
+        // Pagination
+        elements.prevPage.addEventListener('click', () => {
+            if (config.currentPage > 1) {
+                config.currentPage--;
                 updateTable();
             }
         });
 
-        document.getElementById('nextPage').addEventListener('click', () => {
-            const totalPages = Math.ceil(filteredClients.length / rowsPerPage);
-            if (currentPage < totalPages) {
-                currentPage++;
+        elements.nextPage.addEventListener('click', () => {
+            const totalPages = Math.ceil(config.filteredClients.length / config.rowsPerPage);
+            if (config.currentPage < totalPages) {
+                config.currentPage++;
                 updateTable();
             }
         });
 
-        // Modales
-        setupModal('addClientModal');
-        setupModal('editClientModal');
-        setupModal('deleteClientModal');
-
-        // Botones de acción en filas
-        document.querySelectorAll('.action-icon').forEach(icon => {
-            icon.addEventListener('click', function() {
-                const row = this.closest('tr');
-                const clientId = row.getAttribute('data-id');
-                
-                if (this.classList.contains('fa-edit')) {
-                    openEditModal(clientId);
-                } else if (this.classList.contains('fa-eye')) {
-                    viewClientDetails(clientId);
-                } else if (this.classList.contains('fa-user-slash') || this.classList.contains('fa-user-check')) {
-                    toggleClientStatus(clientId);
-                } else if (this.classList.contains('fa-trash')) {
-                    openDeleteModal(clientId);
-                }
-            });
+        // Action buttons
+        elements.tbody.addEventListener('click', (e) => {
+            const icon = e.target.closest('.action-icon');
+            if (!icon) return;
+            
+            const row = e.target.closest('tr');
+            const clientId = row.dataset.id;
+            
+            if (icon.classList.contains('fa-edit')) {
+                openEditModal(clientId, row);
+            } else if (icon.classList.contains('fa-eye')) {
+                viewDetails(clientId);
+            } else if (icon.classList.contains('fa-user-slash') || icon.classList.contains('fa-user-check')) {
+                toggleStatus(clientId, row);
+            } else if (icon.classList.contains('fa-trash')) {
+                openDeleteModal(clientId);
+            }
         });
+
+        // Modal controls
+        setupModal(elements.addClientModal);
+        setupModal(elements.editClientModal);
+        setupModal(elements.deleteClientModal);
     }
 
     function performSearch() {
-        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        const term = elements.searchInput.value.toLowerCase();
         
-        if (searchTerm.trim() === '') {
-            filteredClients = [...allClients];
+        if (term.trim() === '') {
+            config.filteredClients = [...config.clients];
         } else {
-            filteredClients = allClients.filter(client => {
-                return client.cells.some(cell => cell.toLowerCase().includes(searchTerm));
+            config.filteredClients = config.clients.filter(client => {
+                return client.cells.some(cell => cell.toLowerCase().includes(term));
             });
         }
         
-        currentPage = 1;
+        config.currentPage = 1;
+        sortClients();
         updateTable();
+    }
+
+    function updateSortIcons(activeHeader) {
+        document.querySelectorAll('.sort-icon').forEach(icon => {
+            icon.className = 'fas fa-sort sort-icon';
+        });
+        
+        const activeIcon = activeHeader.querySelector('.sort-icon');
+        activeIcon.className = `fas fa-sort-${config.sortDirection === 'asc' ? 'up' : 'down'} sort-icon`;
     }
 
     function sortClients() {
         const columnIndex = Array.from(document.querySelectorAll('#clientesTable th[data-column]'))
-            .findIndex(th => th.getAttribute('data-column') === sortColumn);
+            .findIndex(th => th.dataset.column === config.sortColumn);
         
-        filteredClients.sort((a, b) => {
+        config.filteredClients.sort((a, b) => {
             let valueA = a.cells[columnIndex];
             let valueB = b.cells[columnIndex];
             
-            // Convertir a número si es ID
-            if (sortColumn === 'id') {
+            // Numeric sorting for ID
+            if (config.sortColumn === 'id') {
                 valueA = parseInt(valueA);
                 valueB = parseInt(valueB);
-                return sortDirection === 'asc' ? valueA - valueB : valueB - valueA;
+                return config.sortDirection === 'asc' ? valueA - valueB : valueB - valueA;
             }
             
-            // Ordenar fechas
-            if (sortColumn.includes('fecha')) {
+            // Date sorting
+            if (config.sortColumn.includes('fecha')) {
                 valueA = new Date(valueA);
                 valueB = new Date(valueB);
-                return sortDirection === 'asc' ? valueA - valueB : valueB - valueA;
+                return config.sortDirection === 'asc' ? valueA - valueB : valueB - valueA;
             }
             
-            // Ordenar texto
-            return sortDirection === 'asc' 
+            // Text sorting
+            return config.sortDirection === 'asc' 
                 ? valueA.localeCompare(valueB) 
                 : valueB.localeCompare(valueA);
         });
     }
 
     function updateTable() {
-        const startIndex = (currentPage - 1) * rowsPerPage;
-        const endIndex = startIndex + rowsPerPage;
-        const paginatedClients = filteredClients.slice(startIndex, endIndex);
+        const startIndex = (config.currentPage - 1) * config.rowsPerPage;
+        const endIndex = startIndex + config.rowsPerPage;
+        const paginatedClients = config.filteredClients.slice(startIndex, endIndex);
         
-        // Ocultar todas las filas
-        allClients.forEach(client => {
+        // Hide all rows first
+        config.clients.forEach(client => {
             client.element.style.display = 'none';
         });
         
-        // Mostrar solo las filas de la página actual
+        // Show only current page rows
         paginatedClients.forEach(client => {
             client.element.style.display = '';
         });
         
-        // Actualizar información de paginación
-        document.getElementById('paginationInfo').textContent = 
-            `Mostrando ${filteredClients.length > 0 ? startIndex + 1 : 0}-${Math.min(endIndex, filteredClients.length)} de ${filteredClients.length} clientes`;
+        // Update pagination info
+        elements.paginationInfo.textContent = 
+            `Mostrando ${startIndex + 1}-${Math.min(endIndex, config.filteredClients.length)} de ${config.filteredClients.length} clientes`;
         
-        document.getElementById('currentPage').textContent = currentPage;
+        elements.currentPage.textContent = config.currentPage;
         
-        // Habilitar/deshabilitar botones de paginación
-        document.getElementById('prevPage').disabled = currentPage === 1;
-        document.getElementById('nextPage').disabled = endIndex >= filteredClients.length;
+        // Update pagination buttons
+        elements.prevPage.disabled = config.currentPage === 1;
+        elements.nextPage.disabled = endIndex >= config.filteredClients.length;
     }
 
-    function setupModal(modalId) {
-        const modal = document.getElementById(modalId);
+    function setupModal(modal) {
         if (!modal) return;
         
-        // Botón para abrir modal (si existe)
-        const openButton = document.querySelector(`[data-target="#${modalId}"]`);
-        if (openButton) {
-            openButton.addEventListener('click', () => {
-                modal.style.display = 'block';
-            });
-        }
-        
-        // Botones para cerrar modal
-        modal.querySelectorAll('.close-btn').forEach(button => {
-            button.addEventListener('click', () => {
+        // Close modal buttons
+        modal.querySelectorAll('.close-btn, .btn-cancelar').forEach(btn => {
+            btn.addEventListener('click', () => {
                 modal.style.display = 'none';
             });
         });
         
-        // Cerrar al hacer clic fuera del modal
-        window.addEventListener('click', (event) => {
-            if (event.target === modal) {
+        // Close when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === modal) {
                 modal.style.display = 'none';
             }
         });
     }
 
-    function openEditModal(clientId) {
-        // Aquí deberías hacer una petición para obtener los datos del cliente
-        // o extraerlos de la fila de la tabla
-        console.log(`Editar cliente con ID: ${clientId}`);
+    function openEditModal(clientId, row) {
+        // In a real app, you would fetch the client data or extract from row
+        console.log('Editing client:', clientId);
         
-        // Ejemplo de cómo podrías llenar el modal:
-        // const clientRow = document.querySelector(`tr[data-id="${clientId}"]`);
-        // document.getElementById('editNombre').value = clientRow.cells[1].textContent;
-        // ... etc
+        // Example of populating the edit form:
+        // const cells = row.cells;
+        // document.getElementById('editNombre').value = cells[1].textContent;
+        // ...
         
-        const modal = document.getElementById('editClientModal');
-        modal.style.display = 'block';
+        elements.editClientModal.style.display = 'block';
     }
 
-    function viewClientDetails(clientId) {
-        console.log(`Ver detalles del cliente con ID: ${clientId}`);
-        // Aquí podrías abrir un modal con más detalles o redirigir a una página
+    function viewDetails(clientId) {
+        console.log('Viewing details for client:', clientId);
+        // Could open a detailed view modal or redirect to a details page
     }
 
-    function toggleClientStatus(clientId) {
-        console.log(`Cambiar estatus del cliente con ID: ${clientId}`);
-        // Confirmación y luego hacer petición AJAX o recargar la página
-        if (confirm('¿Está seguro de cambiar el estatus de este cliente?')) {
-            // Aquí iría la lógica para cambiar el estatus
-            location.reload(); // Recargar para ver cambios (temporal)
+    function toggleStatus(clientId, row) {
+        const newStatus = row.querySelector('.status').textContent.trim() === 'Activo' ? 'Inactivo' : 'Activo';
+        
+        if (confirm(`¿Está seguro de cambiar el estado a ${newStatus}?`)) {
+            // In a real app, make an AJAX call to your Flask endpoint
+            console.log(`Changing status for client ${clientId} to ${newStatus}`);
+            
+            // Simulate status change
+            const statusElement = row.querySelector('.status');
+            statusElement.textContent = newStatus;
+            statusElement.className = `status status-${newStatus.toLowerCase()}`;
+            
+            // Update the icon
+            const icon = row.querySelector('.fa-user-slash, .fa-user-check');
+            if (icon) {
+                icon.className = newStatus === 'Activo' 
+                    ? 'fas fa-user-slash action-icon' 
+                    : 'fas fa-user-check action-icon';
+                icon.title = newStatus === 'Activo' ? 'Desactivar' : 'Activar';
+            }
+            
+            // Show feedback
+            alert(`Estado cambiado a ${newStatus}`);
         }
     }
 
     function openDeleteModal(clientId) {
-        console.log(`Eliminar cliente con ID: ${clientId}`);
-        const modal = document.getElementById('deleteClientModal');
-        modal.style.display = 'block';
+        if (!confirm('¿Está seguro de eliminar este cliente?')) return;
         
-        // Configurar el botón de eliminar
-        const deleteButton = document.getElementById('deleteClientButton');
-        deleteButton.onclick = function() {
-            // Aquí iría la lógica para eliminar el cliente
-            console.log(`Cliente ${clientId} eliminado`);
-            modal.style.display = 'none';
-            location.reload(); // Recargar para ver cambios (temporal)
-        };
+        // In a real app, make an AJAX call to your Flask endpoint
+        console.log('Deleting client:', clientId);
+        
+        // Simulate deletion
+        const clientToRemove = config.clients.find(c => c.id === clientId);
+        if (clientToRemove) {
+            clientToRemove.element.remove();
+            config.clients = config.clients.filter(c => c.id !== clientId);
+            config.filteredClients = config.filteredClients.filter(c => c.id !== clientId);
+            updateTable();
+        }
+        
+        alert('Cliente eliminado con éxito');
     }
 
-    // Configurar el formulario de agregar cliente
-    document.getElementById('addClientButton').addEventListener('click', function() {
-        // Validar formulario
-        const form = document.getElementById('addClientForm');
-        let isValid = true;
-        
-        // Validación simple (podrías hacerla más completa)
-        form.querySelectorAll('[required]').forEach(input => {
-            if (!input.value.trim()) {
-                isValid = false;
-                input.style.borderColor = '#e74c3c';
-            }
-        });
-        
-        if (isValid) {
-            console.log('Agregar nuevo cliente:', {
-                nombre: document.getElementById('nombre').value,
-                apellido_p: document.getElementById('apellido_p').value,
-                // ... otros campos
+    // Add new client form handling
+    const addClientForm = document.getElementById('addClientForm');
+    if (addClientForm) {
+        addClientForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Validate form
+            let isValid = true;
+            this.querySelectorAll('[required]').forEach(input => {
+                if (!input.value.trim()) {
+                    isValid = false;
+                    input.style.borderColor = '#e74c3c';
+                }
             });
             
-            // Aquí iría la petición AJAX o envío del formulario
-            alert('Cliente agregado con éxito (simulación)');
-            document.getElementById('addClientModal').style.display = 'none';
-            form.reset();
-            // location.reload(); // Recargar para ver cambios
-        } else {
-            alert('Por favor complete todos los campos requeridos');
-        }
-    });
+            if (isValid) {
+                // In a real app, submit via AJAX or form action
+                console.log('Adding new client:', {
+                    nombre: this.nombre.value,
+                    apellido_p: this.apellido_p.value,
+                    // ... other fields
+                });
+                
+                alert('Cliente agregado con éxito (simulación)');
+                this.reset();
+                elements.addClientModal.style.display = 'none';
+                // location.reload(); // In a real app, you might reload or update the table
+            } else {
+                alert('Por favor complete todos los campos requeridos');
+            }
+        });
+    }
 });
