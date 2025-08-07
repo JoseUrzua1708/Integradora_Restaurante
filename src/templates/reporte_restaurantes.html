@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Reporte de Restaurantes</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/pdf_restaurante.css') }}" />
+</head>
+<body>
+
+  <header>
+    <img src="{{ url_for('static', filename='image/Logotipo del proyecto.jpg', _external=True) }}" class="logo-left" alt="Logo Izq" />
+    <div class="titulo-container">
+      <h1>Sistema de Administración de Restaurantes</h1>
+      <p class="subtitulo">Reporte de Restaurantes Registrados</p>
+      <p class="info-adicional">
+        Generado el {{ now.strftime('%d de %B de %Y, %H:%M') }}
+        {% if session.get('usuario') %} por {{ session['usuario'] }}{% endif %}
+      </p>
+    </div>
+    <hr />
+  </header>
+
+  {% if not data %}
+    <div class="no-data">No hay restaurantes registrados</div>
+  {% else %}
+    <table>
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Dirección</th>
+          <th>Teléfono</th>
+          <th>Correo</th>
+          <th>Apertura</th>
+          <th>Cierre</th>
+          <th>Moneda</th>
+          <th>Impuesto</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in data %}
+          <tr>
+            <td>{{ r.Nombre_Restaurante }}</td>
+            <td style="text-align:left;">{{ r.Direccion }}</td>
+            <td>{{ r.Telefono }}</td>
+            <td>{{ r.Correo_Contacto }}</td>
+            <td>{{ r.Horario_Apertura }}</td>
+            <td>{{ r.Horario_Cierre }}</td>
+            <td>{{ r.Moneda }}</td>
+            <td>{{ r.Impuesto }}%</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
+
+  <div class="firma">
+    <div class="firma-linea">_________________________</div>
+    <div>Nombre del Responsable y firma</div>
+  </div>
+
+  <footer>
+    Universidad Tecnológica de Acapulco &mdash; Sistema de Administración de Restaurantes
+  </footer>
+
+</body>
+</html>

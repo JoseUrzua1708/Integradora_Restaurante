@@ -1,197 +1,189 @@
-/* CENTRADO TOTAL Y FONDO */
+/* Estilos generales */
 body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f6fa;
     margin: 0;
     padding: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f4f6f8;
+    color: #2d3436;
 }
 
-/* Container centrado */
+/* Contenedor principal */
 .container {
-    display: flex;
-    justify-content: center;
-    padding: 2rem;
-    min-height: 100vh;
-}
-
-/* FORMULARIO PRINCIPAL */
-.form-container {
+    max-width: 960px;
+    margin: 60px auto;
+    padding: 25px 35px;
     background-color: #ffffff;
-    padding: 2.5rem 4rem;
     border-radius: 10px;
-    /* sombra un poco más definida y suave */
-    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.12);
-    width: 100%;
-    max-width: 1600px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
     position: relative;
-    transition: box-shadow 0.3s ease;
 }
 
-.form-container:hover {
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+/* Encabezado */
+h1 {
+    text-align: center;
+    color: #16a085;
+    margin-bottom: 35px;
+    font-size: 28px;
 }
 
-/* BOTÓN DE CIERRE */
+/* Botón cerrar */
 .btn-close {
     position: absolute;
-    top: 1.5rem;
-    right: 2rem;
+    top: 16px;
+    right: 20px;
+    font-size: 26px;
+    color: #555;
     background: none;
     border: none;
-    font-size: 1.5rem;
-    color: #7f8c8d;
     cursor: pointer;
-    transition: color 0.3s ease, transform 0.2s ease;
-    z-index: 10;
+    padding: 0;
+    line-height: 1;
 }
 
 .btn-close:hover {
-    color: #e74c3c;
-    transform: scale(1.2);
+    color: #c0392b;
 }
 
-/* TÍTULO */
-.form-container h1 {
-    text-align: center;
-    color: var(--primary-color, #2c3e50);
-    margin-bottom: 2.5rem;
-    font-size: 2.2rem;
-    font-weight: 700;
-    letter-spacing: 0.05em;
-}
-
-/* GRID PARA COLUMNA */
-.form-grid {
-    display: grid;
-    gap: 2rem;
-}
-
-/* CADA COLUMNA */
-.form-column {
+/* Formulario */
+.empleado-form {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
 }
 
-/* CAMPOS */
+/* Títulos de sección */
+.section-title {
+    grid-column: 1 / -1;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 3rem 0 1.5rem;
+    color: #2c3e50;
+    border-bottom: 2px solid #1abc9c;
+    padding-bottom: 0.4rem;
+}
+
+/* Grid del formulario */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px 30px; /* espacio horizontal y vertical */
+}
+
+/* Campos individuales */
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
 .form-group label {
-    display: block;
-    margin-bottom: 0.6rem;
+    margin-bottom: 6px;
     font-weight: 600;
-    color: var(--secondary-color, #34495e);
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
-    font-size: 0.95rem;
+    color: #34495e;
 }
 
-/* Inputs & selects */
 .form-group input,
 .form-group select {
-    width: 100%;
-    padding: 1rem 0.5rem; /* un poco más espacio interno */
-    border: 1.5px solid #ccc;
-    border-radius: 8px; /* ligeramente más redondeado */
-    font-size: 1.1rem;
-    transition: border 0.3s ease, box-shadow 0.3s ease;
-    text-align: center;
-    background-color: #fafafa;
-    box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+    padding: 12px 14px;
+    font-size: 15px;
+    border: 1px solid #bdc3c7;
+    border-radius: 8px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    background-color: #fdfefe;
 }
 
 .form-group input:focus,
 .form-group select:focus {
-    border-color: #1abc9c;
-    box-shadow: 0 0 8px rgba(26, 188, 156, 0.6);
     outline: none;
-    background-color: #fff;
+    border-color: #16a085;
+    box-shadow: 0 0 0 3px rgba(22, 160, 133, 0.15);
 }
 
-/* BOTONES */
-.form-footer {
+/* Campo que abarca toda la fila */
+.full-width {
+    grid-column: 1 / -1;
+}
+
+/* Botones */
+.form-actions {
     display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 1rem;
-    margin-top: 2.5rem;
+    justify-content: flex-end;
+    gap: 18px;
+    margin-top: 45px;
 }
 
-.btn-submit,
-.btn-reset {
-    padding: 1rem 2rem;
+button {
+    padding: 12px 20px;
+    font-size: 16px;
     border: none;
-    border-radius: 8px; /* un poco más redondeado */
-    font-size: 1.1rem;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+/* Botón guardar */
+.btn-primary {
+    background-color: #27ae60;
+    color: #fff;
+    box-shadow: 0 5px 15px rgba(39, 174, 96, 0.4);
+}
+
+.btn-primary:hover {
+    background-color: #219150;
+    transform: translateY(-2px);
+}
+
+/* Botón cancelar en rojo */
+.btn-cancel {
+    background-color: #e74c3c;
+    color: #fff;
+    box-shadow: 0 6px 14px rgba(231, 76, 60, 0.6);
+}
+
+.btn-cancel:hover {
+    background-color: #c0392b;
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 9px 22px rgba(192, 57, 43, 0.8);
+}
+
+/* NUEVO: Botón verde para "Nuevo Empleado" */
+.btn-green {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 6px;
     font-weight: 600;
+    font-size: 16px;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
-    user-select: none;
+    gap: 0.4rem;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    text-decoration: none;
+    box-shadow: 0 5px 12px rgba(40, 167, 69, 0.3);
 }
 
-/* Registrar Empleado: verde */
-.btn-submit {
-    background-color: #28a745;
-    color: white;
-    box-shadow: 0 6px 14px rgba(40, 167, 69, 0.6);
-}
-
-.btn-submit:hover {
+.btn-green:hover,
+.btn-green:focus {
     background-color: #218838;
-    transform: translateY(-3px) scale(1.05);
-    box-shadow: 0 9px 22px rgba(33, 136, 56, 0.8);
+    transform: translateY(-2px);
+    text-decoration: none;
 }
 
-/* Limpiar Formulario: gris suave */
-.btn-reset {
-    background-color: #e0e0e0;
-    color: #333;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
+/* Responsive */
+@media (max-width: 600px) {
+    .form-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
 
-.btn-reset:hover {
-    background-color: #cfd8dc;
-    transform: translateY(-3px) scale(1.05);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.25);
-}
+    .form-actions button {
+        width: 100%;
+    }
 
-/* ALERTAS */
-.alert {
-    padding: 1rem;
-    margin-bottom: 1rem;
-    border-radius: 6px;
-    text-align: center;
-    font-weight: 600;
-    font-size: 1.1rem;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
-}
-
-.alert-success {
-    background-color: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
-}
-
-.alert-danger {
-    background-color: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
-}
-
-/* RESPONSIVE GRID */
-@media (min-width: 768px) {
-    .form-grid {
-        grid-template-columns: repeat(3, 1fr);
+    .btn-close {
+        top: 12px;
+        right: 14px;
+        font-size: 22px;
     }
 }
-
-@media (min-width: 1024px) {
-    .form-grid {
-        grid-template-columns: repeat(4, 1fr);
-        gap: 2rem;
-    }
-}
-
-

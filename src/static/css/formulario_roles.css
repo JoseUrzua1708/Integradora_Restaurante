@@ -54,6 +54,28 @@ body {
     box-shadow: 0 0 0 3px rgba(0, 150, 136, 0.15);
 }
 
+/* Estilos para agrandar el select */
+.roles select {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1px solid #b0bec5;
+    border-radius: 10px;
+    font-size: 16px;
+    background-color: #fff;
+    color: #333;
+    transition: all 0.3s ease;
+    appearance: none;       /* para quitar estilo nativo */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    cursor: pointer;
+}
+
+.roles select:focus {
+    outline: none;
+    border-color: #009688;
+    box-shadow: 0 0 0 3px rgba(0, 150, 136, 0.15);
+}
+
 .roles span {
     display: block;
     padding: 10px 14px;
@@ -114,7 +136,8 @@ body {
 
     .roles input,
     .roles button,
-    .roles span {
+    .roles span,
+    .roles select {
         font-size: 15px;
     }
 
