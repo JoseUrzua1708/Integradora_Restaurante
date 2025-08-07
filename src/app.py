@@ -150,7 +150,7 @@ def formulario_restaurante():
     return render_template('formulario_restaurante.html')
 
 ################################################################################
-# PDF Reporte
+# PDF Reporte Gestión de Restaurantes
 ################################################################################
 
 @app.route('/reporte_restaurantes')
