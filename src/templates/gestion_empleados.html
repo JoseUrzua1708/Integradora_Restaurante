@@ -1,83 +1,92 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Gestión de Empleados</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/gestion_empleados.css') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/gestion_empleados.css') }}" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
 </head>
 <body>
     {% include 'navbar.html' %}
+
     <div class="container">
         <main class="main-content">
-            <div class="table-container">
-                <h1><i class="fas fa-users"></i> Gestión de Empleados</h1>
-
-                <div class="table-actions">
-                    <a href="{{ url_for('formulario_empleado') }}" class="btn-verde">
-                        <i class="fas fa-plus"></i> Añadir Empleado
+            <section class="management-section">
+                <header class="section-header">
+                    <h1><i class="fas fa-users"></i> Gestión de Empleados</h1>
+                    <a href="{{ url_for('formulario_empleado') }}" class="btn btn-primary btn-add">
+                        <i class="fas fa-plus"></i> Nuevo Empleado
                     </a>
-                    <div class="actions-right">
-                        <div class="search-box">
-                            <input type="text" placeholder="Buscar empleado..." id="searchInput">
-                            <button class="btn-search" id="searchButton">
-                                <i class="fas fa-search"></i>
-                            </button>
-                        </div>
-                        <div class="pagination-controls">
-                            <button id="prevPage" class="btn-pagination">Anterior</button>
-                            <span id="currentPage" class="current-page-num">1</span>
-                            <button id="nextPage" class="btn-pagination">Siguiente</button>
-                        </div>
-                    </div>
-                </div>
+                </header>
 
-                <div class="table-responsive">
-                    <table class="table" id="empleadosTable">
+                <div class="table-wrapper">
+                    <table class="table table-striped" id="empleadosTable">
                         <thead>
                             <tr>
-                                <th data-column="sucursal">Sucursal <i class="fas fa-sort sort-icon"></i></th>
-                                <th data-column="rol">Rol <i class="fas fa-sort sort-icon"></i></th>
-                                <th data-column="nombre_completo">Nombre Completo <i class="fas fa-sort sort-icon"></i></th>
-                                <th data-column="tipo_contrato">Tipo Contrato <i class="fas fa-sort sort-icon"></i></th>
-                                <th data-column="estatus">Estatus <i class="fas fa-sort sort-icon"></i></th>
+                                <th>Sucursal</th>
+                                <th>Rol</th>
+                                <th>Nombre Completo</th>
+                                <th>Tipo de Contrato</th>
+                                <th>Estatus</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
-                        <tbody id="empleadosBody">
+                        <tbody>
                             {% for empleado in empleados %}
-                            <tr class="employee-row" data-id="{{ empleado.ID }}">
-                                <td>{{ empleado.sucursal_nombre if empleado.sucursal_nombre else (empleado.Sucursal_ID if empleado.Sucursal_ID else '-') }}</td>
-                                <td>{{ empleado.rol_nombre if empleado.rol_nombre else empleado.Rol_ID }}</td>
-                                <td>{{ empleado.Nombre }} {{ empleado.Apellido_P }} {{ empleado.Apellido_M if empleado.Apellido_M else '' }}</td>
-                                <td>{{ empleado.Tipo_Contrato if empleado.Tipo_Contrato else '-' }}</td>
-                                <td><span class="status-tag status-{{ empleado.Estatus.lower() }}">{{ empleado.Estatus }}</span></td>
-                                <td class="actions">
+                            <tr>
+                                <td>{{ empleado.sucursal_nombre or empleado.Sucursal_ID or '-' }}</td>
+                                <td>{{ empleado.rol_nombre or empleado.Rol_ID or '-' }}</td>
+                                <td>{{ empleado.Nombre }} {{ empleado.Apellido_P }} {% if empleado.Apellido_M %}{{ empleado.Apellido_M }}{% endif %}</td>
+                                <td>{{ empleado.Tipo_Contrato or '-' }}</td>
+                                <td><span class="status-tag status-{{ empleado.Estatus|lower }}">{{ empleado.Estatus }}</span></td>
+                                <td>
                                     <div class="dropdown">
-                                        <button class="btn-action btn-dropdown"><i class="fas fa-ellipsis-v"></i></button>
-                                        <div class="dropdown-content">
-                                            <a href="#" class="action-item view-details-btn" data-id="{{ empleado.ID }}"><i class="fas fa-eye"></i> Ver Detalles</a>
-                                            <a href="#" class="action-item edit-btn" data-id="{{ empleado.ID }}"><i class="fas fa-edit"></i> Editar</a>
-                                            <a href="#" class="action-item delete-btn" data-id="{{ empleado.ID }}"><i class="fas fa-trash-alt"></i> Eliminar</a>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr class="details-row" id="details-row-{{ empleado.ID }}">
-                                <td colspan="6">
-                                    <div class="expanded-details">
-                                        <div class="details-grid">
-                                            <div class="detail-group"><label><i class="fas fa-id-badge"></i> ID:</label><p>{{ empleado.ID }}</p></div>
-                                            <div class="detail-group"><label><i class="fas fa-envelope"></i> Correo:</label><p>{{ empleado.Correo }}</p></div>
-                                            <div class="detail-group"><label><i class="fas fa-phone"></i> Teléfono:</label><p>{{ empleado.Telefono if empleado.Telefono else 'N/A' }}</p></div>
-                                            <div class="detail-group"><label><i class="fas fa-birthday-cake"></i> Fecha Nacimiento:</label><p>{{ empleado.Fecha_Nacimiento }}</p></div>
-                                            <div class="detail-group"><label><i class="fas fa-venus-mars"></i> Género:</label><p>{{ empleado.Genero }}</p></div>
-                                            <div class="detail-group"><label><i class="fas fa-money-bill-wave"></i> Salario:</label><p>${{ "%.2f" | format(empleado.Salario) }}</p></div>
-                                            <div class="detail-group"><label><i class="fas fa-calendar-check"></i> Contratación:</label><p>{{ empleado.Fecha_Contratacion }}</p></div>
-                                            <div class="detail-group"><label><i class="fas fa-calendar-times"></i> Terminación:</label><p>{{ empleado.Fecha_Terminacion if empleado.Fecha_Terminacion else 'N/A' }}</p></div>
-                                        </div>
+                                        <button class="btn btn-action dropdown-toggle">
+                                            <i class="fas fa-ellipsis-v"></i>
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li>
+                                                <a href="#" class="btn-view" data-id="{{ empleado.ID }}">
+                                                    <i class="fas fa-eye"></i> Ver detalles
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="#" class="btn-edit" data-id="{{ empleado.ID }}">
+                                                    <i class="fas fa-edit"></i> Editar
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="#" class="btn-delete" data-id="{{ empleado.ID }}">
+                                                    <i class="fas fa-trash-alt"></i> Eliminar
+                                                </a>
+                                            </li>
+                                            {% if empleado.Estatus != 'Activo' %}
+                                            <li>
+                                                <a href="{{ url_for('activar_empleado', id=empleado.ID) }}" class="btn-activar">
+                                                    <i class="fas fa-check-circle"></i> Activar
+                                                </a>
+                                            </li>
+                                            {% endif %}
+                                            {% if empleado.Estatus != 'Inactivo' %}
+                                            <li>
+                                                <a href="{{ url_for('desactivar_empleado', id=empleado.ID) }}" class="btn-desactivar">
+                                                    <i class="fas fa-ban"></i> Desactivar
+                                                </a>
+                                            </li>
+                                            {% endif %}
+                                            {% if empleado.Estatus != 'Suspendido' %}
+                                            <li>
+                                                <a href="{{ url_for('cambiar_estatus_empleado', id=empleado.ID, nuevo_estatus='Suspendido') }}" class="btn-suspender">
+                                                    <i class="fas fa-user-slash"></i> Suspender
+                                                </a>
+                                            </li>
+                                            {% endif %}
+                                        </ul>
                                     </div>
                                 </td>
                             </tr>
@@ -85,141 +94,19 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="pagination-info-container">
-                    <span id="paginationInfo"></span>
-                </div>
-            </div>
+            </section>
         </main>
     </div>
 
-    <div id="editEmployeeModal" class="modal">
-        <div class="modal-content large-modal">
-            <span class="close-button">&times;</span>
-            <h2><i class="fas fa-user-edit"></i> Editar Empleado</h2>
-            <form id="editEmployeeForm" method="POST">
-                <div class="form-grid">
-                    <div class="form-column">
-                        <div class="form-group">
-                            <label for="edit_Sucursal_ID"><i class="fas fa-store"></i> Sucursal *</label>
-                            <select name="Sucursal_ID" id="edit_Sucursal_ID" required>
-                                <option value="">Seleccione una sucursal</option>
-                                {% for sucursal in sucursales %}
-                                <option value="{{ sucursal.ID }}">{{ sucursal.Nombre }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="edit_Rol_ID"><i class="fas fa-user-tag"></i> Rol *</label>
-                            <select name="Rol_ID" id="edit_Rol_ID" required>
-                                <option value="">Seleccione un rol</option>
-                                {% for rol in roles %}
-                                <option value="{{ rol.ID }}">{{ rol.Nombre }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="edit_Nombre"><i class="fas fa-user"></i> Nombre *</label>
-                            <input type="text" id="edit_Nombre" name="Nombre" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="edit_Apellido_p"><i class="fas fa-user"></i> Apellido Paterno *</label>
-                            <input type="text" id="edit_Apellido_p" name="Apellido_p" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="edit_Apellido_M"><i class="fas fa-user"></i> Apellido Materno</label>
-                            <input type="text" id="edit_Apellido_M" name="Apellido_M">
-                        </div>
-                    </div>
-
-                    <div class="form-column">
-                        <div class="form-group">
-                            <label for="edit_Correo"><i class="fas fa-envelope"></i> Correo *</label>
-                            <input type="email" id="edit_Correo" name="Correo" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="edit_Telefono"><i class="fas fa-phone"></i> Teléfono</label>
-                            <input type="text" id="edit_Telefono" name="Telefono" pattern="[0-9]{10}" placeholder="10 dígitos">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="edit_Fecha_Nacimiento"><i class="fas fa-birthday-cake"></i> Fecha de nacimiento *</label>
-                            <input type="date" id="edit_Fecha_Nacimiento" name="Fecha_Nacimiento" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="edit_Genero"><i class="fas fa-venus-mars"></i> Género *</label>
-                            <select id="edit_Genero" name="Genero" required>
-                                <option value="">Seleccione</option>
-                                <option value="Masculino">Masculino</option>
-                                <option value="Femenino">Femenino</option>
-                                <option value="Otro">Otro</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="form-column">
-                        <div class="form-group">
-                            <label for="edit_Estatus"><i class="fas fa-check-circle"></i> Estatus</label>
-                            <select id="edit_Estatus" name="Estatus">
-                                <option value="Activo">Activo</option>
-                                <option value="Inactivo">Inactivo</option>
-                                <option value="Suspendido">Suspendido</option>
-                                <option value="Vacaciones">Vacaciones</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="edit_Salario"><i class="fas fa-money-bill-wave"></i> Salario</label>
-                            <input type="number" name="Salario" id="edit_Salario" step="0.01" min="0" placeholder="0.00">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="edit_Tipo_Contrato"><i class="fas fa-file-contract"></i> Tipo de Contrato</label>
-                            <select id="edit_Tipo_Contrato" name="Tipo_Contrato">
-                                <option value="">Seleccione</option>
-                                <option value="Tiempo Completo">Tiempo Completo</option>
-                                <option value="Medio Tiempo">Medio Tiempo</option>
-                                <option value="Temporal">Temporal</option>
-                                <option value="Por Horas">Por Horas</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="edit_Fecha_Contratacion"><i class="fas fa-calendar-check"></i> Fecha de contratación *</label>
-                            <input type="date" id="edit_Fecha_Contratacion" name="Fecha_Contratacion" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="edit_Fecha_Terminacion"><i class="fas fa-calendar-times"></i> Fecha de terminación</label>
-                            <input type="date" id="edit_Fecha_Terminacion" name="Fecha_Terminacion">
-                        </div>
-                    </div>
-                </div>
-                <div class="form-footer">
-                    <button type="submit" class="btn-submit">
-                        <i class="fas fa-save"></i> Guardar Cambios
-                    </button>
-                    <button type="button" class="btn-reset" id="cancelEditBtn">
-                        <i class="fas fa-times"></i> Cancelar
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <div id="deleteConfirmModal" class="modal">
+    <!-- Modal confirmación eliminación -->
+    <div id="deleteModal" class="modal" aria-hidden="true">
         <div class="modal-content">
-            <span class="close-button">&times;</span>
-            <h2>Confirmar Eliminación</h2>
-            <p>¿Estás seguro de que quieres eliminar a este empleado?</p>
-            <div class="modal-buttons">
-                <button id="confirmDeleteBtn" class="btn-confirm-delete">Eliminar</button>
-                <button id="cancelDeleteBtn" class="btn-cancel-delete">Cancelar</button>
+            <button class="modal-close" aria-label="Cerrar">&times;</button>
+            <h2>Confirmar eliminación</h2>
+            <p>¿Seguro que deseas eliminar este empleado?</p>
+            <div class="modal-actions">
+                <button id="confirmDeleteBtn" class="btn btn-danger">Eliminar</button>
+                <button id="cancelDeleteBtn" class="btn btn-secondary">Cancelar</button>
             </div>
         </div>
     </div>
