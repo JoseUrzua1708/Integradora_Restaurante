@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Configuración del restaurante</title>
@@ -11,6 +10,12 @@
 </head>
 <body>
     <div class="container">
+        <!-- Botón de cierre -->
+        <a href="{{ url_for('gestion_restaurante') }}" class="btn-cerrar" aria-label="Cerrar formulario">
+  <i class="fas fa-times"></i>
+</a>
+
+
         <h1>Configuración del restaurante</h1>
         <form class="formulario" method="POST" action="#">
             

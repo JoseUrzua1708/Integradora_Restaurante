@@ -13,6 +13,7 @@ body {
   padding: 30px 25px;
   border-radius: 12px;
   box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+  position: relative;
 }
 
 h1 {
@@ -39,12 +40,12 @@ select {
   border: 1.8px solid #cbd5e0;
   border-radius: 8px;
   font-size: 1rem;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
   font-family: inherit;
   resize: vertical;
   min-height: 40px;
- box-sizing: border-box;
+  box-sizing: border-box;
 }
+
 textarea {
   min-height: 80px;
 }
@@ -58,23 +59,23 @@ select:focus {
 }
 
 .input-group {
-    display: flex;
-    gap: 1rem;
+  display: flex;
+  gap: 1rem;
 }
 
 .input-group .form-group {
-    flex: 1;
+  flex: 1;
 }
 
 .readonly-input {
-    background-color: #f0f0f0;
-    cursor: not-allowed;
+  background-color: #f0f0f0;
+  cursor: not-allowed;
 }
 
 .form-actions {
-    display: flex;
-    justify-content: center;
-    margin-top: 2rem;
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
 }
 
 button[type="submit"] {
@@ -87,7 +88,6 @@ button[type="submit"] {
   font-weight: 700;
   border-radius: 10px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
   box-shadow: 0 4px 10px rgba(43, 108, 176, 0.4);
 }
 
@@ -96,15 +96,28 @@ button[type="submit"]:hover {
   box-shadow: 0 6px 14px rgba(30, 78, 140, 0.6);
 }
 
+/* Botón de cierre sin animación */
+.btn-cerrar {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  color: #888;
+  cursor: pointer;
+  z-index: 10;
+}
+
 /* Responsive Grid */
 @media (min-width: 768px) {
-    .form-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
+  .form-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 
-    .full-width {
-        grid-column: 1 / -1;
-    }
+  .full-width {
+    grid-column: 1 / -1;
+  }
 }
 
 @media (max-width: 480px) {
@@ -112,9 +125,11 @@ button[type="submit"]:hover {
     margin: 20px;
     padding: 20px 15px;
   }
+
   h1 {
     font-size: 1.5rem;
   }
+
   button[type="submit"] {
     padding: 12px;
     font-size: 1rem;

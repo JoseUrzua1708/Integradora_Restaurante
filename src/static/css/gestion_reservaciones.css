@@ -2,7 +2,7 @@
     display: flex;
     gap: 0.5rem;
     border-bottom: 2px solid var(--secondary-color);
-    margin-bottom: 2rem;
+    margin-bottom: 0rem;
 }
 
 .tab-btn {
@@ -32,7 +32,7 @@
 
 .form-container, .table-container {
     background-color: #fff;
-    padding: 2rem;
+    padding: 7rem;
     border-radius: 8px;
     box-shadow: 0 4px 20px rgba(0,0,0,0.08);
 }

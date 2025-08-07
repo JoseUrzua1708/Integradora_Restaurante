@@ -100,7 +100,15 @@
                         </div>
 
                         <div class="form-actions">
-                            <button type="submit" class="btn btn-success">Guardar</button>
+                            <button type="submit" class="btn btn-success" style="display: inline-flex; align-items: center; gap: 0.5rem;">
+  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+    <polyline points="17 21 17 13 7 13 7 21"/>
+    <polyline points="7 3 7 8 15 8"/>
+  </svg>
+  Guardar
+</button>
+
                             <button type="reset" class="btn btn-danger">Cancelar</button>
                         </div>
                     </form>
@@ -132,7 +140,7 @@
                                     </tr>
                                 {% else %}
                                     <tr>
-                                        <td colspan="5">No hay reservaciones de mesas.</td>
+                                        <td colspan="5">No hay reservaciones de mesas</td>
                                     </tr>
                                 {% endfor %}
                             </tbody>
@@ -166,7 +174,7 @@
                                     </tr>
                                 {% else %}
                                     <tr>
-                                        <td colspan="5">No hay reservaciones de eventos.</td>
+                                        <td colspan="5">No hay reservaciones de eventos</td>
                                     </tr>
                                 {% endfor %}
                             </tbody>
@@ -176,6 +184,42 @@
             </section>
         </main>
     </div>
+
+    <!-- PIE DE PÁGINA -->
+    <footer class="admin-footer">
+            <div class="footer-content">
+                <div class="footer-info">
+                    <p>Sistema Administrativo del Restaurante © 2025</p>
+                    <p class="dev-team">Equipo de Desarrollo</p>
+                </div>
+                <ul class="footer-menu">
+                    <li>
+                        <a href="#" class="footer-link">
+                            <svg class="icon" viewBox="0 0 24 24">
+                                <path fill="currentColor" d="M22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6m-2 0l-8 5l-8-5h16m0 12H4V8l8 5l8-5v10Z"/>
+                            </svg>
+                            Contacto
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="footer-link">
+                            <svg class="icon" viewBox="0 0 24 24">
+                                <path fill="currentColor" d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12c5.16-1.26 9-6.45 9-12V5l-9-4m0 6c1.4 0 2.8 1.1 2.8 2.5V11c.6 0 1.2.6 1.2 1.3v3.5c0 .6-.6 1.2-1.3 1.2H9.2c-.6 0-1.2-.6-1.2-1.3v-3.5c0-.6.6-1.2 1.2-1.2V9.5C9.2 8.1 10.6 7 12 7m0 1.2c-.8 0-1.5.5-1.5 1.3V11h3V9.5c0-.8-.7-1.3-1.5-1.3Z"/>
+                            </svg>
+                            Políticas
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="footer-link">
+                            <svg class="icon" viewBox="0 0 24 24">
+                                <path fill="currentColor" d="M13 9h-2V7h2m0 10h-2v-6h2m-1-9A10 10 0 0 0 2 12a10 10 0 0 0 10 10a10 10 0 0 0 10-10A10 10 0 0 0 12 2Z"/>
+                            </svg>
+                            Acerca de
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </footer>
 
     <script src="{{ url_for('static', filename='js/gestion_reservaciones.js') }}"></script>
 </body>

@@ -10,6 +10,11 @@
 <body>
 
     <div class="roles">
+        <!-- Botón de cerrar -->
+        <a href="{{ url_for('gestion_roles') }}" class="close-btn" title="Cerrar formulario">
+            <i class="fas fa-times"></i>
+        </a>
+
         <h1>Registro Roles</h1>
         <form action="{{ url_for('guardar_rol') }}" method="POST">
 
@@ -19,12 +24,13 @@
             <label for="Descripcion">Descripción del rol</label>
             <input type="text" id="Descripcion" name="Descripcion" required/>
 
-             <label for="Sucursal_ID">Sucursal</label>
+            <label for="Sucursal_ID">Sucursal</label>
             <select id="Sucursal_ID" name="Sucursal_ID" required>
                 <option value="">-- Seleccione una sucursal --</option>
                 {% for sucursal in sucursales %}
                     <option value="{{ sucursal.ID }}">{{ sucursal.Nombre }}</option>
                 {% endfor %}
+            </select>
 
             <label for="fecha_creacion">Fecha de Registro:</label>
             <input type="text" id="fecha_creacion" value="{{ fecha_actual }}" readonly />
