@@ -26,7 +26,7 @@ app.secret_key = os.getenv('SECRET_KEY', 'your-secret-key-here')
 db_config = {
     'host': os.getenv('DB_HOST', 'localhost'),
     'user': os.getenv('DB_USER', 'root'),
-    'password': os.getenv('DB_PASSWORD', '12345'),
+    'password': os.getenv('DB_PASSWORD', 'Jose1708$'),
     'database': os.getenv('DB_NAME', 'administracion'),
     'pool_name': 'restaurante_pool',
     'pool_size': 5,
@@ -673,275 +673,271 @@ def actualizar_rol(id):
 ################################################################################
 @app.route('/gestion_empleados')
 def gestion_empleados():
-    """Muestra la lista de empleados"""
-    conn = get_db_connection()
-    cursor = conn.cursor(dictionary=True)
-    query = """
-        SELECT 
-            e.ID, e.Nombre, e.Apellido_p, e.Apellido_M, e.Correo, e.Telefono,
-            e.Estatus, r.Nombre AS rol_nombre, s.Nombre AS sucursal_nombre,
-            e.Rol_ID, e.Sucursal_ID
-        FROM Empleados e
-        LEFT JOIN Roles r ON e.Rol_ID = r.ID
-        LEFT JOIN Sucursales s ON e.Sucursal_ID = s.ID
-        ORDER BY e.ID DESC
-    """
-    cursor.execute(query)  
-    empleados = cursor.fetchall()
-    cursor.close()
-    conn.close()
-    return render_template('gestion_empleados.html', empleados=empleados)
+    """Muestra la lista completa de empleados sin paginación ni búsqueda"""
+    conn = None
+    cursor = None
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
 
+        query = """
+            SELECT e.*, r.Nombre AS Rol_Nombre, s.Nombre AS Sucursal_Nombre
+            FROM Empleados e
+            LEFT JOIN Roles r ON e.Rol_ID = r.ID
+            LEFT JOIN Sucursales s ON e.Sucursal_ID = s.ID
+            ORDER BY e.Fecha_Registro DESC
+        """
+        cursor.execute(query)
+        empleados = cursor.fetchall()
 
-@app.route('/empleados/<int:id>/data')
-def obtener_empleado_data(id):
-    conn = get_db_connection()
-    cursor = conn.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM Empleados WHERE ID = %s", (id,))
-    empleado = cursor.fetchone()
-    cursor.close()
-    conn.close()
-    if empleado:
-        return jsonify(empleado)
-    return jsonify({'message': 'Empleado no encontrado'}), 404
+        return render_template('gestion_empleados.html', empleados=empleados)
+
+    except Exception as e:
+        app.logger.error(f"Error en gestion_empleados: {e}")
+        flash("Error al cargar los empleados", "error")
+        return redirect(url_for('inicio'))
+
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
 
 ################################################################################
 # Formulario de empleados ----no quitar-----
 ################################################################################
-@app.route('/formulario_empleado')
-def formulario_empleado():
-    """Muestra el formulario para agregar empleados"""
+@app.route('/formulario_empleado/<int:id>', methods=['GET'])
+@app.route('/formulario_empleado', methods=['GET'])
+def formulario_empleado(id=None):
     conn = None
     cursor = None
     try:
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
-        cursor.execute("SELECT ID, Nombre FROM Sucursales WHERE Estatus = 'Activa'")
+
+        empleado = None
+        if id:
+            cursor.execute("SELECT * FROM Empleados WHERE ID = %s", (id,))
+            empleado = cursor.fetchone()
+            if not empleado:
+                flash("Empleado no encontrado", "error")
+                return redirect(url_for('gestion_empleados'))
+
+        # Obtener sucursales activas
+        cursor.execute("SELECT ID, Nombre FROM sucursales WHERE Estatus = 'Activa'")
         sucursales = cursor.fetchall()
+
+        # Obtener todos los roles 
         cursor.execute("SELECT ID, Nombre FROM Roles")
         roles = cursor.fetchall()
-        return render_template('formulario_empleado.html', sucursales=sucursales, roles=roles)
+
+        return render_template(
+            'formulario_empleado.html',
+            empleado=empleado,
+            generos=['Masculino', 'Femenino', 'Otro', 'Prefiero no decir'],
+            estatus_options=['Activo', 'Inactivo', 'Suspendido'],
+            tipos_contrato=['Tiempo completo', 'Medio tiempo', 'Temporal', 'Indefinido'],
+            sucursales=sucursales,
+            roles=roles
+        )
+
     except Exception as e:
-        app.logger.error(f"Error en formulario_empleado: {str(e)}")
-        flash("Error al cargar el formulario de empleado", "error")
-        return redirect(url_for('inicio'))
+        app.logger.error(f"Error en formulario_empleado: {e}")
+        flash("Error al cargar el formulario", "error")
+        return redirect(url_for('gestion_empleados'))
+
     finally:
-        if cursor is not None:
-            cursor.close()
-        if conn is not None:
-            conn.close()
+        if cursor: cursor.close()
+        if conn: conn.close()
+
+
+################################################################################
+# Cambiar estado del empleado
+################################################################################
+@app.route('/cambiar_estado_empleado/<int:id>/<string:estado>')
+def cambiar_estado_empleado(id, estado):
+    """Cambia el estado de un empleado"""
+    conn = None
+    cursor = None
+    try:
+        if estado not in ['Activo', 'Inactivo', 'Suspendido']:
+            flash("Estado no válido", "error")
+            return redirect(url_for('gestion_empleados'))
+
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        # Verificar existencia
+        cursor.execute("SELECT ID FROM Empleados WHERE ID = %s", (id,))
+        if not cursor.fetchone():
+            flash("Empleado no encontrado", "error")
+            return redirect(url_for('gestion_empleados'))
+
+        cursor.execute(
+            "UPDATE Empleados SET Estatus = %s WHERE ID = %s",
+            (estado, id)
+        )
+        conn.commit()
+
+        flash(f"Estado cambiado a {estado}", "success")
+        return redirect(url_for('gestion_empleados'))
+
+    except Exception as e:
+        if conn: conn.rollback()
+        app.logger.error(f"Error al cambiar estado del empleado ID {id}: {str(e)}")
+        flash("Error al cambiar estado del empleado", "error")
+        return redirect(url_for('gestion_empleados'))
+
+    finally:
+        if cursor: cursor.close()
+        if conn: conn.close()
+
+
+
 
 @app.route('/guardar_empleado', methods=['POST'])
 def guardar_empleado():
-    """Guarda un nuevo empleado"""
     conn = None
     cursor = None
     try:
         datos = {
-            'Sucursal_ID': request.form['Sucursal_ID'],
-            'Rol_ID': request.form['Rol_ID'],
-            'Nombre': request.form['Nombre'].strip(),
-            'Apellido_p': request.form['Apellido_p'].strip(),
-            'Apellido_M': request.form.get('Apellido_M', '').strip(),
-            'Correo': request.form['Correo'].strip(),
-            'Telefono': request.form.get('Telefono', '').strip(),
-            'Fecha_Nacimiento': request.form['Fecha_Nacimiento'],
-            'Genero': request.form['Genero'],
-            'Estatus': request.form.get('Estatus', 'Activo'),
-            'Salario': float(request.form.get('Salario', 0.0)),
-            'Tipo_Contrato': request.form.get('Tipo_Contrato', ''),
-            'Fecha_Contratacion': request.form['Fecha_Contratacion'],
-            'Fecha_Terminacion': request.form.get('Fecha_Terminacion', None) if request.form.get('Fecha_Terminacion') else None
+            'id': request.form.get('id'),
+            'nombre': request.form['nombre'].strip(),
+            'apellido_p': request.form['apellido_p'].strip(),
+            'apellido_m': request.form.get('apellido_m', '').strip(),
+            'correo': request.form['correo'].strip().lower(),
+            'telefono': request.form.get('telefono', '').strip(),
+            'fecha_nacimiento': request.form['fecha_nacimiento'],
+            'genero': request.form['genero'],
+            'rfc': request.form.get('rfc', '').strip().upper(),
+            'curp': request.form.get('curp', '').strip().upper(),
+            'direccion': request.form.get('direccion', '').strip(),
+            'estatus': request.form.get('estatus', 'Activo'),
+            'salario': request.form.get('salario'),
+            'tipo_contrato': request.form.get('tipo_contrato'),
+            'fecha_contratacion': request.form.get('fecha_contratacion'),
+            'rol_id': request.form.get('rol_id'),
+            'sucursal_id': request.form.get('sucursal_id'),
         }
 
-        # Validación de campos obligatorios
-        campos_requeridos = ['Sucursal_ID', 'Rol_ID', 'Nombre', 'Apellido_p', 'Correo', 
-                            'Telefono', 'Fecha_Nacimiento', 'Genero', 'Fecha_Contratacion']
-        if not all(datos[campo] for campo in campos_requeridos):
-            flash("Todos los campos obligatorios deben completarse", "error")
-            return redirect(url_for('formulario_empleado'))
+        errors = []
+        if len(datos['nombre']) > 25:
+            errors.append("Nombre no puede exceder 25 caracteres")
+        if not datos['correo']:
+            errors.append("Correo electrónico es obligatorio")
+        elif not re.match(r"[^@]+@[^@]+\.[^@]+", datos['correo']):
+            errors.append("Correo electrónico no es válido")
+
+        if errors:
+            for error in errors:
+                flash(error, "error")
+            return redirect(url_for('formulario_empleado', id=datos['id']))
 
         conn = get_db_connection()
         cursor = conn.cursor()
-        query = """
-            INSERT INTO Empleados (
-                Sucursal_ID, Rol_ID, Nombre, Apellido_p, Apellido_M, Correo, Telefono,
-                Fecha_Nacimiento, Genero, Estatus, Salario, Tipo_Contrato,
-                Fecha_Contratacion, Fecha_Terminacion
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-        """
-        params = (
-            datos['Sucursal_ID'], datos['Rol_ID'], datos['Nombre'], datos['Apellido_p'],
-            datos['Apellido_M'], datos['Correo'], datos['Telefono'], datos['Fecha_Nacimiento'],
-            datos['Genero'], datos['Estatus'], datos['Salario'], datos['Tipo_Contrato'],
-            datos['Fecha_Contratacion'], datos['Fecha_Terminacion']
-        )
-        cursor.execute(query, params)
+
+        if datos['id']:  # Actualización
+            cursor.execute(
+                "SELECT ID FROM Empleados WHERE Correo = %s AND ID != %s",
+                (datos['correo'], datos['id'])
+            )
+            if cursor.fetchone():
+                flash("El correo ya está registrado", "error")
+                return redirect(url_for('formulario_empleado', id=datos['id']))
+
+            query = """
+                UPDATE Empleados SET
+                    Nombre = %s, Apellido_P = %s, Apellido_M = %s, Correo = %s, Telefono = %s,
+                    Fecha_Nacimiento = %s, Genero = %s, RFC = %s, CURP = %s, Direccion = %s,
+                    Estatus = %s, Salario = %s, Tipo_Contrato = %s, Fecha_Contratacion = %s,
+                    Rol_ID = %s, Sucursal_ID = %s, Ultima_Actualizacion = NOW()
+                WHERE ID = %s
+            """
+            cursor.execute(query, (
+                datos['nombre'], datos['apellido_p'], datos['apellido_m'],
+                datos['correo'], datos['telefono'], datos['fecha_nacimiento'],
+                datos['genero'], datos['rfc'], datos['curp'], datos['direccion'],
+                datos['estatus'], datos['salario'], datos['tipo_contrato'],
+                datos['fecha_contratacion'], datos['rol_id'], datos['sucursal_id'], datos['id']
+            ))
+            mensaje = "Empleado actualizado exitosamente"
+        else:  # Inserción
+            cursor.execute("SELECT ID FROM Empleados WHERE Correo = %s", (datos['correo'],))
+            if cursor.fetchone():
+                flash("El correo ya está registrado", "error")
+                return redirect(url_for('formulario_empleado'))
+
+            query = """
+                INSERT INTO Empleados (
+                    Nombre, Apellido_P, Apellido_M, Correo, Telefono, Fecha_Nacimiento, Genero,
+                    RFC, CURP, Direccion, Estatus, Salario, Tipo_Contrato, Fecha_Contratacion,
+                    Rol_ID, Sucursal_ID, Fecha_Registro
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW())
+            """
+            cursor.execute(query, (
+                datos['nombre'], datos['apellido_p'], datos['apellido_m'],
+                datos['correo'], datos['telefono'], datos['fecha_nacimiento'],
+                datos['genero'], datos['rfc'], datos['curp'], datos['direccion'],
+                datos['estatus'], datos['salario'], datos['tipo_contrato'],
+                datos['fecha_contratacion'], datos['rol_id'], datos['sucursal_id']
+            ))
+            mensaje = "Empleado registrado exitosamente"
+
         conn.commit()
-        flash("Empleado registrado exitosamente", "success")
+        flash(mensaje, "success")
         return redirect(url_for('gestion_empleados'))
+
     except Exception as e:
+        if conn: conn.rollback()
         app.logger.error(f"Error al guardar empleado: {str(e)}")
-        flash("Error al guardar el empleado", "error")
-        return redirect(url_for('formulario_empleado'))
-    finally:
-        if cursor is not None:
-            cursor.close()
-        if conn is not None:
-            conn.close()
-
-
-################################################################################
-# Estatus empleado
-################################################################################
-
-@app.route('/activar_empleado/<int:id>')
-def activar_empleado(id):
-    return cambiar_estatus_empleado(id, 'Activo')
-
-@app.route('/desactivar_empleado/<int:id>')
-def desactivar_empleado(id):
-    return cambiar_estatus_empleado(id, 'Inactivo')
-
-def cambiar_estatus_empleado(id, nuevo_estatus):
-    conn = None
-    cursor = None
-    try:
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        cursor.execute("UPDATE Empleados SET Estatus = %s WHERE ID = %s", (nuevo_estatus, id))
-        conn.commit()
-        flash(f"Empleado {'activado' if nuevo_estatus == 'Activo' else 'desactivado'} exitosamente", "success")
-    except Exception as e:
-        app.logger.error(f"Error al cambiar estatus del empleado ID {id}: {str(e)}")
-        flash("Error al cambiar estatus del empleado", "error")
+        flash("Error técnico al guardar el empleado", "error")
+        return redirect(url_for('formulario_empleado', id=request.form.get('id')))
+    
     finally:
         if cursor: cursor.close()
         if conn: conn.close()
-    return redirect(url_for('gestion_empleados'))
 
 
-
-################################################################################
-# ver empleado
-################################################################################
-
-@app.route('/ver_empleado/<int:id>')
-def ver_empleado(id):
-    """Muestra detalles de un empleado"""
-    conn = None
-    cursor = None
-    try:
-        conn = get_db_connection()
-        cursor = conn.cursor(dictionary=True)
-        query = """
-            SELECT 
-                e.*, r.Nombre AS rol_nombre, s.Nombre AS sucursal_nombre
-            FROM Empleados e
-            LEFT JOIN Roles r ON e.Rol_ID = r.ID
-            LEFT JOIN Sucursales s ON e.Sucursal_ID = s.ID
-            WHERE e.ID = %s
-        """
-        cursor.execute(query, (id,))
-        empleado = cursor.fetchone()
-        if not empleado:
-            flash("Empleado no encontrado", "error")
-            return redirect(url_for('gestion_empleados'))
-        return render_template('detalle_empleado.html', empleado=empleado)
-    except Exception as e:
-        app.logger.error(f"Error al cargar detalles del empleado: {str(e)}")
-        flash("Error al mostrar los detalles", "error")
-        return redirect(url_for('gestion_empleados'))
-    finally:
-        if cursor: cursor.close()
-        if conn: conn.close()
 
 
 ################################################################################
 # eliminar empleado
 ################################################################################
 
-@app.route('/eliminar/<int:id>')
+@app.route('/eliminar_empleado/<int:id>')
 def eliminar_empleado(id):
-    """Elimina un empleado por ID"""
+    """Elimina un empleado"""
     conn = None
     cursor = None
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
+        
+        # Verificar existencia
+        cursor.execute("SELECT ID FROM Empleados WHERE ID = %s", (id,))
+        if not cursor.fetchone():
+            flash("Empleado no encontrado", "error")
+            return redirect(url_for('gestion_empleados'))
+        
         cursor.execute("DELETE FROM Empleados WHERE ID = %s", (id,))
         conn.commit()
-        flash("Empleado eliminado exitosamente", "success")
+        
+        flash("Empleado eliminado", "success")
+        return redirect(url_for('gestion_empleados'))
+    
     except Exception as e:
-        app.logger.error(f"Error al eliminar empleado ID {id}: {str(e)}")
-        flash("Error al eliminar el empleado", "error")
+        if conn: conn.rollback()
+        app.logger.error(f"Error al eliminar empleado: {str(e)}")
+        flash("Error al eliminar empleado", "error")
+        return redirect(url_for('gestion_empleados'))
+    
     finally:
-        if cursor is not None:
-            cursor.close()
-        if conn is not None:
-            conn.close()
-    return redirect(url_for('gestion_empleados'))
+        if cursor: cursor.close()
+        if conn: conn.close()
 
-################################################################################
-# actualizar empleado
-################################################################################
 
-@app.route('/actualizar/<int:id>', methods=['POST'])
-def actualizar_empleado(id):
-    """Actualiza un empleado existente"""
-    conn = None
-    cursor = None
-    try:
-        datos = {
-            'id': id,
-            'sucursal_id': request.form['Sucursal_ID'],
-            'rol_id': request.form['Rol_ID'],
-            'nombre': request.form['Nombre'].strip(),
-            'apellido_p': request.form['Apellido_p'].strip(),
-            'apellido_m': request.form.get('Apellido_M', '').strip(),
-            'correo': request.form['Correo'].strip(),
-            'telefono': request.form.get('Telefono', '').strip(),
-            'fecha_nacimiento': request.form['Fecha_Nacimiento'],
-            'genero': request.form['Genero'],
-            'estatus': request.form.get('Estatus', 'Activo'),
-            'salario': float(request.form.get('Salario', 0.0)),
-            'tipo_contrato': request.form.get('Tipo_Contrato', ''),
-            'fecha_contratacion': request.form['Fecha_Contratacion'],
-            'fecha_terminacion': request.form.get('Fecha_Terminacion', None) if request.form.get('Fecha_Terminacion') else None
-        }
 
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        query = """
-            UPDATE Empleados SET 
-                Sucursal_ID = %(sucursal_id)s,
-                Rol_ID = %(rol_id)s,
-                Nombre = %(nombre)s,
-                Apellido_p = %(apellido_p)s,
-                Apellido_M = %(apellido_m)s,
-                Correo = %(correo)s,
-                Telefono = %(telefono)s,
-                Fecha_Nacimiento = %(fecha_nacimiento)s,
-                Genero = %(genero)s,
-                Estatus = %(estatus)s,
-                Salario = %(salario)s,
-                Tipo_Contrato = %(tipo_contrato)s,
-                Fecha_Contratacion = %(fecha_contratacion)s,
-                Fecha_Terminacion = %(fecha_terminacion)s
-            WHERE ID = %(id)s
-        """
-        cursor.execute(query, datos)
-        conn.commit()
-        flash("Empleado actualizado exitosamente", "success")
-    except Exception as e:
-        app.logger.error(f"Error al actualizar empleado ID {id}: {str(e)}")
-        flash("Error al actualizar el empleado", "error")
-    finally:
-        if cursor is not None:
-            cursor.close()
-        if conn is not None:
-            conn.close()        
-    return redirect(url_for('gestion_empleados'))
 
 ################################################################################
 # gestion de proveedores
@@ -1694,7 +1690,7 @@ def guardar_cliente():
         if conn: conn.close()
 
 ################################################################################
-# Cambiar estado del cliente
+# Cambiar estado del cliente                                               }}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
 ################################################################################
 @app.route('/cambiar_estado/<int:id>/<string:estado>')
 def cambiar_estado_cliente(id, estado):
