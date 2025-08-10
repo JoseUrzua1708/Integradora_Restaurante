@@ -9,8 +9,7 @@ from datetime import time
 import re
 from mysql.connector import Error
 import pymysql
-from weasyprint import HTML
-from io import BytesIO 
+
 
 
 ###############################################################################
@@ -27,7 +26,7 @@ app.secret_key = os.getenv('SECRET_KEY', 'your-secret-key-here')
 db_config = {
     'host': os.getenv('DB_HOST', 'localhost'),
     'user': os.getenv('DB_USER', 'root'),
-    'password': os.getenv('DB_PASSWORD', '12345'),
+    'password': os.getenv('DB_PASSWORD', 'Jose1708$'),
     'database': os.getenv('DB_NAME', 'administracion'),
     'pool_name': 'restaurante_pool',
     'pool_size': 5,
@@ -148,35 +147,6 @@ def formulario_restaurante():
     
     # Método GET - Mostrar formulario
     return render_template('formulario_restaurante.html')
-
-################################################################################
-# PDF Reporte Gestión de Restaurantes
-################################################################################
-
-@app.route('/reporte_restaurantes')
-def reporte_restaurantes():
-    try:
-        conn = get_db_connection()
-        cursor = conn.cursor(dictionary=True)
-        cursor.execute("SELECT * FROM Configuracion_Restaurante")
-        data = cursor.fetchall()
-    except Exception as e:
-        flash(f"Error al generar el reporte: {str(e)}", "error")
-        return redirect(url_for('gestion_restaurante'))
-    finally:
-        if cursor: cursor.close()
-        if conn: conn.close()
-
-    html = render_template('reporte_restaurantes.html', data=data, now=datetime.now())
-    pdf_io = BytesIO()
-    HTML(string=html, base_url=request.base_url).write_pdf(pdf_io)
-    pdf_io.seek(0)
-
-    response = make_response(pdf_io.read())
-    response.headers['Content-Type'] = 'application/pdf'
-    response.headers['Content-Disposition'] = 'attachment; filename=reporte_restaurantes.pdf'
-    return response
-
 
 ################################################################################
 # Eliminar restaurante
@@ -2224,9 +2194,6 @@ def subcategorias_por_categoria(categoria_id):
     cursor.close()
     conn.close()
     return jsonify(subcategorias)
-
-
-
 
 ################################################################################
 # corer la aplicación
