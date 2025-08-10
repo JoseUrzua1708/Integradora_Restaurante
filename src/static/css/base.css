@@ -286,17 +286,6 @@ body {
     }
 }
 
-@media (min-width: 992px) {
-    :root {
-        --icon-size: 1.6rem;
-        --icon-size-footer: 1.3rem;
-    }
-
-    .nav-link {
-        padding: 1.2rem 2rem;
-    }
-}
-
 @media (max-width: 480px) {
     :root {
         --icon-size: 1.3rem;
@@ -304,31 +293,48 @@ body {
         --nav-link-padding: 0.8rem 1rem;
     }
 
+    /* Mantener diseño de la barra superior igual que desktop */
     .header-content {
-        flex-direction: row;
+        padding: 1rem 1.5rem;
         justify-content: space-between;
         align-items: center;
-        padding: 0.8rem 1rem;
-        gap: 0;
+        flex-wrap: nowrap;
     }
 
-    /* Mostrar botón hamburger */
-    .hamburger-btn {
-        display: inline-flex;
+    .admin-header h1 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--light-color);
+        margin: 0;
     }
 
-    /* Ajustar layout para móvil */
+    .welcome-msg {
+        font-size: 0.9rem;
+        color: var(--light-color);
+    }
+
+    .logout-btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.85rem;
+    }
+
+    /* Ocultar botón hamburguesa original en header */
+    .admin-header .hamburger-btn {
+        display: none;
+    }
+
+    /* Layout en columna para móvil */
     .admin-layout {
         flex-direction: column;
     }
 
-    /* Menú lateral oculto por defecto (fuera de pantalla) */
+    /* Sidebar oculto por defecto en móvil */
     .main-nav {
         width: 80%;
         max-width: 300px;
         position: fixed;
         top: 70px;
-        left: -100%; /* oculto */
+        left: -100%;
         height: calc(100vh - 70px - 90px);
         padding-top: 1rem;
         background-color: var(--secondary-color);
@@ -337,40 +343,83 @@ body {
         transition: left 0.3s ease;
     }
 
-    /* Menú lateral visible cuando tiene clase active */
+    /* Sidebar visible cuando activo */
     .main-nav.active {
         left: 0;
     }
 
-    /* Menú en grid de 2 columnas */
+    /* Fondo oscuro debajo del menú cuando abierto */
+    .main-nav.active::before {
+        content: "";
+        position: fixed;
+        top: 70px;
+        left: 0;
+        width: 100vw;
+        height: calc(100vh - 70px - 90px);
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: -1;
+    }
+
+    /* Evitar scroll cuando menú abierto */
+    body.menu-open {
+        overflow: hidden;
+    }
+
     .nav-menu {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
+        display: flex;
+        flex-direction: column;
         gap: 0.3rem;
     }
 
-    /* Enlaces centrados y apilados */
     .nav-link {
-        justify-content: center;
-        padding: 0.8rem;
+        justify-content: flex-start;
+        padding: var(--nav-link-padding);
         font-size: 0.85rem;
-        white-space: normal;
-        text-align: center;
-        flex-direction: column;
-        gap: 0.5rem;
+        white-space: nowrap;
+        text-align: left;
+        flex-direction: row;
+        gap: 0.8rem;
+        margin: 0;
     }
 
     .nav-link .icon {
-        margin-right: 0;
-        margin-bottom: 0.3rem;
+        margin-right: 0.7rem;
+        margin-bottom: 0;
     }
 
-    /* Contenido principal ocupa todo el ancho */
+    /* Contenido principal ocupa todo el ancho (sin margen sidebar) */
     .main-content {
-        margin: 0.5rem;
+        margin: 0.5rem 1rem;
         padding: 1rem;
         margin-left: 0 !important;
         margin-top: 70px;
         min-height: calc(100vh - 70px - 90px);
+    }
+
+    /* Footer igual */
+    .admin-footer {
+        height: 90px;
+    }
+
+    /* NUEVO: botón hamburguesa fijo abajo a la izquierda */
+    .hamburger-btn.mobile-hamburger {
+        display: block;
+        position: fixed;
+        bottom: 15px;
+        left: 10px;
+        background: var(--primary-color);
+        border-radius: 0 5px 5px 0;
+        padding: 0.5rem 1rem;
+        font-size: 1.8rem;
+        color: var(--light-color);
+        border: none;
+        cursor: pointer;
+        z-index: 1100;
+        box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.3);
+        transition: background-color 0.3s ease;
+    }
+
+    .hamburger-btn.mobile-hamburger:hover {
+        background-color: var(--hover-color);
     }
 }
