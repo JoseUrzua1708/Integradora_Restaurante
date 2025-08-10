@@ -515,6 +515,24 @@ CREATE TABLE Pedidos (
     FOREIGN KEY (Sucursal_ID) REFERENCES Sucursales(ID)
 );
 
+INSERT INTO Pedidos (
+    Cliente_ID, Sucursal_ID, Mesa_ID, Empleado_ID, Fecha_Hora, Estatus,
+    Subtotal, Impuestos, Descuentos, Total, Notas, Tipo, Metodo_Pago,
+    Direccion_Entrega, Telefono_Contacto, Tiempo_Estimado, Fecha_Entrega, Codigo_Pedido
+) VALUES
+(1, 1, 1, 1, '2025-08-10 13:00:00', 'Nuevo',
+ 200.00, 32.00, 0.00, 232.00, 'Sin picante', 'Presencial', 'Efectivo',
+ NULL, '5512345678', 45, NULL, 'PED20250810001'),
+
+(2, 2, NULL, 2, '2025-08-10 13:30:00', 'En preparación',
+ 350.00, 56.00, 20.00, 386.00, 'Entrega rápida, por favor', 'Domicilio', 'Tarjeta Crédito',
+ 'Av. Siempre Viva 456, Monterrey', '5523456789', 60, '2025-08-10 14:30:00', 'PED20250810002'),
+
+(NULL, 3, 3, 3, '2025-08-10 14:00:00', 'Listo',
+ 150.00, 24.00, 0.00, 174.00, '', 'Recoger', 'Transferencia',
+ NULL, '5534567890', 30, NULL, 'PED20250810003');
+
+
 
 
 CREATE TABLE Caja (
@@ -533,6 +551,15 @@ CREATE TABLE Caja (
     FOREIGN KEY (Sucursal_ID) REFERENCES Sucursales(ID)
 );
 
+INSERT INTO Caja (
+    Sucursal_ID, Empleado_ID, Fecha_Apertura, Fecha_Cierre, Monto_Inicial, Monto_Final,
+    Monto_Teorico, Diferencia, Estatus, Notas
+) VALUES
+(1, 1, '2025-08-10 08:00:00', '2025-08-10 20:00:00', 5000.00, 15000.00, 14850.00, 150.00, 'Cerrada', 'Diferencia por propinas no registradas'),
+(2, 2, '2025-08-10 09:00:00', NULL, 3000.00, NULL, NULL, NULL, 'Abierta', 'Caja abierta para turno de la mañana'),
+(3, 3, '2025-08-09 18:00:00', '2025-08-10 02:00:00', 4000.00, 11000.00, 11000.00, 0.00, 'Cerrada', 'Turno nocturno cerrado sin diferencias');
+
+
 CREATE TABLE Detalle_Pedido (
     ID INT AUTO_INCREMENT PRIMARY KEY,
     Pedido_ID INT NOT NULL,
@@ -542,6 +569,14 @@ CREATE TABLE Detalle_Pedido (
     FOREIGN KEY (Pedido_ID) REFERENCES Pedidos(ID) ON DELETE CASCADE,
     FOREIGN KEY (ProductoID) REFERENCES Menu(ID)
 );
+
+INSERT INTO Detalle_Pedido (
+    Pedido_ID, ProductoID, Cantidad, PrecioUnitario
+) VALUES
+(1, 1, 2, 100.00),
+(1, 3, 1, 50.00),
+(2, 5, 1, 200.00),
+(3, 2, 3, 50.00);
 
 CREATE TABLE Transacciones (
     ID INT PRIMARY KEY AUTO_INCREMENT,
@@ -560,6 +595,15 @@ CREATE TABLE Transacciones (
     FOREIGN KEY (Empleado_ID) REFERENCES Empleados(ID)
 );
 
+INSERT INTO Transacciones (
+    Caja_ID, Pedido_ID, Tipo, Monto, Metodo_Pago, Descripcion, Empleado_ID, Referencia, Estatus
+) VALUES
+(1, 1, 'Ingreso', 300.00, 'Efectivo', 'Pago de cliente en efectivo', 1, 'REC12345', 'Confirmada'),
+(1, NULL, 'Apertura', 5000.00, 'Efectivo', 'Apertura de caja con monto inicial', 1, NULL, 'Confirmada'),
+(2, 2, 'Egreso', 150.00, 'Tarjeta Débito', 'Compra de insumos', 2, 'FAC56789', 'Confirmada'),
+(3, 3, 'Cierre', 11000.00, 'Efectivo', 'Cierre de caja turno nocturno', 3, NULL, 'Pendiente');
+
+
 CREATE TABLE Turnos (
     ID INT PRIMARY KEY AUTO_INCREMENT,
     Sucursal_ID INT NOT NULL,
@@ -575,6 +619,13 @@ CREATE TABLE Turnos (
     FOREIGN KEY (Sucursal_ID) REFERENCES Sucursales(ID)
 );
 
+INSERT INTO Turnos (
+    Sucursal_ID, Empleado_ID, Fecha, Hora_Entrada, Hora_Salida, descanso, Estatus, Notas, Horas_Extras
+) VALUES
+(1, 1, '2025-08-10', '08:00:00', '16:00:00', '2025-08-15', 'Completado', 'Turno sin incidencias', 0.00),
+(2, 2, '2025-08-10', '09:00:00', NULL, '2025-08-20', 'En turno', 'Turno iniciado, pendiente salida', 1.50),
+(3, 3, '2025-08-09', '18:00:00', '02:00:00', '2025-08-15', 'Completado', 'Turno nocturno con horas extras', 2.25);
+
 CREATE TABLE Logs_Acceso (
     ID INT PRIMARY KEY AUTO_INCREMENT,
     Usuario_ID INT NOT NULL,
@@ -584,6 +635,12 @@ CREATE TABLE Logs_Acceso (
     Detalles TEXT,
     Estatus ENUM('Exitoso', 'Fallido') DEFAULT 'Exitoso'
 );
+
+INSERT INTO Logs_Acceso (Usuario_ID, Tipo_Usuario, Accion, Detalles, Estatus) VALUES
+(1, 'Empleado', 'Login', 'Inicio de sesión exitoso desde IP 192.168.1.10', 'Exitoso'),
+(5, 'Cliente', 'Intento de acceso', 'Intento fallido por contraseña incorrecta', 'Fallido'),
+(2, 'Empleado', 'Cambio de contraseña', 'Contraseña actualizada correctamente', 'Exitoso'),
+(3, 'Cliente', 'Logout', 'Cierre de sesión desde navegador móvil', 'Exitoso');
 
 CREATE TABLE Tickets_Soporte (
     ID INT PRIMARY KEY AUTO_INCREMENT,
@@ -601,6 +658,12 @@ CREATE TABLE Tickets_Soporte (
     FOREIGN KEY (Cliente_ID) REFERENCES Clientes(ID),
     FOREIGN KEY (Empleado_ID) REFERENCES Empleados(ID)
 );
+
+INSERT INTO Tickets_Soporte (Cliente_ID, Empleado_ID, Asunto, Descripcion, Estatus, Prioridad, Solucion, Tiempo_Resolucion, Categoria) VALUES
+(1, 3, 'Problema con pago', 'No se procesó el pago con tarjeta de crédito.', 'En proceso', 'Alta', NULL, NULL, 'Pago'),
+(3, NULL, 'Error en sistema', 'La aplicación se cierra inesperadamente al abrir el menú.', 'Abierto', 'Crítica', NULL, NULL, 'Sistema'),
+(NULL, 2, 'Consulta sobre reserva', 'Cliente solicita cambio de fecha en reserva confirmada.', 'Resuelto', 'Media', 'Cambio realizado correctamente.', 30, 'Reserva'),
+(2, 4, 'Duda en pedido', 'Cliente no recibió bebida incluida en el pedido.', 'Cerrado', 'Baja', 'Se reembolsó el monto correspondiente.', 15, 'Pedido');
 
 CREATE TABLE Promociones (
     ID INT PRIMARY KEY AUTO_INCREMENT,
@@ -621,6 +684,15 @@ CREATE TABLE Promociones (
     FOREIGN KEY (Sucursal_ID) REFERENCES Sucursales(ID) ON DELETE CASCADE
 );
 
+INSERT INTO Promociones (
+    Sucursal_ID, Nombre, Descripcion, Tipo, Valor, Fecha_Inicio, Fecha_Fin, Estatus,
+    Codigo, Usos_Maximos, Usos_Actuales, Aplicable_A, Minimo_Compra
+) VALUES
+(1, 'Descuento Verano', '10% de descuento en todos los productos', 'Descuento', 10.00, '2025-07-01 00:00:00', '2025-08-31 23:59:59', 'Activa', 'VERANO10', 1000, 0, 'Todo', 100.00),
+(2, 'Combo Parrillero', 'Combo especial para 2 personas con bebida incluida', 'Combo', 250.00, '2025-07-15 00:00:00', '2025-09-15 23:59:59', 'Activa', 'COMBOPARR', 500, 0, 'Productos específicos', 0.00),
+(3, 'Envío Gratis', 'Envío gratis en pedidos mayores a $300', 'Envío Gratis', 0.00, '2025-08-01 00:00:00', '2025-08-31 23:59:59', 'Pausada', 'ENVIOGRATIS', 200, 0, 'Todo', 300.00);
+
+
 CREATE TABLE Promociones_Menu (
     Promocion_ID INT NOT NULL,
     Menu_ID INT NOT NULL,
@@ -628,6 +700,11 @@ CREATE TABLE Promociones_Menu (
     FOREIGN KEY (Promocion_ID) REFERENCES Promociones(ID) ON DELETE CASCADE,
     FOREIGN KEY (Menu_ID) REFERENCES Menu(ID) ON DELETE CASCADE
 );
+
+INSERT INTO Promociones_Menu (Promocion_ID, Menu_ID) VALUES
+(2, 1),  
+(2, 2),  
+(2, 2);
 
 CREATE TABLE Calificaciones (
     ID INT PRIMARY KEY AUTO_INCREMENT,
@@ -645,6 +722,13 @@ CREATE TABLE Calificaciones (
     FOREIGN KEY (Pedido_ID) REFERENCES Pedidos(ID)
 );
 
+INSERT INTO Calificaciones (
+    Cliente_ID, Pedido_ID, Calificacion_Comida, Calificacion_Servicio, Calificacion_Ambiente, Comentarios, Estatus_Respuesta
+) VALUES
+(1, 1, 5, 4, 5, 'Excelente comida y buen servicio.', 'Pendiente'),
+(2, 2, 4, 5, 4, 'Muy buen ambiente, pero la comida tardó.', 'Respondido'),
+(3, 3, 3, 3, 3, 'Regular, esperaba más.', 'Pendiente');
+
 CREATE TABLE Eventos (
     ID INT PRIMARY KEY AUTO_INCREMENT,
     Sucursal_ID INT NOT NULL,
@@ -660,6 +744,13 @@ CREATE TABLE Eventos (
     FOREIGN KEY (Sucursal_ID) REFERENCES Sucursales(ID)
 );
 
+INSERT INTO Eventos (
+    Sucursal_ID, Nombre, Descripcion, Fecha_Inicio, Fecha_Fin, Capacidad_Maxima, Precio_Entrada, Estatus, Requiere_Reserva
+) VALUES
+(1, 'Noche Mexicana', 'Evento cultural con música y comida típica.', '2025-09-15 19:00:00', '2025-09-15 23:00:00', 100, 250.00, 'Programado', TRUE),
+(2, 'Cena Maridaje', 'Cena especial con maridaje de vinos y platillos.', '2025-10-05 20:00:00', '2025-10-05 23:00:00', 50, 1200.00, 'Programado', TRUE),
+(3, 'Brunch Dominical', 'Brunch con música en vivo y menú especial.', '2025-08-20 10:00:00', '2025-08-20 14:00:00', 80, 350.00, 'Programado', FALSE);
+
 CREATE TABLE Eventos_Reservaciones (
     ID INT PRIMARY KEY AUTO_INCREMENT,
     Evento_ID INT NOT NULL,
@@ -672,6 +763,13 @@ CREATE TABLE Eventos_Reservaciones (
     FOREIGN KEY (Evento_ID) REFERENCES Eventos(ID),
     FOREIGN KEY (Cliente_ID) REFERENCES Clientes(ID)
 );
+
+INSERT INTO Eventos_Reservaciones (
+    Evento_ID, Cliente_ID, Numero_Personas, Estatus, Monto_Pagado, Notas
+) VALUES
+(1, 1, 4, 'Confirmada', 1000.00, 'Reserva familiar'),
+(2, 2, 2, 'Pendiente', 2400.00, 'Reserva para pareja'),
+(3, 3, 1, 'Cancelada', 0.00, 'Cancelación por enfermedad');
 
 CREATE TABLE Gastos (
     ID INT PRIMARY KEY AUTO_INCREMENT,
@@ -689,6 +787,13 @@ CREATE TABLE Gastos (
     FOREIGN KEY (Proveedor_ID) REFERENCES Proveedores(ID)
 );
 
+INSERT INTO Gastos (
+    Sucursal_ID, Categoria, Descripcion, Monto, Fecha_Gasto, Empleado_ID, Metodo_Pago, Proveedor_ID
+) VALUES
+(1, 'Nómina', 'Pago de sueldos de meseros', 30000.00, '2025-07-31', 1, 'Transferencia', NULL),
+(2, 'Inventario', 'Compra de ingredientes secos', 15000.00, '2025-08-02', 2, 'Cheque', 1),
+(3, 'Servicios', 'Pago de electricidad', 5000.00, '2025-08-05', 3, 'Efectivo', NULL);
+
 CREATE TABLE Reportes (
     ID INT PRIMARY KEY AUTO_INCREMENT,
     Tipo VARCHAR(50) NOT NULL,
@@ -699,6 +804,11 @@ CREATE TABLE Reportes (
     Estatus ENUM('Generado', 'Fallido', 'En Proceso') DEFAULT 'Generado',
     FOREIGN KEY (Empleado_ID) REFERENCES Empleados(ID)
 );
+
+INSERT INTO Reportes (Tipo, Parametros, Empleado_ID, Archivo, Estatus) VALUES
+('Ventas Mensuales', '{"mes":"2025-07"}', 1, 'reporte_ventas_2025_07.pdf', 'Generado'),
+('Inventario Diario', '{"fecha":"2025-08-09"}', 2, 'reporte_inventario_2025_08_09.pdf', 'En Proceso'),
+('Gastos por Sucursal', '{"sucursal_id":3}', 3, NULL, 'Fallido');
 
 CREATE TABLE Notificaciones (
     ID INT PRIMARY KEY AUTO_INCREMENT,
@@ -711,3 +821,8 @@ CREATE TABLE Notificaciones (
     Fecha_Lectura DATETIME,
     FOREIGN KEY (Usuario_ID) REFERENCES Empleados(ID) ON DELETE CASCADE
 );
+
+INSERT INTO Notificaciones (Usuario_ID, Tipo_Usuario, Titulo, Mensaje, Leida) VALUES
+(1, 'Empleado', 'Recordatorio de reunión', 'Reunión programada para mañana a las 10:00 AM.', FALSE),
+(2, 'Empleado', 'Nuevo pedido asignado', 'Tienes un nuevo pedido para atender en la sucursal.', TRUE),
+(3, 'Empleado', 'Actualización de sistema', 'El sistema estará en mantenimiento este sábado.', FALSE);
