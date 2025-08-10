@@ -2016,35 +2016,24 @@ def eliminar_subcategoria_almacen(id):
 ################################################################################
 # Gestion de almacen
 ################################################################################
-
-
-# Ruta para mostrar productos almacen
-@app.route('/almacen')
-def mostrar_almacen():
+@app.route('/gestion_almacen')
+def gestion_almacen():
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
     query = """
         SELECT a.ID, a.Nombre, a.Descripcion, a.Cantidad, a.Unidad_Medida, a.Costo_Unitario,
                a.Costo_Total, a.Fecha_Entrada, a.Fecha_Caducidad, a.Estatus, a.Fecha_Registro,
-               s.Nombre AS Subcategoria, c.Nombre AS Categoria
+               c.Nombre AS Categoria
         FROM Almacen a
-        JOIN SUBCATEGORIA_ALMACEN s ON a.SUBCATEGORIA_ALMACEN_ID = s.ID
-        JOIN CATEGORIA_ALMACEN c ON s.CategoriaID = c.ID
+        JOIN CATEGORIA_ALMACEN c ON a.CATEGORIA_ALMACEN_ID = c.ID
         ORDER BY a.Fecha_Registro DESC
     """
     cursor.execute(query)
     productos = cursor.fetchall()
 
-    cursor.execute("SELECT ID, Nombre FROM CATEGORIA_ALMACEN WHERE Estatus='Activo' ORDER BY Nombre")
-    categorias = cursor.fetchall()
-
-    cursor.execute("SELECT ID, Nombre, CategoriaID FROM SUBCATEGORIA_ALMACEN WHERE Estatus='Activo' ORDER BY Nombre")
-    subcategorias = cursor.fetchall()
-
     cursor.close()
     conn.close()
-    return render_template('gestion_almacen.html', productos=productos, categorias=categorias, subcategorias=subcategorias)
-
+    return render_template('gestion_almacen.html', productos=productos)
 
 # Ruta para formulario nuevo producto
 @app.route('/formulario_almacen')

@@ -63,11 +63,11 @@
                                     </a>
                                     {% if cliente.Estatus == 'Activo' %}
                                     <a href="{{ url_for('cambiar_estado_cliente', id=cliente.ID, estado='Inactivo') }}" class="btn-accion" title="Desactivar">
-                                        <i class="fas fa-user-slash"></i>
+                                        <i class="fas fa-user-check"></i>
                                     </a>
                                     {% else %}
                                     <a href="{{ url_for('cambiar_estado_cliente', id=cliente.ID, estado='Activo') }}" class="btn-accion" title="Activar">
-                                        <i class="fas fa-user-check"></i>
+                                        <i class="fas fa-user-slash"></i>
                                     </a>
                                     {% endif %}
                                     <a href="{{ url_for('eliminar_cliente', id=cliente.ID) }}" class="btn-accion btn-eliminar" title="Eliminar" onclick="return confirm('¿Está seguro de eliminar este cliente?')">

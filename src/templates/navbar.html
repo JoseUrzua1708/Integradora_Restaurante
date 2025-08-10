@@ -21,7 +21,7 @@
                     <li>
                         <a href="{{ url_for('inicio') }}" class="nav-link">
                             <svg class="icon" viewBox="0 0 24 24">
-                                <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8 0-1.85.63-3.55 1.69-4.9L16.9 18.31C15.55 19.37 13.85 20 12 20zm6.31-3.1L7.1 5.69C8.45 4.63 10.15 4 12 4c4.42 0 8 3.58 8 8 0 1.85-.63 3.55-1.69 4.9z"/>
+                                <path fill="currentColor" d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
                             </svg>
                             Inicio
                         </a>
@@ -91,13 +91,22 @@
                         </a>
                     </li>
                     <li>
-                        <a href="{{ url_for('mostrar_categorias_almacen') }}" class="nav-link">
+                        <a href="{{ url_for('gestion_almacen') }}" class="nav-link">
                             <svg class="icon" viewBox="0 0 24 24">
-                                <path fill="currentColor" d="M21 16V8a2 2 0 0 0-1-1.73l-7-4.05a2 2 0 0 0-2 0l-7 4.05A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4.05a2 2 0 0 0 2 0l7-4.05a2 2 0 0 0 1-1.73m-9 3.4l-5.74-3.32L12 12.4l5.74 3.68L12 19.4M12 11L6.26 7.32L12 4.6l5.74 2.72L12 11Z"/>
+                                <path fill="currentColor" d="M3 3v18h2V3H3zm16 0v18h2V3h-2zM7 3v4h4V3H7zm6 0v4h4V3h-4zM7 9v4h4V9H7zm6 0v4h4V9h-4zM7 15v4h4v-4H7zm6 0v4h4v-4h-4z"/>
                             </svg>
-                            Gestión de Almacen
-                        </a>
-                    </li>
+                            <span style="font-size:0.70rem; line-height:1.2;">Configuración de almacenamiento</span>
+                            </a>
+                        </li>
+
+                    <li>
+                        <a href="{{ url_for('gestion_almacen') }}" class="nav-link">
+                            <svg class="icon" viewBox="0 0 24 24">
+                                <path fill="currentColor" d="M3 3v18h2V3H3zm16 0v18h2V3h-2zM7 3v4h4V3H7zm6 0v4h4V3h-4zM7 9v4h4V9H7zm6 0v4h4V9h-4zM7 15v4h4v-4H7zm6 0v4h4v-4h-4z"/>
+                            </svg>
+                            Gestión de almacén
+                            </a>
+                        </li>
         </ul>
     </nav>
 </header>
