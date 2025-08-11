@@ -9,8 +9,20 @@ from datetime import time
 import re
 from mysql.connector import Error
 import pymysql
-
-
+import reportlab as rl
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.units import inch
+from reportlab.lib.enums import TA_JUSTIFY
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image, Table, TableStyle
+from reportlab.lib.colors import Color
+from reportlab.lib import colors
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.pdfbase.cidfonts import UnicodeCIDFont
+from reportlab.pdfgen import canvas
+from reportlab.lib.utils import ImageReader
+from reportlab.lib.styles import ParagraphStyle
 
 ###############################################################################
 # Cargar variables de entorno
@@ -26,10 +38,10 @@ app.secret_key = os.getenv('SECRET_KEY', 'your-secret-key-here')
 db_config = {
     'host': os.getenv('DB_HOST', 'localhost'),
     'user': os.getenv('DB_USER', 'root'),
-    'password': os.getenv('DB_PASSWORD', '12345'),
+    'password': os.getenv('DB_PASSWORD', 'Jose1708$'),
     'database': os.getenv('DB_NAME', 'administracion'),
     'pool_name': 'restaurante_pool',
-    'pool_size': 5,
+    'pool_size': 10,
     'pool_reset_session': True
 }
 
@@ -57,7 +69,7 @@ def inicio():
 ################################################################################
 @app.route('/gestion_restaurante')
 def gestion_restaurante():
-    """Muestra todos los restaurantes"""
+    """Página de gestión de restaurantes"""
     conn = None
     cursor = None
     try:
@@ -65,7 +77,7 @@ def gestion_restaurante():
         cursor = conn.cursor(dictionary=True)
         cursor.execute("SELECT * FROM Configuracion_Restaurante")
         restaurantes = cursor.fetchall()
-        return render_template('Gestion_Restaurante.html', data=restaurantes)
+        return render_template('gestion_restaurante.html', restaurantes=restaurantes)
     except Exception as e:
         app.logger.error(f"Error en gestion_restaurante: {str(e)}")
         flash("Error al cargar los restaurantes", "error")
@@ -669,17 +681,24 @@ def actualizar_rol(id):
     return redirect(url_for('gestion_roles'))
 
 ################################################################################
-# Gestión de empleados---no quitar---
+# Gestión de empleados - Versión mejorada y segura
 ################################################################################
 @app.route('/gestion_empleados')
 def gestion_empleados():
-    """Muestra la lista completa de empleados sin paginación ni búsqueda"""
+    """Muestra la lista de empleados con manejo seguro de conexión a BD"""
     conn = None
     cursor = None
     try:
+        # Obtener conexión a la base de datos
         conn = get_db_connection()
-        cursor = conn.cursor(dictionary=True)
+        if conn is None:
+            app.logger.error("Error: No se pudo establecer conexión con la base de datos")
+            flash("Error de conexión con la base de datos", "error")
+            return redirect(url_for('inicio'))
 
+        # Crear cursor y ejecutar consulta
+        cursor = conn.cursor(dictionary=True)
+        
         query = """
             SELECT e.*, r.Nombre AS Rol_Nombre, s.Nombre AS Sucursal_Nombre
             FROM Empleados e
@@ -693,14 +712,15 @@ def gestion_empleados():
         return render_template('gestion_empleados.html', empleados=empleados)
 
     except Exception as e:
-        app.logger.error(f"Error en gestion_empleados: {e}")
+        app.logger.error(f"Error en gestion_empleados: {str(e)}")
         flash("Error al cargar los empleados", "error")
         return redirect(url_for('inicio'))
 
     finally:
+        # Cerrar cursor y conexión de manera segura
         if cursor:
             cursor.close()
-        if conn:
+        if conn and conn.is_connected():  # Verificar si la conexión existe y está abierta
             conn.close()
 
 
@@ -793,9 +813,9 @@ def cambiar_estado_empleado(id, estado):
         if cursor: cursor.close()
         if conn: conn.close()
 
-
-
-
+################################################################################
+# Guardar empleado  
+################################################################################
 @app.route('/guardar_empleado', methods=['POST'])
 def guardar_empleado():
     conn = None
@@ -898,9 +918,6 @@ def guardar_empleado():
         if cursor: cursor.close()
         if conn: conn.close()
 
-
-
-
 ################################################################################
 # eliminar empleado
 ################################################################################
@@ -936,8 +953,60 @@ def eliminar_empleado(id):
         if cursor: cursor.close()
         if conn: conn.close()
 
+################################################################################
+# Funciones auxiliares
+################################################################################
+def validar_empleado(datos):
+    """Realiza validaciones sobre los datos del empleado"""
+    errores = []
+    
+    # Validar nombre y apellidos
+    if len(datos['nombre']) > 25 or len(datos['nombre']) < 2:
+        errores.append("Nombre debe tener entre 2 y 25 caracteres")
+    
+    if len(datos['apellido_p']) > 25 or len(datos['apellido_p']) < 2:
+        errores.append("Apellido paterno debe tener entre 2 y 25 caracteres")
+    
+    # Validar correo
+    if not datos['correo']:
+        errores.append("Correo electrónico es obligatorio")
+    elif not re.match(r"[^@]+@[^@]+\.[^@]+", datos['correo']):
+        errores.append("Correo electrónico no válido")
+    
+    # Validar formato de RFC
+    if datos['rfc'] and not re.match(r"^[A-Z&Ñ]{3,4}\d{6}[A-Z0-9]{3}$", datos['rfc']):
+        errores.append("RFC no válido")
+    
+    # Validar CURP
+    if datos['curp'] and not re.match(r"^[A-Z]{4}\d{6}[A-Z]{6}\d{2}$", datos['curp']):
+        errores.append("CURP no válida")
+    
+    # Validar teléfono
+    if datos['telefono'] and not re.match(r"^[\d\s\-\(\)]{10,15}$", datos['telefono']):
+        errores.append("Teléfono no válido (debe tener 10 dígitos)")
+    
+    # Validar fechas
+    try:
+        fecha_nac = datetime.strptime(datos['fecha_nacimiento'], '%Y-%m-%d')
+        if fecha_nac > datetime.now():
+            errores.append("Fecha de nacimiento no puede ser futura")
+    except:
+        errores.append("Fecha de nacimiento no válida")
+    
+    # Validar salario
+    try:
+        salario = float(datos['salario'])
+        if salario <= 0:
+            errores.append("Salario debe ser positivo")
+    except:
+        errores.append("Salario no válido")
+    
+    return errores
 
-
+def get_db_connection():
+    """Obtiene una conexión a la base de datos"""
+    # Implementar según tu sistema de base de datos
+    pass
 
 ################################################################################
 # gestion de proveedores
@@ -1763,6 +1832,19 @@ def eliminar_cliente(id):
     finally:
         if cursor: cursor.close()
         if conn: conn.close()
+0
+################################################################################
+# Configuracion almacen
+################################################################################
+@app.route('/configuracion_almacen')
+def configuracion_almacen():
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT * FROM configuracion_almacen")
+    productos = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return render_template('configuracion_almacen.html', data=productos)
 
 ################################################################################
 # Configuración categoria almacenamiento

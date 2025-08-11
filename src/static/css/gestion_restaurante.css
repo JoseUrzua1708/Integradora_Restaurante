@@ -29,8 +29,9 @@
 
 .table th, .table td {
     padding: 1rem;
-    text-align: left;
+    text-align: center; /* centramos encabezados y datos */
     border-bottom: 1px solid #ddd;
+    vertical-align: middle;
 }
 
 .table th {

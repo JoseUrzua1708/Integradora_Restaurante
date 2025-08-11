@@ -14,7 +14,7 @@ function cerrarModal(id) {
 // Función para manejar la eliminación
 function eliminarRestaurante(id) {
     idAEliminar = id;
-    document.getElementById('modalConfirmacion').style.display = 'block';
+    document.getElementById('modalConfirmacion').style.display = 'flex';
 }
 
 // Evento cuando el DOM está cargado

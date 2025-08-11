@@ -21,42 +21,41 @@
                         <i class="fas fa-plus"></i> Añadir Rol
                     </a>
                 </div>
-            </div>
-
-            <div class="table-responsive">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Nombre</th>
-                            <th>Descripción</th>
-                            <th>Sucursal</th>
-                            <th>Fecha de creación</th>
-                            <th>Fecha de actualización</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for rol in roles %}
-                        <tr data-rol-id="{{ rol.ID }}">
-                            <td>{{ rol.ID }}</td>
-                            <td data-nombre>{{ rol.Nombre }}</td>
-                            <td data-descripcion>{{ rol.Descripcion }}</td>
-                            <td>{{ rol.Sucursal }}</td>
-                            <td>{{ rol.Fecha_Creacion.strftime('%Y-%m-%d %H:%M:%S') if rol.Fecha_Creacion else '' }}</td>
-                            <td>{{ rol.Fecha_Actualizacion.strftime('%Y-%m-%d %H:%M:%S') if rol.Fecha_Actualizacion else '' }}</td>
-                            <td>
-                                <select class="accion-rol" data-id="{{ rol.ID }}" data-nombre="{{ rol.Nombre }}" 
-                                        data-descripcion="{{ rol.Descripcion }}" data-sucursal-id="{{ rol.Sucursal_ID }}">
-                                    <option selected disabled>Opciones</option>
-                                    <option value="Editar">Editar</option>
-                                    <option value="Eliminar">Eliminar</option>
-                                </select>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Descripción</th>
+                                <th>Sucursal</th>
+                                <th>Fecha de creación</th>
+                                <th>Fecha de actualización</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for rol in roles %}
+                            <tr data-rol-id="{{ rol.ID }}">
+                                <td>{{ rol.ID }}</td>
+                                <td data-nombre>{{ rol.Nombre }}</td>
+                                <td data-descripcion>{{ rol.Descripcion }}</td>
+                                <td>{{ rol.Sucursal }}</td>
+                                <td>{{ rol.Fecha_Creacion.strftime('%Y-%m-%d %H:%M:%S') if rol.Fecha_Creacion else '' }}</td>
+                                <td>{{ rol.Fecha_Actualizacion.strftime('%Y-%m-%d %H:%M:%S') if rol.Fecha_Actualizacion else '' }}</td>
+                                <td>
+                                    <select class="accion-rol" data-id="{{ rol.ID }}" data-nombre="{{ rol.Nombre }}" 
+                                            data-descripcion="{{ rol.Descripcion }}" data-sucursal-id="{{ rol.Sucursal_ID }}">
+                                        <option selected disabled>Opciones</option>
+                                        <option value="Editar">Editar</option>
+                                        <option value="Eliminar">Eliminar</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </main>
     </div>   
@@ -115,6 +114,7 @@
             </form>
         </div>
     </div>
+    
     <footer class="admin-footer">
         <div class="footer-content">
             <div class="footer-info">
@@ -153,3 +153,5 @@
     <script src="{{ url_for('static', filename='js/gestion_roles.js') }}"></script>
 </body>
 </html>
+
+

@@ -93,18 +93,24 @@
     font-size: 0.95rem;
 }
 
-.table th, .table td {
-    padding: 1rem;
-    text-align: left;
-    border-bottom: 1px solid var(--border-color);
-}
-
+/* Encabezados alineados a la izquierda */
 .table th {
     background-color: var(--primary-color);
     color: white;
     font-weight: 600;
     position: sticky;
     top: 0;
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+/* Datos centrados - SOLO ESTA LÍNEA CAMBIÓ */
+.table td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-color);
+    vertical-align: middle;
+    text-align: center; /* <-- Aquí se centra todo el contenido */
 }
 
 .table tbody tr {

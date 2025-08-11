@@ -9,6 +9,7 @@ CREATE TABLE Configuracion_Restaurante (
     Correo_Contacto VARCHAR(100) NOT NULL,
     Horario_Apertura TIME NOT NULL,
     Horario_Cierre TIME NOT NULL,
+    Estatus ENUM('Activo', 'Inactivo') DEFAULT 'Activo',   -- actualiza bd por esto 
     Moneda VARCHAR(10) DEFAULT 'MXN',
     Impuesto DECIMAL(5,2) DEFAULT 16.00,
     Tiempo_Reserva_Min INT DEFAULT 30,
@@ -123,19 +124,19 @@ CREATE TABLE Empleados (
 
 
 INSERT INTO Empleados (
-    Rol_ID, Sucursal_ID, Nombre, Apellido_P, Apellido_M, Correo, Contrasena, Telefono, 
+    Rol_ID, Sucursal_ID, Nombre, Apellido_P, Apellido_M, Correo, Contraseña, Telefono, 
     RFC, CURP, Direccion, Fecha_Nacimiento, Genero, Estatus, Ultimo_Acceso, Salario, 
     Tipo_Contrato, Fecha_Contratacion, Fecha_Terminacion
 ) VALUES
-(1, 1, 'Juan', 'Pérez', 'García', 'juan.perez@example.com', 'hash_contrasena1', '5512345678', 
+(1, 1, 'Juan', 'Pérez', 'García', 'juan.perez@example.com', 'Meseros1$', '5512345678', 
  'PEPJ800101XXX', 'PEPJ800101HDFGRN01', 'Calle Falsa 123, CDMX', '1980-01-01', 'Masculino', 'Activo', '2025-08-01 09:00:00', 12000.00, 
  'Tiempo Completo', '2020-05-10', NULL),
 
-(2, 2, 'María', 'López', 'Fernández', 'maria.lopez@example.com', 'hash_contrasena2', '5523456789', 
+(2, 2, 'María', 'López', 'Fernández', 'maria.lopez@example.com', 'Cosinero1$', '5523456789', 
  'LOFM850202XXX', 'LOFM850202MDFRGN02', 'Av. Siempre Viva 456, Monterrey', '1985-02-02', 'Femenino', 'Activo', '2025-08-01 08:45:00', 15000.00, 
  'Tiempo Completo', '2019-11-15', NULL),
 
-(3, 3, 'Carlos', 'Ramírez', NULL, 'carlos.ramirez@example.com', 'hash_contrasena3', '5534567890', 
+(3, 3, 'Carlos', 'Ramírez', NULL, 'carlos.ramirez@example.com', 'admin1$', '5534567890', 
  'RACJ900303XXX', 'RACJ900303HDFRGN03', 'Boulevard Central 789, Guadalajara', '1990-03-03', 'Masculino', 'Vacaciones', '2025-07-30 17:30:00', 13000.00, 
  'Medio Tiempo', '2021-01-20', '2025-12-31');
 
@@ -317,9 +318,9 @@ CREATE TABLE Reservaciones (
 INSERT INTO Reservaciones (
     Cliente_ID, Sucursal_ID, Mesa_ID, Fecha_Hora, Duracion_Estimada, Numero_Personas, Estatus, Notas, Empleado_ID, Requerimientos_Especiales, Codigo_Reserva
 ) VALUES
-(1, 1, 1, '2025-08-15 20:00:00', 90, 4, 'Confirmada', 'Celebración de cumpleaños', 1, 'Mesa con vista al jardín', 'RES2025081501'),
-(2, 2, 5, '2025-08-16 19:30:00', 120, 2, 'Pendiente', '', 2, '', 'RES2025081602'),
-(3, 3, NULL, '2025-08-17 21:00:00', 90, 3, 'Confirmada', 'Aniversario', 3, 'Decoración especial', 'RES2025081703');
+(1, 1, 1, '2025-08-15 20:00:00', 90, 4, 'Confirmada', 'Celebración de cumpleaños', 1, 'Mesa con vista al jardín', 'RES202501501'),
+(2, 2, 5, '2025-08-16 19:30:00', 120, 2, 'Pendiente', '', 2, '', 'RES202501602'),
+(3, 3, NULL, '2025-08-17 21:00:00', 90, 3, 'Confirmada', 'Aniversario', 3, 'Decoración especial', 'RES202501703');
 
 CREATE TABLE Categorias_Menu (
     ID INT PRIMARY KEY AUTO_INCREMENT,
@@ -387,11 +388,11 @@ CREATE TABLE Menu_Ingredientes (
 
 INSERT INTO Menu_Ingredientes (Menu_ID, Ingrediente_ID, Cantidad, Notas) VALUES
 (1, 1, 2.000, 'Para preparar guacamole fresco'),            
-(1, 4, 50.000, 'Queso fresco para acompañar'),              
+(1, 2, 50.000, 'Queso fresco para acompañar'),              
 (2, 2, 1.000, 'Una tortilla por sopa'),                     
 (3, 3, 150.000, 'Porción de carne al pastor'),              
 (3, 2, 2.000, 'Dos tortillas por taco'),
-(4, 5, 1.000, 'Un huevo para preparar flan');   
+(2, 3, 1.000, 'Un huevo para preparar flan');   
 
 
 CREATE TABLE CATEGORIA_ALMACEN (
@@ -432,8 +433,8 @@ CREATE TABLE Almacen (
     ID INT PRIMARY KEY AUTO_INCREMENT,
     Nombre VARCHAR(100) NOT NULL,
     Descripcion TEXT,
-    SUBCATEGORIA_ALMACEN_ID INT NOT NULL,
     CATEGORIA_ALMACEN_ID INT NOT NULL,
+    SUBCATEGORIA_ALMACEN_ID INT NOT NULL,
     Cantidad DECIMAL(10,2) NOT NULL,
     Unidad_Medida VARCHAR(20) NOT NULL,
     Costo_Unitario DECIMAL(10,2) DEFAULT NULL,
@@ -442,15 +443,15 @@ CREATE TABLE Almacen (
     Fecha_Caducidad DATE DEFAULT NULL,
     Estatus ENUM('Activo', 'Agotado', 'Descontinuado') DEFAULT 'Activo',
     Fecha_Registro DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (CATEGORIA_ALMACEN_ID) REFERENCES CATEGORIA_ALMACEN(ID) ON DELETE CASCADE
+    FOREIGN KEY (CATEGORIA_ALMACEN_ID) REFERENCES CATEGORIA_ALMACEN(ID) ON DELETE CASCADE,
     FOREIGN KEY (SUBCATEGORIA_ALMACEN_ID) REFERENCES SUBCATEGORIA_ALMACEN(ID) ON DELETE CASCADE
 );
 
-INSERT INTO Almacen (Nombre, Descripcion, CATEGORIA_ALMACEN_ID, Cantidad, Unidad_Medida, Costo_Unitario, Costo_Total, Fecha_Entrada, Fecha_Caducidad, Estatus) VALUES
-('Harina de trigo', 'Harina para todo uso', 1, 50.00, 'kg', 20.00, 1000.00, '2025-08-01', '2026-02-01', 'Activo'),
-('Frijol negro', 'Frijol negro para guisos', 1, 30.00, 'kg', 15.00, 450.00, '2025-07-15', '2026-01-15', 'Activo'),
-('Aceite de oliva extra virgen', 'Aceite premium para aderezos', 2, 20.00, 'litros', 120.00, 2400.00, '2025-07-30', '2027-07-30', 'Activo'),
-('Levadura seca instantánea', 'Levadura para panadería', 3, 10.00, 'kg', 90.00, 900.00, '2025-08-05', '2026-08-05', 'Activo');
+INSERT INTO Almacen (Nombre, Descripcion, CATEGORIA_ALMACEN_ID, SUBCATEGORIA_ALMACEN_ID, Cantidad, Unidad_Medida, Costo_Unitario, Costo_Total, Fecha_Entrada, Fecha_Caducidad, Estatus) VALUES
+('Harina de trigo', 'Harina para todo uso', 1, 2, 50.00, 'kg', 20.00, 1000.00, '2025-08-01', '2026-02-01', 'Activo'),
+('Frijol negro', 'Frijol negro para guisos', 1, 3, 30.00, 'kg', 15.00, 450.00, '2025-07-15', '2026-01-15', 'Activo'),
+('Aceite de oliva extra virgen', 'Aceite premium para aderezos', 2, 1, 20.00, 'litros', 120.00, 2400.00, '2025-07-30', '2027-07-30', 'Activo'),
+('Levadura seca instantánea', 'Levadura para panadería', 3, 3, 10.00, 'kg', 90.00, 900.00, '2025-08-05', '2026-08-05', 'Activo');
 
 select * from Almacen;
 
@@ -577,7 +578,7 @@ INSERT INTO Detalle_Pedido (
 ) VALUES
 (1, 1, 2, 100.00),
 (1, 3, 1, 50.00),
-(2, 5, 1, 200.00),
+(2, 3, 1, 200.00),
 (3, 2, 3, 50.00);
 
 CREATE TABLE Transacciones (
@@ -665,7 +666,7 @@ INSERT INTO Tickets_Soporte (Cliente_ID, Empleado_ID, Asunto, Descripcion, Estat
 (1, 3, 'Problema con pago', 'No se procesó el pago con tarjeta de crédito.', 'En proceso', 'Alta', NULL, NULL, 'Pago'),
 (3, NULL, 'Error en sistema', 'La aplicación se cierra inesperadamente al abrir el menú.', 'Abierto', 'Crítica', NULL, NULL, 'Sistema'),
 (NULL, 2, 'Consulta sobre reserva', 'Cliente solicita cambio de fecha en reserva confirmada.', 'Resuelto', 'Media', 'Cambio realizado correctamente.', 30, 'Reserva'),
-(2, 4, 'Duda en pedido', 'Cliente no recibió bebida incluida en el pedido.', 'Cerrado', 'Baja', 'Se reembolsó el monto correspondiente.', 15, 'Pedido');
+(2, 2, 'Duda en pedido', 'Cliente no recibió bebida incluida en el pedido.', 'Cerrado', 'Baja', 'Se reembolsó el monto correspondiente.', 15, 'Pedido');
 
 CREATE TABLE Promociones (
     ID INT PRIMARY KEY AUTO_INCREMENT,
@@ -706,7 +707,7 @@ CREATE TABLE Promociones_Menu (
 INSERT INTO Promociones_Menu (Promocion_ID, Menu_ID) VALUES
 (2, 1),  
 (2, 2),  
-(2, 2);
+(2, 3);
 
 CREATE TABLE Calificaciones (
     ID INT PRIMARY KEY AUTO_INCREMENT,
@@ -727,8 +728,8 @@ CREATE TABLE Calificaciones (
 INSERT INTO Calificaciones (
     Cliente_ID, Pedido_ID, Calificacion_Comida, Calificacion_Servicio, Calificacion_Ambiente, Comentarios, Estatus_Respuesta
 ) VALUES
-(1, 1, 5, 4, 5, 'Excelente comida y buen servicio.', 'Pendiente'),
-(2, 2, 4, 5, 4, 'Muy buen ambiente, pero la comida tardó.', 'Respondido'),
+(1, 1, 3, 3, 1, 'Excelente comida y buen servicio.', 'Pendiente'),
+(2, 2, 3, 2, 2, 'Muy buen ambiente, pero la comida tardó.', 'Respondido'),
 (3, 3, 3, 3, 3, 'Regular, esperaba más.', 'Pendiente');
 
 CREATE TABLE Eventos (
@@ -769,7 +770,7 @@ CREATE TABLE Eventos_Reservaciones (
 INSERT INTO Eventos_Reservaciones (
     Evento_ID, Cliente_ID, Numero_Personas, Estatus, Monto_Pagado, Notas
 ) VALUES
-(1, 1, 4, 'Confirmada', 1000.00, 'Reserva familiar'),
+(1, 1, 3, 'Confirmada', 1000.00, 'Reserva familiar'),
 (2, 2, 2, 'Pendiente', 2400.00, 'Reserva para pareja'),
 (3, 3, 1, 'Cancelada', 0.00, 'Cancelación por enfermedad');
 

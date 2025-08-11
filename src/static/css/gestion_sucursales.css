@@ -27,9 +27,11 @@
     border-collapse: collapse;
 }
 
-.table th, .table td {
+.table th,
+.table td {
     padding: 1rem;
-    text-align: left;
+    text-align: center; /* Centra horizontalmente */
+    vertical-align: middle; /* Centra verticalmente */
     border-bottom: 1px solid #ddd;
 }
 
@@ -68,6 +70,8 @@
 
 .actions {
     display: flex;
+    justify-content: center; /* Centra los botones en la celda */
+    align-items: center;
     gap: 0.5rem;
 }
 

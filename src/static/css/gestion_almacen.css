@@ -1,0 +1,257 @@
+/* Variables */
+:root {
+    --primary-color: #2c3e50;
+    --secondary-color: #34495e;
+    --accent-color: #e74c3c;
+    --success-color: #27ae60;
+    --warning-color: #f39c12;
+    --light-gray: #ecf0f1;
+    --border-color: #bdc3c7;
+    --text-color: #2c3e50;
+}
+
+/* Contenedor principal */
+.container {
+    max-width: 2200px;
+    margin: 1.5rem auto;
+    padding: 0 1rem;
+}
+
+/* Contenido principal */
+.main-content {
+    background-color: white;
+    padding: 0rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+/* Título */
+.main-content h1 {
+    color: var(--primary-color);
+    font-size: 1.9rem; /* Reducido */
+    margin-bottom: 1.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center; /* <-- Aquí se agregó */
+    gap: 0.5rem;
+    text-align: center;
+}
+
+/* Acciones arriba de la tabla */
+.table-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+/* Botón Nuevo Producto */
+.btn-primary {
+    background-color: var(--success-color);
+    color: white;
+    padding: 0.4rem 1.2rem;
+    border-radius: 4px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 600;
+
+    margin-left: 30px; /* Mover botón un poco a la derecha */
+}
+
+.btn-primary:hover {
+    background-color: #219653;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 5px rgba(39, 174, 96, 0.3);
+}
+
+/* Input búsqueda */
+#searchInput {
+    padding: 0.4rem 0.6rem; /* Reducido */
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    width: 190px; /* Más pequeño */
+    max-width: 100%;
+    font-size: 0.9rem;
+
+    margin-right: 90px; /* Mover buscador un poco a la izquierda */
+    margin-left: 0; /* Asegurar que no tenga margen izquierdo */
+}
+
+/* Tabla almacen */
+.almacen-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8rem; /* Reducido */
+}
+
+/* Centrar todo excepto acciones */
+.almacen-table th,
+.almacen-table td {
+    padding: 0.4rem 0.6rem;
+    text-align: center;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.almacen-table td:last-child,
+.almacen-table th:last-child {
+    text-align: left;
+}
+
+.almacen-table th {
+    background-color: var(--primary-color);
+    color: white;
+    font-weight: 600;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.almacen-table tbody tr {
+    transition: background-color 0.2s;
+}
+
+.almacen-table tbody tr:hover {
+    background-color: var(--light-gray);
+}
+
+/* Estatus */
+.estatus {
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    display: inline-block;
+    text-align: center;
+    min-width: 80px;
+}
+
+.estatus.activo {
+    background-color: #e8f5e9;
+    color: var(--success-color);
+}
+
+.estatus.agotado {
+    background-color: #fff3e0;
+    color: var(--warning-color);
+}
+
+.estatus.descontinuado {
+    background-color: #ffebee;
+    color: var(--accent-color);
+}
+
+/* Acciones */
+td > .btn-accion,
+td > form > button.btn-accion {
+    color: var(--primary-color);
+    padding: 0.5rem;
+    border-radius: 4px;
+    transition: all 0.2s;
+    display: inline-flex;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+td > .btn-accion:hover,
+td > form > button.btn-accion:hover {
+    background-color: var(--light-gray);
+    transform: scale(1.1);
+}
+
+.btn-accion.eliminar {
+    color: var(--accent-color);
+}
+
+.btn-accion.eliminar:hover {
+    background-color: #ffebee;
+}
+
+/* Footer */
+.admin-footer {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 1rem 0;
+    margin-top: 2rem;
+    font-size: 0.9rem;
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.footer-info p {
+    margin: 0.2rem 0;
+}
+
+.dev-team {
+    font-weight: 600;
+}
+
+.footer-menu {
+    list-style: none;
+    display: flex;
+    gap: 1rem;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-link {
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer-link:hover {
+    color: var(--accent-color);
+}
+
+.icon {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .table-actions {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    #searchInput {
+        width: 100%;
+        font-size: 0.85rem;
+        padding: 0.3rem 0.5rem;
+    }
+    .almacen-table th,
+    .almacen-table td {
+        padding: 0.3rem 0.4rem;
+        font-size: 0.75rem;
+    }
+    .footer-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    .footer-menu {
+        flex-wrap: wrap;
+    }
+}
