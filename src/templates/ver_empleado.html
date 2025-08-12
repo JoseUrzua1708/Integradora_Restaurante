@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Detalles del Empleado</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/gestion_empleados.css') }}" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+  {% include 'navbar.html' %}
+
+  <div class="contenedor">
+    <main class="contenido-principal">
+      <div class="contenedor-tabla">
+        <h1><i class="fas fa-user"></i> Detalles del Empleado</h1>
+        <div class="acciones-tabla">
+          <a href="{{ url_for('gestion_empleados') }}" class="btn-verde">
+            <i class="fas fa-arrow-left"></i> Volver a la lista
+          </a>
+        </div>
+      </div>
+
+      <div class="detalles-empleado">
+        <p><strong>Nombre:</strong> {{ empleado.Nombre }} {{ empleado.Apellido_P }} {{ empleado.Apellido_M }}</p>
+        <p><strong>Correo:</strong> {{ empleado.Correo }}</p>
+        <p><strong>Teléfono:</strong> {{ empleado.Telefono }}</p>
+        <p><strong>Sucursal:</strong> {{ empleado.sucursal_nombre or empleado.Sucursal_ID or '-' }}</p>
+        <p><strong>Rol:</strong> {{ empleado.rol_nombre or empleado.Rol_ID or '-' }}</p>
+        <p><strong>Tipo de Contrato:</strong> {{ empleado.Tipo_Contrato or '-' }}</p>
+        <p><strong>Estatus:</strong> <span class="etiqueta-estatus estatus-{{ empleado.Estatus|lower }}">{{ empleado.Estatus }}</span></p>
+        <p><strong>Fecha de Registro:</strong> {{ empleado.Fecha_Registro.strftime('%d/%m/%Y') }}</p>
+      </div>
+
+    </main>
+  </div>
+
+  <footer class="pie-pagina-admin">
+    <div class="contenido-pie">
+      <div class="info-pie">
+        <p>Sistema Administrativo del Restaurante © 2025</p>
+        <p class="equipo-desarrollo">Equipo de Desarrollo</p>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

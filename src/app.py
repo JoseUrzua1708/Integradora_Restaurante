@@ -164,7 +164,7 @@ def formulario_restaurante():
 # Eliminar restaurante
 ################################################################################
 
-@app.route('/eliminar/<int:id>')
+@app.route('/eliminar_restaurante/<int:id>')
 def eliminar_restaurante(id):
     """Elimina un restaurante por ID"""
     conn = None
@@ -189,7 +189,7 @@ def eliminar_restaurante(id):
 # Actualizar restaurante
 ################################################################################
 
-@app.route('/actualizar/<int:id>', methods=['POST'])
+@app.route('/actualizar_restaurante/<int:id>', methods=['POST'])
 def actualizar_restaurante(id):
     """Actualiza un restaurante existente"""
     conn = None
@@ -349,7 +349,7 @@ def guardar_sucursal():
 # Eliminar sucursal
 ################################################################################
 
-@app.route('/eliminar/<int:id>')
+@app.route('/eliminar_sucursal/<int:id>')
 def eliminar_sucursal(id):
     """Elimina una sucursal por ID"""
     conn = None
@@ -374,7 +374,7 @@ def eliminar_sucursal(id):
 # Actualizar sucursal
 ################################################################################
 
-@app.route('/actualizar/<int:id>', methods=['POST'])
+@app.route('/actualizar_sucursal/<int:id>', methods=['POST'])
 def actualizar_sucursal(id):
     """Actualiza una sucursal existente"""
     conn = None
@@ -583,7 +583,7 @@ def guardar_rol():
 # Eliminar rol
 ################################################################################
 
-@app.route('/eliminar/<int:id>', methods=['POST'])
+@app.route('/eliminar_rol/<int:id>', methods=['POST'])
 def eliminar_rol(id):
     """Elimina un rol por ID"""
     conn = None
@@ -607,7 +607,7 @@ def eliminar_rol(id):
 ################################################################################
 # actualizar rol
 ################################################################################
-@app.route('/actualizar/<int:id>', methods=['POST'])
+@app.route('/actualizar_rol/<int:id>', methods=['POST'])
 def actualizar_rol(id):
     """Actualiza un rol existente"""
     conn = None
@@ -953,6 +953,31 @@ def eliminar_empleado(id):
         if cursor: cursor.close()
         if conn: conn.close()
 
+@app.route('/ver_empleado/<int:id>')
+def ver_empleado(id):
+    """Muestra los detalles de un empleado"""
+    conn = None
+    cursor = None
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM Empleados WHERE ID = %s", (id,))
+        empleado = cursor.fetchone()
+        if empleado:
+            return render_template('ver_empleado.html', empleado=empleado)
+        else:
+            flash("Empleado no encontrado", "error")
+            return redirect(url_for('gestion_empleados'))
+    except Exception as e:
+        app.logger.error(f"Error en ver_empleado: {str(e)}")
+        flash("Error al cargar los detalles del empleado", "error")
+        return redirect(url_for('gestion_empleados'))
+    finally:
+        if cursor:
+            cursor.close()
+        if conn and conn.is_connected():
+            conn.close()
+
 ################################################################################
 # Funciones auxiliares
 ################################################################################
@@ -1003,10 +1028,7 @@ def validar_empleado(datos):
     
     return errores
 
-def get_db_connection():
-    """Obtiene una conexión a la base de datos"""
-    # Implementar según tu sistema de base de datos
-    pass
+
 
 ################################################################################
 # gestion de proveedores
@@ -1155,7 +1177,7 @@ def guardar_proveedor():
 ################################################################################
 # Eliminar proveedor
 ################################################################################
-@app.route('/eliminar/<int:id>')
+@app.route('/eliminar_proveedor/<int:id>')
 def eliminar_proveedor(id):
     """Elimina un proveedor por ID"""
     conn = None
@@ -1179,7 +1201,7 @@ def eliminar_proveedor(id):
 ################################################################################
 # Actualizar proveedor
 ################################################################################
-@app.route('/actualizar/<int:id>', methods=['POST'])
+@app.route('/actualizar_proveedor/<int:id>', methods=['POST'])
 def actualizar_proveedor(id):
     """Actualiza un proveedor existente"""
     conn = None
@@ -1362,7 +1384,7 @@ def guardar_inventario():
 ################################################################################
 # Eliminar inventario
 ################################################################################
-@app.route('/eliminar/<int:id>')
+@app.route('/eliminar_inventario/<int:id>')
 def eliminar_inventario(id):
     """Elimina un inventario por ID"""
     conn = None
@@ -1386,7 +1408,7 @@ def eliminar_inventario(id):
 ################################################################################
 # Actualizar inventario
 ################################################################################
-@app.route('/actualizar/<int:id>', methods=['POST'])
+@app.route('/actualizar_inventario/<int:id>', methods=['POST'])
 def actualizar_inventario(id):
     """Actualiza un inventario existente"""
     conn = None
@@ -1430,6 +1452,11 @@ def actualizar_inventario(id):
         if conn is not None:
             conn.close()
     return redirect(url_for('gestion_inventario'))
+
+@app.route('/editar_inventario/<int:id>')
+def editar_inventario(id):
+    """Redirige al formulario para editar un item del inventario"""
+    return redirect(url_for('formulario_inventario', id=id))
 
 ################################################################################
 # Gestión de reservaciones
@@ -1759,9 +1786,9 @@ def guardar_cliente():
         if conn: conn.close()
 
 ################################################################################
-# Cambiar estado del cliente                                               }}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}
+# Cambiar estado del cliente
 ################################################################################
-@app.route('/cambiar_estado/<int:id>/<string:estado>')
+@app.route('/cambiar_estado_cliente/<int:id>/<string:estado>')
 def cambiar_estado_cliente(id, estado):
     """Cambia el estado de un cliente"""
     conn = None
