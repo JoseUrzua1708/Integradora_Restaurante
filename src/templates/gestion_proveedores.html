@@ -43,8 +43,12 @@
                                 <td>{{ proveedor.Correo_Electronico }}</td>
                                 <td><span class="status status-{{ proveedor.Estatus.lower() }}">{{ proveedor.Estatus }}</span></td>
                                 <td class="actions">
-                                    <a href="#" class="btn-action btn-edit"><i class="fas fa-edit"></i></a>
-                                    <a href="#" class="btn-action btn-delete"><i class="fas fa-trash"></i></a>
+                                    <a href="{{ url_for('formulario_proveedor', id=proveedor.ID) }}" class="btn-accion" title="Editar">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="{{ url_for('eliminar_proveedor', id=proveedor.ID) }}" class="btn-accion btn-eliminar" title="Eliminar" onclick="return confirm('¿Está seguro de eliminar este cliente?')">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </a>
                                 </td>
                             </tr>
                             {% endfor %}
@@ -89,5 +93,7 @@
                 </ul>
             </div>
         </footer>
+
+        <script src="{{ url_for('static', filename='js/gestion_proveedores.js') }}"></script>
 </body>
 </html>

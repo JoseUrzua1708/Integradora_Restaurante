@@ -1,111 +1,132 @@
 .table-container {
-    background-color: #fff;
-    padding: 2rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    background-color: #fff;      /* Fondo blanco */
+    padding: 2rem;               /* Espacio interno */
+    border-radius: 8px;          /* Bordes redondeados */
+    box-shadow: 0 1px 20px rgba(0,0,0,0.1); /* Sombra sutil */
 }
 
 .table-container h1 {
-    text-align: center;
-    color: var(--primary-color);
-    margin-bottom: 2rem;
-    font-size: 1.8rem;
+    text-align: center;          /* Centra texto horizontalmente */
+    color: var(--primary-color); /* Color principal */
+    margin-bottom: 2rem;         /* Margen abajo */
+    font-size: 1.8rem;           /* Tamaño de fuente grande */
 }
 
 .table-actions {
-    display: flex;
-    justify-content: flex-end;
-    margin-bottom: 1.5rem;
+    display: flex;               /* Usa flexbox para organizar */
+    justify-content: flex-end;   /* Alinea elementos a la derecha */
+    margin-bottom: 1.5rem;       /* Margen inferior */
 }
 
 .table-responsive {
-    overflow-x: auto;
+    overflow-x: auto;            /* Scroll horizontal si necesario */
 }
 
 .table {
-    width: 100%;
-    border-collapse: collapse;
+    width: 100%;                 /* Ancho total */
+    border-collapse: collapse;   /* Bordes juntos, sin espacios */
 }
 
-.table th,
-.table td {
-    padding: 1rem;
-    text-align: center; /* Centra horizontalmente */
-    vertical-align: middle; /* Centra verticalmente */
-    border-bottom: 1px solid #ddd;
+.table th, .table td {
+    padding: 1rem;               /* Espacio interno */
+    text-align: center;          /* Centra texto horizontal */
+    vertical-align: middle;      /* Centra texto vertical */
+    border-bottom: 1px solid #ddd; /* Línea inferior suave */
 }
 
 .table th {
-    background-color: var(--secondary-color);
-    color: white;
-    font-weight: 600;
+    background-color: var(--secondary-color); /* Fondo oscuro */
+    color: white;               /* Texto blanco */
+    font-weight: 600;           /* Semi negrita */
+    position: sticky;            /* Se queda fijo al hacer scroll */
+    top: 0;
 }
 
 .table tbody tr:hover {
-    background-color: #f5f5f5;
+    background-color: #f5f5f5;  /* Fondo claro al pasar cursor */
 }
 
 .status {
-    padding: 0.3rem 0.6rem;
-    border-radius: 15px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    text-transform: capitalize;
+    padding: 0.4rem 0.8rem;        /* Espaciado interno */
+    border-radius: 20px;           /* Bordes redondeados */
+    font-size: 0.80rem;             /* Tamaño de texto */
+    font-weight: 500;               /* Seminegrita */
+    display: inline-block;          /* Mantiene tamaño contenido */
+    text-align: center;             /* Texto centrado */
+    min-width: 50px;                 /* Ancho mínimo */
 }
 
 .status-activa {
-    background-color: #d4edda;
-    color: #155724;
+    background-color: #d4edda;  /* Fondo verde claro */
+    color: #155724;             /* Texto verde oscuro */
 }
 
 .status-inactiva {
-    background-color: #f8d7da;
-    color: #721c24;
+    background-color: #f8d7da;  /* Fondo rojo claro */
+    color: #721c24;             /* Texto rojo oscuro */
 }
 
 .status-en {
-    background-color: #fff3cd;
-    color: #856404;
+    background-color: #fff3cd;  /* Fondo amarillo claro */
+    color: #856404;             /* Texto amarillo oscuro */
 }
 
 .actions {
-    display: flex;
-    justify-content: center; /* Centra los botones en la celda */
-    align-items: center;
-    gap: 0.5rem;
+    display: flex;              /* Flexbox para botones */
+    justify-content: center;    /* Centra horizontal */
+    align-items: center;        /* Centra vertical */
+    gap: 0.5rem;                /* Espacio entre botones */
 }
 
 .btn-action {
-    padding: 0.5rem;
-    border-radius: 4px;
-    color: white;
-    font-size: 0.9rem;
-    text-decoration: none;
+    width: 32px;                    /* Ancho fijo */
+    height: 32px;                   /* Alto fijo */
+    display: inline-flex;           /* Centrar icono */
+    align-items: center;            /* Centrar verticalmente */
+    justify-content: center;        /* Centrar horizontalmente */
+    border-radius: 50%;             /* Forma circular */
+    transition: all 0.2s;           /* Animación al interactuar */
+    color: var(--text-color);       /* Color de icono */
+    background-color: transparent;  /* Fondo transparente */
+    border: none;                   /* Sin borde */
+    cursor: pointer;                /* Cursor de mano */
 }
 
-.btn-edit {
-    background-color: var(--hover-color);
+.btn-action:hover { /* Efecto al pasar el mouse */
+    transform: scale(1.1);          /* Agranda un poco */
 }
 
-.btn-delete {
-    background-color: var(--accent-color);
+.btn-edit { /* Botón editar */
+    color: var(--primary-color);    /* Azul/gris principal */
+}
+
+.btn-edit:hover { /* Hover editar */
+    background-color: rgba(44, 62, 80, 0.1); /* Fondo sutil */
+}
+
+.btn-delete { /* Botón eliminar */
+    color: var(--accent-color);     /* Rojo principal */
+}
+
+.btn-delete:hover { /* Hover eliminar */
+    background-color: rgba(231, 76, 60, 0.1); /* Fondo sutil rojo */
 }
 
 .btn-verde {
-    background-color: #28a745;
-    color: white;
-    padding: 0.6rem 1.2rem;
-    font-size: 1rem;
-    font-weight: 600;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    text-decoration: none;
-    display: inline-block;
-    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    background-color: #28a745;  /* Verde estándar */
+    color: white;               /* Texto blanco */
+    padding: 0.6rem 1.2rem;     /* Padding amplio */
+    font-size: 1rem;            /* Tamaño grande */
+    font-weight: 600;           /* Negrita */
+    border: none;               /* Sin borde */
+    border-radius: 4px;         /* Bordes redondeados */
+    cursor: pointer;            /* Cursor de mano */
+    text-decoration: none;      /* Sin subrayado */
+    display: inline-block;      /* Comportamiento inline */
+    transition: background-color 0.3s ease, box-shadow 0.3s ease; /* Transiciones suaves */
 }
 
 .btn-verde:hover {
-    background-color: #218838;
-    box-shadow: 0 0 8px rgba(40, 167, 69, 0.5);
+    background-color: #218838;  /* Verde oscuro al pasar mouse */
+    box-shadow: 0 0 8px rgba(40, 167, 69, 0.5); /* Sombra para destacar */
 }

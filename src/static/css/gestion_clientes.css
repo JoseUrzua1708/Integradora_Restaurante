@@ -1,200 +1,266 @@
-/* Variables */
+/* Variables CSS para colores reutilizables en toda la tabla y UI */
 :root {
-    --primary-color: #2c3e50;
-    --secondary-color: #34495e;
-    --accent-color: #e74c3c;
-    --success-color: #27ae60;
-    --warning-color: #f39c12;
-    --light-gray: #ecf0f1;
-    --border-color: #bdc3c7;
-    --text-color: #2c3e50;
+    --primary-color: #2c3e50;      /* Color principal oscuro, usado para encabezados y textos */
+    --secondary-color: #34495e;    /* Color secundario, para hover o elementos secundarios */
+    --accent-color: #e74c3c;       /* Color de acento rojo, usado para alertas o acciones eliminar */
+    --success-color: #27ae60;      /* Verde para indicar éxito o acciones positivas */
+    --warning-color: #f39c12;      /* Amarillo para advertencias o estados de alerta */
+    --light-gray: #ecf0f1;         /* Gris claro para fondos o estados hover */
+    --border-color: #bdc3c7;       /* Color para bordes suaves */
+    --text-color: #2c3e50;         /* Color estándar para texto */
 }
 
-/* Estructura principal */
+/* Contenedor principal de la tabla */
 .table-container {
-    background-color: white;
-    padding: 2rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    margin: 1rem auto;
-    max-width: 1200px;
+    background-color: white;                   /* Fondo blanco para claridad */
+    padding: 2rem;                             /* Espacio interior amplio para comodidad visual */
+    border-radius: 8px;                        /* Bordes redondeados para suavizar diseño */
+    box-shadow: 0 1px 20px rgba(0,0,0,0.1);  /* Sombra ligera para darle profundidad */
+    margin: 1rem auto;                         /* Separación vertical y centrado horizontal */
+    max-width: 1200px;                         /* Ancho máximo para pantallas grandes */
 }
 
+
+
+/* Título principal dentro del contenedor */
 .table-container h1 {
-    color: var(--primary-color);
-    text-align: center;
-    margin-bottom: 1.5rem;
-    font-size: 1.8rem;
+    color: var(--primary-color);               /* Color principal */
+    text-align: center;                        /* Centrar texto */
+    margin-bottom: 1.5rem;                     /* Espacio inferior para separar de otros elementos */
+    font-size: 1.8rem;                         /* Tamaño grande para destacar */
 }
 
-/* Acciones de tabla */
+/* Contenedor para acciones sobre la tabla (botones, filtros, búsqueda) */
+.table-actions {
+    display: flex;                            /* Flexbox para layout flexible */
+    justify-content: space-between;          /* Espacio entre elementos (extremos) */
+    align-items: center;                      /* Centrado vertical de elementos */
+    margin-bottom: 2.5rem;                    /* Separación debajo de las acciones */
+    flex-wrap: wrap;                         /* Permite que los elementos bajen a siguiente línea si es necesario */
+    gap: 1rem;                               /* Espacio entre elementos */
+}
+
+/* Botón verde para acciones positivas */
+.btn-verde {
+    background-color: var(--success-color); /* Verde vivo */
+    color: white;                           /* Texto blanco */
+    padding: 0.6rem 1.2rem;                 /* Espaciado cómodo */
+    border-radius: 4px;                     /* Bordes redondeados */
+    text-decoration: none;                  /* Sin subrayado (por si es link) */
+    display: inline-flex;                   /* Flex para iconos + texto */
+    align-items: center;                    /* Centrado vertical */
+    gap: 0.5rem;                           /* Separación entre icono y texto */
+    transition: all 0.3s ease;              /* Transición suave para hover */
+}
+
+/* Efecto hover para el botón verde */
+.btn-verde:hover {
+    background-color: #219653;              /* Verde más oscuro */
+    transform: translateY(-2px);            /* Levanta botón al pasar mouse */
+    box-shadow: 0 2px 5px rgba(39, 174, 96, 0.3); /* Sombra verde suave */
+}
+
+
 .table-actions {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
     flex-wrap: wrap;
-    gap: 1rem;
+    gap: 10px;
 }
-
-.btn-verde {
-    background-color: var(--success-color);
-    color: white;
-    padding: 0.6rem 1.2rem;
-    border-radius: 4px;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    transition: all 0.3s ease;
-}
-
-.btn-verde:hover {
-    background-color: #219653;
-    transform: translateY(-2px);
-    box-shadow: 0 2px 5px rgba(39, 174, 96, 0.3);
-}
-
+/* Caja de búsqueda con lupa integrada */
 .search-box {
+    position: relative;
     display: flex;
     align-items: center;
 }
 
-.search-box input {
-    padding: 0.6rem;
+.search-box i {
+    position: absolute;
+    left: 12px;
+    font-size: 16px;
+    color: #666;
+    pointer-events: none;
+}
+
+.search-box [id="searchInput"] {
+    width: 220px;
+    padding: 10px 12px 10px 38px; /* Espacio a la izquierda para la lupa */
     border: 1px solid var(--border-color);
-    border-radius: 4px 0 0 4px;
-    width: 250px;
+    border-radius: 200px;
+    font-size: 14px;
+    outline: none;
+    transition: border 0.2s ease, box-shadow 0.2s ease;
 }
 
+.search-box input:focus {
+    border-color: var(--success-color);
+    box-shadow: 0 0 5px rgba(39, 174, 96, 0.3);
+}
+
+
+
+/* Contenedor para caja de búsqueda */
+.search-box {
+    display: flex;                          /* Alinea input y botón horizontalmente */
+    align-items: center;                    /* Centrado vertical */
+}
+
+/* Estilo para input de búsqueda */
+.search-box input {
+    padding: 0.6rem;                       /* Espaciado interior */
+    border: 1px solid var(--border-color); /* Borde gris claro */
+    border-radius: 4px 0 0 4px;            /* Bordes redondeados solo a la izquierda */
+    width: 250px;                         /* Ancho fijo para campo búsqueda */
+}
+
+/* Botón de búsqueda */
 .search-box button {
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
-    padding: 0.6rem 1rem;
-    border-radius: 0 4px 4px 0;
-    cursor: pointer;
-    transition: background-color 0.3s;
+    background-color: var(--primary-color); /* Color principal oscuro */
+    color: white;                          /* Texto blanco */
+    border: none;                         /* Sin borde */
+    padding: 0.6rem 1rem;                 /* Espaciado interno */
+    border-radius: 0 4px 4px 0;           /* Bordes redondeados solo a la derecha */
+    cursor: pointer;                      /* Cursor pointer para indicar clic */
+    transition: background-color 0.3s;   /* Transición suave al cambiar color */
 }
 
+/* Hover para botón de búsqueda */
 .search-box button:hover {
-    background-color: var(--secondary-color);
+    background-color: var(--secondary-color); /* Cambio a color secundario */
 }
 
-/* Tabla */
+/* Contenedor que permite scroll horizontal en tablas anchas */
 .table-responsive {
-    overflow-x: auto;
-    margin-bottom: 1.5rem;
+    overflow-x: auto;                     /* Scroll horizontal si es necesario */
+    margin-bottom: 1.5rem;                /* Espacio inferior para separar de otros elementos */
 }
 
+/* Tabla principal */
 .table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.95rem;
+    width: 100%;                        /* Ocupa todo el ancho disponible */
+    border-collapse: collapse;          /* Elimina espacio entre bordes de celdas */
+    font-size: 0.95rem;                 /* Tamaño de fuente legible */
 }
 
-/* Encabezados alineados a la izquierda */
+/* Encabezados de tabla */
 .table th {
-    background-color: var(--primary-color);
-    color: white;
-    font-weight: 600;
-    position: sticky;
-    top: 0;
-    padding: 1rem;
-    text-align: left;
-    border-bottom: 1px solid var(--border-color);
+    background-color: var(--primary-color);  /* Fondo oscuro */
+    color: white;                          /* Texto blanco */
+    font-weight: 600;                     /* Fuente semi-negrita */
+    position: sticky;                     /* Encabezados fijos al hacer scroll vertical */
+    top: 0;                              /* Posición pegada al top */
+    padding: 1rem;                       /* Espaciado interno */
+    text-align: left;                    /* Alineación izquierda para encabezados */
+    border-bottom: 1px solid var(--border-color); /* Línea divisoria */
 }
 
-/* Datos centrados - SOLO ESTA LÍNEA CAMBIÓ */
+/* Celdas de datos en la tabla */
+/* SOLO ESTA LÍNEA CAMBIÓ para centrar contenido */
 .table td {
     padding: 1rem;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom-style: 1px solid var(--border-color);
     vertical-align: middle;
-    text-align: center; /* <-- Aquí se centra todo el contenido */
+    text-align: left;
 }
 
+
+/* Transición suave para cambio de fondo en filas */
 .table tbody tr {
     transition: background-color 0.2s;
 }
 
+/* Cambio de fondo en fila al pasar mouse */
 .table tbody tr:hover {
-    background-color: var(--light-gray);
+    background-color: var(--light-gray); /* Fondo gris claro */
 }
 
-/* Estatus */
+/* Estilos para etiquetas de estado o estatus */
 .estatus {
-    padding: 0.4rem 0.8rem;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    font-weight: 500;
+    padding: 0.4rem 0.8rem;             /* Relleno para darle forma */
+    border-radius: 20px;                /* Bordes muy redondeados para estilo "badge" */
+    font-size: 0.85rem;                 /* Tamaño pequeño */
+    font-weight: 500;                   /* Peso medio */
 }
 
+/* Estado activo con fondo y texto verde */
 .estatus-activo {
-    background-color: #e8f5e9;
-    color: var(--success-color);
+    background-color: #e8f5e9;          /* Verde muy claro */
+    color: var(--success-color);        /* Verde vivo */
 }
 
+/* Estado inactivo con fondo y texto amarillo */
 .estatus-inactivo {
-    background-color: #fff3e0;
-    color: var(--warning-color);
+    background-color: #fff3e0;          /* Amarillo muy claro */
+    color: var(--warning-color);        /* Amarillo */
 }
 
+/* Estado bloqueado con fondo y texto rojo */
 .estatus-bloqueado {
-    background-color: #ffebee;
-    color: var(--accent-color);
+    background-color: #ffebee;          /* Rojo muy claro */
+    color: var(--accent-color);         /* Rojo vivo */
 }
 
-/* Acciones */
+/* Contenedor para botones de acciones dentro de tabla */
 .acciones {
-    display: flex;
-    gap: 0.5rem;
+    display: flex;                      /* Layout horizontal */
+    gap: 0.5rem;                       /* Espacio entre botones */
 }
 
+/* Botón de acción genérico */
 .btn-accion {
-    color: var(--primary-color);
-    padding: 0.5rem;
-    border-radius: 4px;
-    transition: all 0.2s;
-    display: inline-flex;
+    color: var(--primary-color);       /* Color texto principal */
+    padding: 0.5rem;                   /* Relleno pequeño */
+    border-radius: 4px;               /* Bordes redondeados */
+    transition: all 0.2s;             /* Transición rápida para hover */
+    display: inline-flex;             /* Flex para iconos + texto si los hay */
 }
 
+/* Hover para botón de acción */
 .btn-accion:hover {
-    background-color: var(--light-gray);
-    transform: scale(1.1);
+    background-color: var(--light-gray); /* Fondo gris claro */
+    transform: scale(1.1);                /* Escala para dar efecto zoom */
 }
 
+/* Botón eliminar con color rojo */
 .btn-eliminar {
-    color: var(--accent-color);
+    color: var(--accent-color);           /* Texto rojo */
 }
 
+/* Hover para botón eliminar */
 .btn-eliminar:hover {
-    background-color: #ffebee;
+    background-color: #ffebee;             /* Fondo rojo muy claro */
 }
 
-/* Pie de tabla */
+/* Pie de tabla con información y paginación */
 .table-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 1rem;
+    display: flex;                     /* Layout horizontal */
+    justify-content: space-between;   /* Separar contenido en extremos */
+    align-items: center;              /* Centrado vertical */
+    margin-top: 1rem;                 /* Espacio superior */
 }
 
+/* Información de paginación o datos */
 .pagination-info {
-    color: var(--text-color);
-    font-size: 0.9rem;
+    color: var(--text-color);         /* Texto principal */
+    font-size: 0.9rem;                /* Tamaño legible */
 }
 
-/* Responsive */
+/* Ajustes responsivos para pantallas pequeñas */
 @media (max-width: 768px) {
+    /* Contenedor de acciones pasa a columna */
     .table-actions {
         flex-direction: column;
-        align-items: flex-start;
+        align-items: flex-start;    /* Alinear a la izquierda */
     }
     
+    /* Campo de búsqueda ocupa todo el ancho */
     .search-box input {
         width: 100%;
     }
     
+    /* Menos padding en celdas para mejor ajuste */
     .table th, .table td {
         padding: 0.75rem 0.5rem;
     }

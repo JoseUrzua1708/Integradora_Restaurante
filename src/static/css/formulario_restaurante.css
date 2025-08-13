@@ -1,137 +1,201 @@
+/* === Estilos generales de la página === */
 body {
-  font-family: 'Segoe UI', 'sans-serif';
-  background-color: #f7fafc;
-  margin: 0;
-  padding: 0;
-  color: #2d3748;
+  font-family: 'Segoe UI', Roboto, -apple-system, sans-serif; /* Tipografía moderna y legible */
+  background-color: #f8fafc; /* Fondo gris claro para contraste suave */
+  margin: 0; /* Quitamos márgenes por defecto */
+  padding: 20px; /* Espaciado interno alrededor del contenido */
+  color: #1e293b; /* Color de texto gris oscuro */
 }
 
-.container {
-  max-width: 480px;
-  margin: 50px auto;
-  background: #ffffff;
-  padding: 30px 25px;
-  border-radius: 12px;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.1);
-  position: relative;
+/* === Contenedor principal del formulario === */
+.form-container {
+  max-width: 550px; /* Ancho máximo para no estirarse demasiado en pantallas grandes */
+  margin: 30px auto; /* Centrado horizontal con espacio superior */
+  background: white; /* Fondo blanco para destacar sobre el fondo general */
+  padding: 25px; /* Espaciado interno */
+  border-radius: 10px; /* Bordes redondeados */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); /* Sombra suave */
+  border: 1px solid #e2e8f0; /* Borde gris claro */
+  position: relative; /* Necesario para posicionar el botón de cerrar */
 }
 
-h1 {
-  text-align: center;
-  color: #2b6cb0;
+/* === Botón cerrar en esquina superior derecha === */
+.btn-cerrar {
+  position: absolute; /* Posicionamiento relativo al contenedor */
+  top: 15px;
+  right: 15px;
+  color: #94a3b8; /* Color gris medio */
+  font-size: 1.2rem; /* Tamaño de icono */
+  text-decoration: none; /* Quitar subrayado */
+  transition: color 0.2s; /* Transición suave al pasar el mouse */
+}
+.btn-cerrar:hover {
+  color: #1e293b; /* Cambia a gris más oscuro al pasar el mouse */
+}
+
+/* === Título principal del formulario === */
+.form-container h1 {
+  text-align: center; /* Centrado del texto */
+  color: #1e40af; /* Azul oscuro */
   margin-bottom: 25px;
-  font-weight: 700;
-  font-size: 1.8rem;
-}
-
-form label {
-  display: block;
-  margin-bottom: 8px;
+  font-size: 1.5rem;
   font-weight: 600;
-  color: #4a5568;
+  padding-bottom: 10px; /* Espacio inferior antes del borde */
+  border-bottom: 1px solid #e2e8f0; /* Línea separadora inferior */
 }
 
-input,
+/* === Secciones del formulario (agrupaciones temáticas) === */
+.form-section {
+  margin-bottom: 25px; /* Espacio inferior para separar secciones */
+}
+
+.form-section h2 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1e40af; /* Azul oscuro */
+  margin-bottom: 15px;
+  border-bottom: 1px solid #e2e8f0; /* Línea separadora inferior */
+  padding-bottom: 5px;
+}
+
+/* === Grupo de campos individuales === */
+.form-group {
+  margin-bottom: 20px; /* Separación entre campos */
+}
+
+label {
+  display: block; /* Ocupa todo el ancho */
+  margin-bottom: 8px; /* Espacio entre etiqueta y campo */
+  font-weight: 500;
+  color: #334155; /* Gris oscuro */
+  font-size: 0.9rem;
+}
+
+/* === Campos de texto, área y select === */
+input:not([type="hidden"]),
 textarea,
 select {
-  width: 100%;
-  padding: 10px 14px;
-  margin-bottom: 20px;
-  border: 1.8px solid #cbd5e0;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-family: inherit;
-  resize: vertical;
-  min-height: 40px;
-  box-sizing: border-box;
+  width: 100%; /* Ocupar todo el ancho disponible */
+  padding: 10px 12px; /* Espaciado interno */
+  border: 1px solid #cbd5e1; /* Borde gris */
+  border-radius: 6px; /* Bordes redondeados */
+  font-size: 0.95rem;
+  background-color: #f8fafc; /* Fondo gris muy claro */
+  transition: border-color 0.2s; /* Transición suave en focus */
 }
 
-textarea {
-  min-height: 80px;
-}
-
+/* === Efecto al enfocar campos === */
 input:focus,
 textarea:focus,
 select:focus {
-  outline: none;
-  border-color: #3182ce;
-  box-shadow: 0 0 8px rgba(49, 130, 206, 0.4);
+  outline: none; /* Quitar borde azul por defecto */
+  border-color: #3b82f6; /* Azul más vivo */
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); /* Resaltado suave */
 }
 
-.input-group {
-  display: flex;
-  gap: 1rem;
+/* === Campos de hora === */
+input[type="time"] {
+  padding: 9px 12px; /* Ajuste visual */
 }
 
-.input-group .form-group {
-  flex: 1;
+/* === Grupo de campos para teléfono === */
+.phone-input-group {
+  display: flex; /* Colocar select y campo en la misma línea */
+  gap: 10px; /* Espaciado entre elementos */
 }
 
-.readonly-input {
-  background-color: #f0f0f0;
-  cursor: not-allowed;
+.phone-input-group select {
+  flex: 0 0 140px; /* Ancho fijo para el prefijo */
 }
 
+.phone-input-group input[type="tel"] {
+  flex: 1; /* El input ocupa el resto del espacio */
+}
+
+/* === Grupo de campos para moneda === */
+.currency-input-group {
+  display: flex; /* Elementos en línea */
+  gap: 10px;
+}
+
+.currency-input-group select {
+  flex: 1; /* El select ocupa la mayor parte */
+}
+
+.currency-input-group .readonly-input {
+  flex: 0 0 60px; /* Ancho fijo */
+  background-color: #f1f5f9; /* Fondo gris claro */
+  display: flex; /* Centrado del texto */
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  font-weight: 500;
+  text-align: center;
+}
+
+/* === Botones generales === */
+.btn {
+  display: inline-block;
+  padding: 12px; /* Espaciado interno */
+  font-size: 1rem;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer; /* Manito al pasar el mouse */
+  text-align: center;
+  border: none;
+  transition: background-color 0.2s; /* Transición suave en hover */
+}
+
+/* Botón principal (azul) */
+.btn-primary {
+  background-color: #2563eb;
+  color: white;
+}
+.btn-primary:hover {
+  background-color: #1d4ed8;
+}
+
+/* Botón secundario (gris) */
+.btn-secondary {
+  background-color: #e2e8f0;
+  color: #1e293b;
+}
+.btn-secondary:hover {
+  background-color: #cbd5e1;
+}
+
+/* === Contenedor de botones al final del formulario === */
 .form-actions {
   display: flex;
-  justify-content: center;
-  margin-top: 2rem;
+  justify-content: center; /* Centrado horizontal del botón */
+  gap: 10px; /* Espacio entre botones si hay más de uno */
+  flex-wrap: wrap; /* Permite que salten a otra línea si no hay espacio */
+  margin-top: 15px; /* Separación del contenido anterior */
 }
 
-button[type="submit"] {
-  width: 100%;
-  background-color: #2b6cb0;
-  color: #fff;
-  border: none;
-  padding: 14px;
-  font-size: 1.1rem;
-  font-weight: 700;
-  border-radius: 10px;
-  cursor: pointer;
-  box-shadow: 0 4px 10px rgba(43, 108, 176, 0.4);
+/* Separación entre ícono y texto dentro del botón */
+.btn i {
+  margin-right: 8px; /* Espacio entre icono y texto */
+  vertical-align: middle; /* Alineación vertical */
 }
 
-button[type="submit"]:hover {
-  background-color: #1e4e8c;
-  box-shadow: 0 6px 14px rgba(30, 78, 140, 0.6);
-}
-
-/* Botón de cierre sin animación */
-.btn-cerrar {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background: transparent;
-  border: none;
-  font-size: 1.5rem;
-  color: #888;
-  cursor: pointer;
-  z-index: 10;
-}
-
-/* Responsive Grid */
-@media (min-width: 768px) {
-  .form-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .full-width {
-    grid-column: 1 / -1;
-  }
-}
-
+/* === Estilos adaptativos para móviles === */
 @media (max-width: 480px) {
-  .container {
-    margin: 20px;
-    padding: 20px 15px;
+  .form-container {
+    padding: 20px; /* Reducimos el padding */
   }
-
-  h1 {
-    font-size: 1.5rem;
+  
+  /* Apilar elementos verticalmente en pantallas pequeñas */
+  .phone-input-group,
+  .currency-input-group {
+    flex-direction: column;
   }
-
-  button[type="submit"] {
-    padding: 12px;
-    font-size: 1rem;
+  
+  .phone-input-group select,
+  .currency-input-group select,
+  .currency-input-group .readonly-input {
+    flex: 1;
+    width: 100%;
   }
 }

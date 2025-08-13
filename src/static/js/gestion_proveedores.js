@@ -1,28 +1,3 @@
-function filtrarTabla() {
-    const input = document.getElementById('searchInput');
-    const filter = input.value.toLowerCase();
-    const table = document.getElementById('clientesTable');
-    const trs = table.getElementsByTagName('tr');
-
-    for (let i = 1; i < trs.length; i++) { // saltar encabezado
-        const tr = trs[i];
-        const tds = tr.getElementsByTagName('td');
-        let textoFila = '';
-
-        // juntamos el texto de todas las celdas excepto la última (acciones)
-        for (let j = 0; j < tds.length - 1; j++) {
-            textoFila += tds[j].textContent.toLowerCase() + ' ';
-        }
-
-        if (textoFila.includes(filter)) {
-            tr.style.display = '';
-        } else {
-            tr.style.display = 'none';
-        }
-    }
-}
-
-
 document.addEventListener('DOMContentLoaded', function() {
     // Configuration
     const config = {

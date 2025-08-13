@@ -1,232 +1,265 @@
+/* Variables CSS para mantener consistencia en colores y sombras */
 :root {
-    --primary-color: #2c3e50;
-    --secondary-color: #34495e;
-    --accent-color: #2ecc71;
-    --hover-color: #27ae60;
-    --border-color: #acacac;
-    --background-light: #f5f7fa;
-    --background-card: #fff;
-    --shadow-color: rgba(0, 0, 0, 0.08);
+    --primary-color: #2c3e50;        /* Color principal, para textos y elementos clave */
+    --secondary-color: #34495e;      /* Color secundario para subtítulos y etiquetas */
+    --accent-color: #2ecc71;         /* Color de acento (verde) para botones y elementos destacados */
+    --hover-color: #27ae60;          /* Color para estado hover de elementos interactivos */
+    --border-color: #acacac;         /* Color para bordes neutros */
+    --background-light: #f5f7fa;     /* Color de fondo general claro */
+    --background-card: #fff;         /* Fondo blanco para contenedores o tarjetas */
+    --shadow-color: rgba(0, 0, 0, 0.08); /* Sombra ligera para profundidad */
 }
 
+/* Estilos generales para el cuerpo de la página */
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: var(--background-light);
-    margin: 0;
-    padding: 20px;
-    color: var(--primary-color);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Fuente legible y moderna */
+    background-color: var(--background-light); /* Fondo claro para evitar fatiga visual */
+    margin: 0;           /* Quita margenes predeterminados */
+    padding: 20px;       /* Espaciado interno para separar contenido de bordes ventana */
+    color: var(--primary-color); /* Texto principal con color definido */
 }
 
+/* Contenedor principal del formulario */
 .form-container {
-    max-width: 1000px;
-    margin: 30px auto;
-    padding: 2rem;
-    background-color: var(--background-card);
-    border-radius: 8px;
-    box-shadow: 0 4px 20px var(--shadow-color);
+    max-width: 1000px;            /* Ancho máximo para mejor legibilidad */
+    margin: 30px auto;            /* Centrado horizontal con margen superior e inferior */
+    padding: 2rem;                /* Espacio interno para separar contenido de bordes */
+    background-color: var(--background-card); /* Fondo blanco para destacar */
+    border-radius: 8px;           /* Bordes redondeados para estilo suave */
+    box-shadow: 0 4px 20px var(--shadow-color); /* Sombra ligera para dar profundidad */
 }
 
+/* Estilo general para el título principal h1 */
 h1 {
-    color: var(--primary-color);
-    margin-bottom: 2rem;
-    font-size: 1.8rem;
-    text-align: center;
-    padding-bottom: 0;
-    border-bottom: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
+    color: var(--primary-color);  /* Color principal para texto importante */
+    margin-bottom: 2rem;          /* Separación inferior para separar de contenido siguiente */
+    font-size: 1.8rem;            /* Tamaño grande para encabezado */
+    text-align: center;           /* Centrar texto */
+    padding-bottom: 0;            /* Sin relleno inferior */
+    border-bottom: none;          /* Sin borde inferior */
+    display: flex;                /* Flex para alinear íconos y texto horizontalmente */
+    align-items: center;          /* Centrar verticalmente */
+    justify-content: center;      /* Centrar horizontalmente */
+    gap: 10px;                   /* Espacio entre elementos hijos */
 }
 
+/* Contenedor grid para distribuir campos del formulario */
 .form-grid {
-    display: grid;
-    gap: 1.5rem;
+    display: grid;                /* Uso de grid para layout responsivo */
+    gap: 1.5rem;                  /* Espacio entre filas y columnas */
 }
 
+/* Secciones dentro del formulario para agrupar campos relacionados */
 .form-section {
-    padding: 0;
-    border-radius: 0;
-    border: none;
-    background-color: transparent;
+    padding: 0;                  /* Sin relleno para no alterar layout */
+    border-radius: 0;            /* Sin bordes redondeados */
+    border: none;                /* Sin bordes */
+    background-color: transparent; /* Fondo transparente para integrarse con el contenedor */
 }
 
+/* Títulos secundarios dentro de secciones del formulario */
 .form-section h2 {
-    font-size: 1.2rem;
-    color: var(--secondary-color);
-    margin-top: 1.5rem;
-    margin-bottom: 1rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 1px solid var(--border-color);
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    font-size: 1.2rem;           /* Tamaño de texto para subtítulos */
+    color: var(--secondary-color); /* Color secundario para diferenciar */
+    margin-top: 1.5rem;          /* Margen superior para separación */
+    margin-bottom: 1rem;         /* Margen inferior para separación */
+    padding-bottom: 0.5rem;      /* Relleno inferior para separación visual */
+    border-bottom: 1px solid var(--border-color); /* Línea inferior para delimitar */
+    display: flex;               /* Flex para alinear posibles íconos y texto */
+    align-items: center;         /* Centrado vertical */
+    gap: 8px;                   /* Espacio entre elementos hijos */
 }
 
+/* Grupo individual para cada campo del formulario */
 .form-group {
-    margin-bottom: 1rem;
+    margin-bottom: 1rem;         /* Espacio inferior para separar campos */
 }
 
+/* Etiquetas de los campos del formulario */
 .form-group label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-weight: 600;
-    color: var(--secondary-color);
-    font-size: 1rem;
+    display: block;              /* Mostrar etiqueta en bloque */
+    margin-bottom: 0.5rem;       /* Separación debajo de la etiqueta */
+    font-weight: 600;            /* Fuente seminegrita para legibilidad */
+    color: var(--secondary-color); /* Color secundario para etiquetas */
+    font-size: 1rem;             /* Tamaño estándar de texto */
 }
 
+/* Estilos para inputs, selects y textarea */
 .form-group input,
 .form-group select,
 .form-group textarea {
-    width: 100%;
-    padding: 0.8rem 1rem;
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
-    font-family: inherit;
-    font-size: 1rem;
-    transition: all 0.3s ease;
+    width: 100%;                /* Ancho completo para aprovechar espacio */
+    padding: 0.8rem 1rem;       /* Relleno interno para comodidad */
+    border: 1px solid var(--border-color); /* Borde neutro */
+    border-radius: 4px;         /* Bordes ligeramente redondeados */
+    font-family: inherit;       /* Mantener fuente heredada */
+    font-size: 1rem;            /* Tamaño de texto cómodo */
+    transition: all 0.3s ease;  /* Transición suave para cambios */
 }
 
+/* Estilo para inputs, selects y textarea al recibir foco */
 .form-group input:focus,
 .form-group select:focus,
 .form-group textarea:focus {
-    outline: none;
-    border-color: var(--hover-color);
-    box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.2);
+    outline: none;              /* Sin borde de foco por defecto */
+    border-color: var(--hover-color); /* Cambio a color hover para indicar foco */
+    box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.2); /* Sombra verde ligera */
 }
 
+/* Textarea específico: tamaño mínimo y permitir cambio vertical */
 .form-group textarea {
-    min-height: 80px;
-    resize: vertical;
+    min-height: 80px;           /* Altura mínima para contenido visible */
+    resize: vertical;           /* Permitir al usuario cambiar altura */
 }
 
+/* Contenedor para inputs de contraseña con botón para mostrar/ocultar */
 .password-container {
-    position: relative;
+    position: relative;         /* Posicionamiento relativo para botón interno */
 }
 
+/* Ícono o botón para mostrar/ocultar contraseña */
 .toggle-password {
-    position: absolute;
-    right: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    cursor: pointer;
-    color: var(--secondary-color);
-    transition: color 0.2s;
+    position: absolute;         /* Posicionado dentro del contenedor */
+    right: 12px;                /* Separado del borde derecho */
+    top: 50%;                  /* Centrado vertical */
+    transform: translateY(-50%); /* Ajuste para centrar exactamente */
+    cursor: pointer;            /* Cursor pointer para indicar interactividad */
+    color: var(--secondary-color); /* Color neutro */
+    transition: color 0.2s;     /* Transición suave en color */
 }
 
+/* Cambio de color al pasar mouse sobre el toggle password */
 .toggle-password:hover {
-    color: var(--accent-color);
+    color: var(--accent-color); /* Color de acento para destacar */
 }
 
+/* Mensajes de error inicialmente ocultos */
 .error-message {
-    color: #e74c3c;
-    font-size: 0.8rem;
-    margin-top: 0.5rem;
-    display: none;
+    color: #e74c3c;             /* Color rojo para errores */
+    font-size: 0.8rem;          /* Texto pequeño */
+    margin-top: 0.5rem;         /* Separación arriba */
+    display: none;              /* Oculto por defecto */
 }
 
+/* Estados válidos e inválidos para inputs y selects */
 input:invalid, select:invalid {
-    border-color: #acacac;
+    border-color: #acacac;      /* Borde neutro para inputs inválidos no enfocados */
 }
 
 input:valid, select:valid {
-    border-color: var(--border-color);
+    border-color: var(--border-color); /* Borde normal para válidos */
 }
 
+/* Estilo para inputs inválidos y enfocados (error visible) */
 input:invalid:focus, select:invalid:focus {
-    border-color: #e74c3c;
-    box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.2);
+    border-color: #e74c3c;      /* Borde rojo */
+    box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.2); /* Sombra roja */
 }
 
+/* Contenedor para botones de acción (Enviar, Cancelar, etc.) */
 .form-actions {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-    margin-top: 2rem;
-    padding-top: 0;
-    border-top: none;
-    flex-wrap: wrap;
+    display: flex;              /* Layout flexible */
+    justify-content: center;    /* Centrado horizontal */
+    gap: 1rem;                  /* Espacio entre botones */
+    margin-top: 2rem;           /* Separación superior */
+    padding-top: 0;             /* Sin padding superior */
+    border-top: none;           /* Sin borde superior */
+    flex-wrap: wrap;            /* Permite que botones bajen de línea en pantallas pequeñas */
 }
 
+/* Estilo general para botones */
 .btn {
-    padding: 0.8rem 1.5rem;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: 600;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    transition: all 0.3s ease;
-    font-size: 1rem;
+    padding: 0.8rem 1.5rem;     /* Espaciado interno cómodo */
+    border: none;               /* Sin borde */
+    border-radius: 4px;         /* Bordes redondeados */
+    cursor: pointer;            /* Cursor pointer para indicar clic */
+    font-weight: 600;           /* Texto en negrita */
+    display: inline-flex;       /* Inline-flex para íconos + texto */
+    align-items: center;        /* Centrado vertical */
+    gap: 0.5rem;                /* Espacio entre ícono y texto */
+    transition: all 0.3s ease;  /* Transiciones suaves */
+    font-size: 1rem;            /* Tamaño de texto */
 }
 
+/* Botón primario (ej. Enviar) */
 .btn-primary {
-    background-color: var(--accent-color);
-    color: white;
+    background-color: var(--accent-color); /* Fondo verde */
+    color: white;              /* Texto blanco */
 }
 
+/* Hover para botón primario */
 .btn-primary:hover {
-    background-color: var(--hover-color);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: var(--hover-color); /* Verde más oscuro */
+    transform: translateY(-2px);           /* Leve elevación */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra para profundidad */
 }
 
+/* Botón secundario (ej. Cancelar) */
 .btn-secondary {
-    background-color: #bdc3c7;
-    color: var(--primary-color);
+    background-color: #bdc3c7;    /* Gris claro */
+    color: var(--primary-color);  /* Texto oscuro */
 }
 
+/* Hover para botón secundario */
 .btn-secondary:hover {
-    background-color: #95a5a6;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #95a5a6;    /* Gris más oscuro */
+    transform: translateY(-2px);  /* Leve elevación */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra */
 }
 
+/* Clase para marcar un input como inválido con borde rojo */
 .is-invalid {
-    border-color: #e74c3c !important;
+    border-color: #e74c3c !important; /* Prioridad para borde rojo */
 }
 
+/* Mensajes de validación mostrados explícitamente */
 .invalid-feedback {
-    color: #e74c3c;
-    font-size: 0.8rem;
-    margin-top: 0.5rem;
-    display: block;
+    color: #e74c3c;             /* Rojo para error */
+    font-size: 0.8rem;          /* Texto pequeño */
+    margin-top: 0.5rem;         /* Separación arriba */
+    display: block;             /* Mostrar siempre */
 }
 
+/* Animación para efecto shake en errores */
 @keyframes shake {
     0%, 100% { transform: translateX(0); }
     20%, 60% { transform: translateX(-5px); }
     40%, 80% { transform: translateX(5px); }
 }
 
+/* Clase que aplica animación shake */
 .shake {
     animation: shake 0.5s;
 }
 
+/* Media queries para responsive */
+
+/* Desde 768px (tablets en adelante) usar 2 columnas */
 @media (min-width: 768px) {
     .form-grid {
         grid-template-columns: repeat(2, 1fr);
     }
 }
 
+/* Desde 1024px (desktop) usar 3 columnas */
 @media (min-width: 1024px) {
     .form-grid {
         grid-template-columns: repeat(3, 1fr);
     }
 }
 
+/* Para pantallas pequeñas (menos de 768px) ajustar padding y layout botones */
 @media (max-width: 767px) {
     .form-container {
-        padding: 15px;
-        margin: 15px;
+        padding: 15px;  /* Menor padding para aprovechar espacio */
+        margin: 15px;   /* Menor margen */
     }
     .form-actions {
-        flex-direction: column-reverse;
-        gap: 10px;
+        flex-direction: column-reverse; /* Botones apilados y en orden invertido */
+        gap: 10px;       /* Espacio vertical entre botones */
     }
     .btn {
-        width: 100%;
-        justify-content: center;
+        width: 100%;    /* Botones ocupan todo el ancho */
+        justify-content: center; /* Centrar texto e íconos */
     }
 }

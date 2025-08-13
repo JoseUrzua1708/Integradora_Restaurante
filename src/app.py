@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 import logging
 from datetime import time
 import re
-from mysql.connector import Error
+from mysql.connector import Error 
 import pymysql
 import reportlab as rl
 from reportlab.lib.pagesizes import A4
@@ -92,78 +92,195 @@ def gestion_restaurante():
 # Formulario de restaurante
 ################################################################################ 
 
-@app.route('/formulario_restaurante', methods=['GET', 'POST'])
-def formulario_restaurante():
-    if request.method == 'POST':
+@app.route('/formulario_restaurante/<int:id>', methods=['GET'])
+@app.route('/formulario_restaurante', methods=['GET'])  
+def formulario_restaurante(id=None):
+    """Muestra el formulario para agregar o editar un restaurante"""
+    conn = None
+    cursor = None
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        if id is not None:
+            # Editar restaurante existente
+            cursor.execute("SELECT * FROM Configuracion_Restaurante WHERE ID = %s", (id,))
+            restaurante = cursor.fetchone()
+            if not restaurante:
+                flash("Restaurante no encontrado", "error")
+                return redirect(url_for('gestion_restaurante'))
+            
+            # Parse phone number if exists (format: +XX XXXXXXXXX)
+            if restaurante['Telefono'] and ' ' in restaurante['Telefono']:
+                phone_parts = restaurante['Telefono'].split(' ')
+                restaurante['codigo_pais'] = phone_parts[0][1:]  # Remove + prefix
+                restaurante['telefono_local'] = phone_parts[1]
+            
+            return render_template('formulario_restaurante.html', restaurante=restaurante)
+        return render_template('formulario_restaurante.html')
+    except Exception as e:
+        app.logger.error(f"Error en formulario_restaurante: {str(e)}")
+        flash("Error al cargar el formulario", "error")
+        return redirect(url_for('gestion_restaurante'))
+    finally:
+        if cursor is not None:
+            cursor.close()
+        if conn is not None:
+            conn.close()
+
+################################################################################
+# Guardar restaurante
+################################################################################
+@app.route('/guardar_restaurante', methods=['POST'])
+def guardar_restaurante():
+    conn = None
+    cursor = None
+    try:
+        # Get form data using .get() with defaults
+        datos = {
+            'id': request.form.get('id'),
+            'nombre': request.form.get('Nombre_Restaurante', '').strip(),
+            'direccion': request.form.get('Direccion', '').strip(),
+            'telefono': request.form.get('Telefono', '').strip(),
+            'correo': request.form.get('Correo_Contacto', '').strip(),
+            'apertura': request.form.get('Horario_Apertura'),
+            'cierre': request.form.get('Horario_Cierre'),
+            'moneda': request.form.get('Moneda', '').strip(),  # Changed to .get()
+            'impuesto': request.form.get('Impuesto'),
+            'tiempo_reserva': request.form.get('Tiempo_Reserva_Min'),
+            'politica': request.form.get('Politica_Cancelacion', '').strip()
+        }
+
+        # Validations
+        errors = []
+        
+        # Name validation
+        if not datos['nombre']:
+            errors.append("El nombre del restaurante es obligatorio.")
+        elif len(datos['nombre']) > 100:  # Updated to match HTML maxlength
+            errors.append("El nombre no puede exceder 100 caracteres.")
+        
+        # Email validation
+        if not datos['correo']:
+            errors.append("Correo electrónico es obligatorio.")
+        elif not re.match(r'^[\w\.-]+@[\w\.-]+\.\w+$', datos['correo']):
+            errors.append("Formato de correo electrónico inválido.")
+        
+        # Phone validation (international format: +XX XXXXXXXXX)
+        if not datos['telefono']:
+            errors.append("Teléfono es obligatorio.")
+        elif not re.match(r'^\+\d{1,3} \d{7,15}$', datos['telefono']):
+            errors.append("Formato de teléfono inválido. Debe ser: +código número (ej: +52 5512345678)")
+        
+        # Business hours validation
+        if not datos['apertura']:
+            errors.append("Horario de apertura es obligatorio.")
+        if not datos['cierre']:
+            errors.append("Horario de cierre es obligatorio.")
+        elif datos['apertura'] and datos['cierre'] and datos['apertura'] >= datos['cierre']:
+            errors.append("El horario de cierre debe ser posterior al de apertura.")
+        
+        # Currency validation - updated with valid currency codes
+        monedas_validas = ['USD', 'EUR', 'JPY', 'GBP', 'MXN', 'BRL', 'COP', 'CLP', 'PEN', 'ARS', 'CAD', 'AUD', 'CNY']
+        if not datos['moneda']:
+            errors.append("Moneda es obligatoria.")
+        elif datos['moneda'] not in monedas_validas:
+            errors.append(f"Moneda no válida. Seleccione una de: {', '.join(monedas_validas)}")
+        
+        # Tax validation
         try:
-            # Obtener datos del formulario
-            datos = {
-                'nombre': request.form['Nombre_Restaurante'],
-                'direccion': request.form['Direccion'],
-                'telefono': request.form['telefono_completo'],  # Usamos el teléfono completo
-                'correo': request.form['Correo_Contacto'],
-                'apertura': request.form['Horario_Apertura'],
-                'cierre': request.form['Horario_Cierre'],
-                'moneda': request.form['tipo_moneda'],  # Usamos el código de moneda
-                'impuesto': float(request.form['Impuesto']),
-                'tiempo_reserva': int(request.form['Tiempo_Reserva_Min']),
-                'politica': request.form['Politica_Cancelacion']
-            }
-
-            # Validación básica
-            if not all(datos.values()):
-                flash("Todos los campos son obligatorios", "error")
+            impuesto = float(datos['impuesto']) if datos['impuesto'] else 0
+            if impuesto < 0 or impuesto > 100:
+                errors.append("El impuesto debe estar entre 0 y 100%.")
+        except ValueError:
+            errors.append("El impuesto debe ser un número válido.")
+        
+        # Reservation time validation
+        try:
+            tiempo = int(datos['tiempo_reserva']) if datos['tiempo_reserva'] else 0
+            if tiempo < 1:
+                errors.append("El tiempo mínimo de reserva debe ser al menos 1 minuto.")
+        except ValueError:
+            errors.append("El tiempo de reserva debe ser un número entero válido.")
+        
+        # Policy validation
+        if not datos['politica']:
+            errors.append("Política de cancelación es obligatoria.")
+        
+        if errors:
+            for error in errors:
+                flash(error, "error")
+            # Preserve form data when redirecting back
+            if datos['id']:
+                return redirect(url_for('formulario_restaurante', id=datos['id']))
+            else:
                 return redirect(url_for('formulario_restaurante'))
-
-            # Convertir horarios a objetos time para validación
-            hora_apertura = time.fromisoformat(datos['apertura'])
-            hora_cierre = time.fromisoformat(datos['cierre'])
+        
+        # Database operations
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        try:
+            if datos['id']:  # Update existing
+                cursor.execute("""
+                    UPDATE Configuracion_Restaurante
+                    SET Nombre_Restaurante = %s,
+                        Direccion = %s,
+                        Telefono = %s,
+                        Correo_Contacto = %s,
+                        Horario_Apertura = %s,
+                        Horario_Cierre = %s,
+                        Moneda = %s,
+                        Impuesto = %s,
+                        Tiempo_Reserva_Min = %s,
+                        Politica_Cancelacion = %s,
+                        Fecha_Actualizacion = NOW()
+                    WHERE ID = %s
+                """, (
+                    datos['nombre'], datos['direccion'], datos['telefono'],
+                    datos['correo'], datos['apertura'], datos['cierre'],
+                    datos['moneda'], datos['impuesto'], datos['tiempo_reserva'],
+                    datos['politica'], datos['id']
+                ))
+                flash("Restaurante actualizado exitosamente", "success")
+            else:  # Create new
+                cursor.execute("""
+                    INSERT INTO Configuracion_Restaurante (
+                        Nombre_Restaurante, Direccion, Telefono, Correo_Contacto,
+                        Horario_Apertura, Horario_Cierre, Moneda, Impuesto,
+                        Tiempo_Reserva_Min, Politica_Cancelacion, Fecha_Creacion
+                    ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW())
+                """, (
+                    datos['nombre'], datos['direccion'], datos['telefono'],
+                    datos['correo'], datos['apertura'], datos['cierre'],
+                    datos['moneda'], datos['impuesto'], datos['tiempo_reserva'],
+                    datos['politica']
+                ))
+                flash("Restaurante creado exitosamente", "success")
             
-            if hora_apertura >= hora_cierre:
-                flash("El horario de cierre debe ser posterior al de apertura", "error")
-                return redirect(url_for('formulario_restaurante'))
-
-            # Conexión a la base de datos
-            conn = get_db_connection()
-            cursor = conn.cursor()
-            
-            query = """
-                INSERT INTO Configuracion_Restaurante 
-                (Nombre_Restaurante, Direccion, Telefono, Correo_Contacto, 
-                 Horario_Apertura, Horario_Cierre, Moneda, Impuesto, 
-                 Tiempo_Reserva_Min, Politica_Cancelacion)
-                VALUES (%(nombre)s, %(direccion)s, %(telefono)s, %(correo)s, 
-                        %(apertura)s, %(cierre)s, %(moneda)s, %(impuesto)s, 
-                        %(tiempo_reserva)s, %(politica)s)
-            """
-            cursor.execute(query, datos)
             conn.commit()
             
-            flash("Restaurante agregado exitosamente", "success")
-            return redirect(url_for('gestion_restaurante'))
+        except Exception as db_error:
+            conn.rollback()
+            app.logger.error(f"Database error: {str(db_error)}")
+            flash("Error en la base de datos al guardar el restaurante", "error")
+            return redirect(url_for('formulario_restaurante', id=datos.get('id')))
             
-        except ValueError as e:
-            flash(f"Error en los datos proporcionados: {str(e)}", "error")
-            return redirect(url_for('formulario_restaurante'))
-            
-        except Exception as e:
-            logging.error(f"Error al insertar restaurante: {str(e)}")
-            flash("Error técnico al agregar el restaurante", "error")
-            return redirect(url_for('formulario_restaurante'))
-            
-        finally:
-            if 'cursor' in locals() and cursor is not None:
-                cursor.close()
-            if 'conn' in locals() and conn is not None:
-                conn.close()
-    
-    # Método GET - Mostrar formulario
-    return render_template('formulario_restaurante.html')
+        return redirect(url_for('gestion_restaurante'))
+        
+    except Exception as e:
+        app.logger.error(f"Error al guardar restaurante: {str(e)}")
+        flash("Error inesperado al procesar el formulario", "error")
+        return redirect(url_for('formulario_restaurante', id=request.form.get('id')))
+        
+    finally:
+        if cursor is not None:
+            cursor.close()
+        if conn is not None:
+            conn.close()
 
 ################################################################################
 # Eliminar restaurante
 ################################################################################
-
 @app.route('/eliminar_restaurante/<int:id>')
 def eliminar_restaurante(id):
     """Elimina un restaurante por ID"""
@@ -185,58 +302,6 @@ def eliminar_restaurante(id):
             conn.close()
     return redirect(url_for('gestion_restaurante'))
 
-################################################################################
-# Actualizar restaurante
-################################################################################
-
-@app.route('/actualizar_restaurante/<int:id>', methods=['POST'])
-def actualizar_restaurante(id):
-    """Actualiza un restaurante existente"""
-    conn = None
-    cursor = None
-    try:
-        datos = {
-            'id': id,
-            'nombre': request.form['Nombre_Restaurante'],
-            'direccion': request.form['Direccion'],
-            'telefono': request.form['Telefono'],
-            'correo': request.form['Correo_Contacto'],
-            'apertura': request.form['Horario_Apertura'],
-            'cierre': request.form['Horario_Cierre'],
-            'moneda': request.form['Moneda'],
-            'impuesto': request.form['Impuesto'],
-            'tiempo_reserva': request.form['Tiempo_Reserva_Min'],
-            'politica': request.form['Politica_Cancelacion']
-        }
-
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        query = """
-            UPDATE Configuracion_Restaurante SET 
-                Nombre_Restaurante = %(nombre)s,
-                Direccion = %(direccion)s,
-                Telefono = %(telefono)s,
-                Correo_Contacto = %(correo)s,
-                Horario_Apertura = %(apertura)s,
-                Horario_Cierre = %(cierre)s,
-                Moneda = %(moneda)s,
-                Impuesto = %(impuesto)s,
-                Tiempo_Reserva_Min = %(tiempo_reserva)s,
-                Politica_Cancelacion = %(politica)s
-            WHERE ID = %(id)s
-        """
-        cursor.execute(query, datos)
-        conn.commit()
-        flash("Restaurante actualizado exitosamente", "success")
-    except Exception as e:
-        app.logger.error(f"Error al actualizar restaurante ID {id}: {str(e)}")
-        flash("Error al actualizar el restaurante", "error")
-    finally:
-        if cursor is not None:
-            cursor.close()
-        if conn is not None:
-            conn.close()
-    return redirect(url_for('gestion_restaurante'))
 
 ################################################################################
 # Gestión de sucursales
@@ -273,15 +338,19 @@ def formulario_sucursales():
     try:
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
-        cursor.execute("SELECT ID, Nombre FROM Ciudades")
-        ciudades = cursor.fetchall()
+        cursor.execute("SELECT ID, Nombre FROM Sucursalesw")
+        Sucursales = cursor.fetchall(
         
         # Obtener lista de responsables disponibles
-        cursor.execute("SELECT ID, Nombre FROM Configuracion_Restaurante WHERE Rol = 'Responsable'")
-        responsables = cursor.fetchall()
+        cursor.execute("SELECT ID, Nombre FROM Sucursales WHERE Rol = 'Responsable'")
+        responsables = cursor.fetchall())
+        
+        # Obtener lista de responsables disponibles
+        cursor.execute("SELECT ID, Nombre FROM Sucursales ,HERE Rol = 'Responsable'")
+   responsables=responsablesr.fetchall()
         
         return render_template('formulario_sucursales.html', 
-                            ciudades=ciudades, 
+                            Sucursales=Sucursales, 
                             responsables=responsables)
     except Exception as e:
         app.logger.error(f"Error en formulario_sucursales: {str(e)}")
@@ -292,6 +361,8 @@ def formulario_sucursales():
             cursor.close()
         if conn is not None:
             conn.close()
+
+####
 
 @app.route('/guardar_sucursal', methods=['POST'])
 def guardar_sucursal():
@@ -413,7 +484,7 @@ def actualizar_sucursal(id):
         flash("El responsable seleccionado no es válido", "error")
     except Exception as e:
         app.logger.error(f"Error al actualizar sucursal ID {id}: {str(e)}")
-        flash("Error al actualizar la sucursal", "error")
+        flash("Error al actualizar la sucursal", "error") 
     finally:
         if cursor is not None:
             cursor.close()
@@ -1673,9 +1744,9 @@ def formulario_cliente(id=None):
         if cursor: cursor.close()
         if conn: conn.close()
 
-################################################################################
-# Guardar cliente
-################################################################################
+################################################################################++++++++++++++++++++++++++++++++
+# Guardar cliente                                                       +++++++++++++++++++++++++++++++++++++++++
+################################################################################+++++++++++++++++++++++++++++++++
 @app.route('/guardar_cliente', methods=['POST'])
 def guardar_cliente():
     conn = None
@@ -1859,7 +1930,7 @@ def eliminar_cliente(id):
     finally:
         if cursor: cursor.close()
         if conn: conn.close()
-0
+
 ################################################################################
 # Configuracion almacen
 ################################################################################
@@ -2155,7 +2226,7 @@ def formulario_almacen():
     cursor.execute("SELECT ID, Nombre, CategoriaID FROM SUBCATEGORIA_ALMACEN WHERE Estatus='Activo' ORDER BY Nombre")
     subcategorias = cursor.fetchall()
 
-    cursor.execute("SELECT ID, Nombre FROM Proveedores WHERE Estatus='Activo' ORDER BY Nombre")
+    cursor.execute("SELECT ID, Nombre_Empresa FROM Proveedores WHERE Estatus='Activo' ORDER BY Nombre_Empresa")
     proveedores = cursor.fetchall()
 
     cursor.close()
@@ -2197,7 +2268,7 @@ def registrar_almacen():
     finally:
         cursor.close()
         conn.close()
-    return redirect(url_for('mostrar_almacen'))
+    return redirect(url_for('gestion_almacen'))
 
 
 # Ruta para formulario editar producto
@@ -2215,7 +2286,7 @@ def editar_almacen(id):
     cursor.execute("SELECT ID, Nombre, CategoriaID FROM SUBCATEGORIA_ALMACEN WHERE Estatus='Activo' ORDER BY Nombre")
     subcategorias = cursor.fetchall()
 
-    cursor.execute("SELECT ID, Nombre FROM Proveedores WHERE Estatus='Activo' ORDER BY Nombre")
+    cursor.execute("SELECT ID, Nombre_Empresa FROM Proveedores WHERE Estatus='Activo' ORDER BY Nombre_Empresa")
     proveedores = cursor.fetchall()
 
     cursor.close()
@@ -2223,7 +2294,7 @@ def editar_almacen(id):
 
     if not producto:
         flash('Producto no encontrado', 'error')
-        return redirect(url_for('mostrar_almacen'))
+        return redirect(url_for('gestion_almacen'))
 
     return render_template('formulario_almacen.html', producto=producto, categorias=categorias,
                            subcategorias=subcategorias, proveedores=proveedores)
@@ -2262,24 +2333,42 @@ def actualizar_almacen(id):
     finally:
         cursor.close()
         conn.close()
-    return redirect(url_for('mostrar_almacen'))
+    return redirect(url_for('gestion_almacen'))
 
 
 # Ruta para eliminar producto
+# Ruta para eliminar producto
 @app.route('/eliminar_almacen/<int:id>', methods=['POST'])
 def eliminar_almacen(id):
+    conn = None
+    cursor = None
     try:
         conn = get_db_connection()
-        cursor = conn.cursor()
+        cursor = conn.cursor(dictionary=True)
+
+        # Verificar si el producto existe
+        cursor.execute("SELECT * FROM Almacen WHERE ID = %s", (id,))
+        producto = cursor.fetchone()
+        if not producto:
+            flash(f'No se encontró el producto con ID {id}', 'error')
+            return redirect(url_for('gestion_almacen'))
+
+        # Eliminar el producto
         cursor.execute("DELETE FROM Almacen WHERE ID = %s", (id,))
         conn.commit()
-        flash('Producto eliminado correctamente', 'success')
+        flash(f'Producto "{producto["Nombre"]}" eliminado correctamente', 'success')
+
     except Exception as e:
         flash(f'Error al eliminar producto: {e}', 'error')
+
     finally:
-        cursor.close()
-        conn.close()
-    return redirect(url_for('mostrar_almacen'))
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
+    return redirect(url_for('gestion_almacen'))
+
 
 
 # Ruta para obtener subcategorías por categoría (JSON para JS)

@@ -75,7 +75,7 @@
 #searchInput {
     padding: 0.4rem 0.6rem; /* Reducido */
     border: 1px solid var(--border-color);
-    border-radius: 4px;
+    border-radius: 100px;
     width: 190px; /* Más pequeño */
     max-width: 100%;
     font-size: 0.9rem;
@@ -83,6 +83,36 @@
     margin-right: 90px; /* Mover buscador un poco a la izquierda */
     margin-left: 0; /* Asegurar que no tenga margen izquierdo */
 }
+
+.search-box {
+    position: relative;
+    display: flex;
+    align-items: derecha;
+}
+
+.search-box i {
+    position: absolute;
+    left: 12px; /* Pegado al borde con espacio */
+    font-size: 16px;
+    color: #666;
+    pointer-events: none;
+}
+
+.search-box [id="searchInput"] {
+    width: 220px;
+    padding: 10px 12px 10px 38px; /* espacio para la lupa a la izquierda */
+    border: 1px solid var(--border-color);
+    border-radius: 200px;
+    font-size: 14px;
+    outline: none;
+    transition: border 0.2s ease, box-shadow 0.2s ease;
+}
+
+.search-box input:focus {
+    border-color: var(--success-color);
+    box-shadow: 0 0 5px rgba(39, 174, 96, 0.3);
+}
+
 
 /* Tabla almacen */
 .almacen-table {
@@ -228,6 +258,7 @@ td > form > button.btn-accion:hover {
     height: 20px;
     fill: currentColor;
 }
+
 
 /* Responsive */
 @media (max-width: 768px) {

@@ -4,10 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro de Sucursal - Sistema Restaurante</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/formulario_sucursales.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="{{ url_for('static', filename='js/formulario_sucursales.js') }}" defer></script>
 </head>
 <body>
     {% include 'navbar.html' %}
@@ -19,7 +17,8 @@
             </a>
         </div>
         
-        <form id="sucursalForm" class="sucursal-form" method="POST" action="#">
+        <!-- Cambié action="#" por la ruta de guardar_sucursal -->
+        <form id="sucursalForm" class="sucursal-form" method="POST" action="{{ url_for('guardar_sucursal') }}">
             <div class="form-group">
                 <label for="Nombre">
                     <i class="fas fa-signature"></i> Nombre de la sucursal
@@ -42,11 +41,17 @@
                 <span class="input-hint">Formato: 10 dígitos sin espacios</span>
             </div>
 
+            <!-- Cambié de input a select para enviar el ID del responsable -->
             <div class="form-group">
                 <label for="Responsable">
                     <i class="fas fa-user-tie"></i> Responsable
                 </label>
-                <input type="text" id="Responsable" name="Responsable" required>
+                <select id="Responsable" name="Responsable" required>
+                    <option value="" disabled selected>Seleccione un responsable</option>
+                    {% for responsable in responsables %}
+                        <option value="{{ responsable.ID }}">{{ responsable.Nombre }}</option>
+                    {% endfor %}
+                </select>
             </div>
 
             <div class="form-row">
@@ -95,5 +100,6 @@
             </div>
         </form>
     </div>
+    <script src="{{ url_for('static', filename='js/formulario_sucursales.js') }}" defer></script>
 </body>
 </html>

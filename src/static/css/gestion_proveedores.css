@@ -1,165 +1,197 @@
-/* Contenedor principal */
-.table-container {
-    background-color: white;
-    padding: 2rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    margin: 1rem auto;
+/* Variables CSS para colores reutilizables en toda la tabla y UI */
+:root {
+    --primary-color: #2c3e50;      /* Color principal oscuro, usado para encabezados y textos */
+    --secondary-color: #34495e;    /* Color secundario, para hover o elementos secundarios */
+    --accent-color: #e74c3c;       /* Color de acento rojo, usado para alertas o acciones eliminar */
+    --success-color: #27ae60;      /* Verde para indicar éxito o acciones positivas */
+    --warning-color: #f39c12;      /* Amarillo para advertencias o estados de alerta */
+    --light-gray: #ecf0f1;         /* Gris claro para fondos o estados hover */
+    --border-color: #bdc3c7;       /* Color para bordes suaves */
+    --text-color: #2c3e50;         /* Color estándar para texto */
 }
 
-.table-container h1 {
-    color: var(--primary-color);
-    text-align: center;
-    margin-bottom: 1.5rem;
-    font-size: 1.8rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.8rem;
+/* === SOLO ESTILO DEL CONTENEDOR PRINCIPAL === */
+.table-container { /* Contenedor principal de la tabla */
+    background-color: white;      /* Fondo blanco del contenedor */
+    padding: 0rem;              /* Espaciado interno reducido */
+    border-radius: 8px;           /* Bordes redondeados */
+    box-shadow: 0 1px 20px rgba(0,0,0,0.1); /* Sombra ligera */
+    margin: 1rem auto;            /* Margen superior/inferior y centrado horizontal */
 }
 
-/* Acciones de tabla */
-.table-actions {
-    display: flex;
-    justify-content: flex-end;
-    margin-bottom: 1.5rem;
+.table-container h1 { /* Título dentro del contenedor */
+    color: var(--primary-color);  /* Color del texto del título */
+    text-align: center;           /* Alineación centrada */
+    padding-top: 1.8rem;       /* ⬅ Baja el texto e ícono dentro del h1 */
+    margin-top: 0rem;            /* ⬅ Espacio arriba para bajarlo */
+    margin-bottom: 1.5rem;         /* Espacio debajo del título */
+    font-size: 1.8rem;             /* Tamaño de fuente */
+    display: flex;                 /* Flexbox para icono + texto */
+    align-items: center;           /* Centrar verticalmente */
+    justify-content: center;       /* Centrar horizontalmente */
+    gap: 0.8rem;                    /* Espaciado entre icono y texto */
+}
+/* === FIN SOLO CONTENEDOR === */
+
+
+/* === ACCIONES DE TABLA === */
+.table-actions { /* Contenedor de botones de acción (Ej: agregar) */
+    display: flex;                 /* Coloca elementos en línea */
+    justify-content: flex-end;     /* Alinea elementos a la derecha */
+    margin-bottom: 3.2rem;         /* Espacio inferior amplio */
 }
 
-/* Tabla */
-.table-responsive {
-    overflow-x: auto;
-    margin-bottom: 1.5rem;
-    border-radius: 6px;
-    border: 1px solid var(--border-color);
+
+/* === CONTENEDOR DE TABLA RESPONSIVA === */
+.table-responsive { /* Hace que la tabla pueda desplazarse horizontalmente */
+    overflow-x: auto;              /* Scroll horizontal si es necesario */
+    margin-bottom: 1.4rem;         /* Espacio debajo */
+    border-radius: 3px;            /* Bordes redondeados */
+    border: 1px solid var(--border-color); /* Borde gris */
 }
 
-.table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.95rem;
+
+/* === TABLA PRINCIPAL === */
+.table { /* Estilo base de la tabla */
+    width: 100%;                   /* Ocupa todo el ancho */
+    border-collapse: collapse;     /* Sin doble borde */
+    font-size: 0.95rem;             /* Tamaño de texto */
 }
 
-.table th, .table td {
-    padding: 1rem;
-    text-align: left;
-    border-bottom: 1px solid var(--border-color);
+.table th, .table td { /* Celdas de encabezado y contenido */
+    padding: 1rem;                 /* Espaciado interno */
+    text-align: center;              /* Texto alineado a la izquierda */
+    border-bottom: 1px solid var(--border-color); /* Línea divisoria */
 }
 
-.table th {
-    background-color: var(--primary-color);
-    color: white;
-    font-weight: 600;
-    position: sticky;
-    top: 0;
+.table th { /* Encabezados */
+    background-color: var(--primary-color); /* Fondo principal */
+    color: white;                /* Texto blanco */
+    font-weight: 600;            /* Negrita */
+    position: sticky;            /* Se queda fijo al hacer scroll */
+    top: 0;                      /* Pegado arriba */
 }
 
-.table tbody tr {
-    transition: background-color 0.2s;
-}
-
+/* === EFECTO HOVER EN FILAS DE LA TABLA === */
 .table tbody tr:hover {
-    background-color: var(--light-gray);
+    background-color: #f5f5f5;         /* Cambio de fondo para resaltar fila al pasar el cursor */
 }
 
-/* Estatus */
-.status {
-    padding: 0.4rem 0.8rem;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    font-weight: 500;
-    display: inline-block;
-    text-align: center;
-    min-width: 80px;
+/* === ESTADO / STATUS === */
+.status { /* Etiqueta de estado */
+    padding: 0.4rem 0.8rem;        /* Espaciado interno */
+    border-radius: 20px;           /* Bordes redondeados */
+    font-size: 0.80rem;             /* Tamaño de texto */
+    font-weight: 500;               /* Seminegrita */
+    display: inline-block;          /* Mantiene tamaño contenido */
+    text-align: center;             /* Texto centrado */
+    min-width: 50px;                 /* Ancho mínimo */
 }
 
-.status-activo {
-    background-color: #e8f5e9;
-    color: var(--success-color);
+.status-activo { /* Estado activo */
+    background-color: #e8f5e9;      /* Verde claro */
+    color: var(--success-color);    /* Verde principal */
 }
 
-.status-inactivo {
-    background-color: #ffebee;
-    color: var(--accent-color);
+.status-inactivo { /* Estado inactivo */
+    background-color: #ffebee;      /* Rojo claro */
+    color: var(--accent-color);     /* Rojo principal */
 }
 
-/* Acciones */
-.actions {
-    display: flex;
-    gap: 0.5rem;
+
+
+/* Contenedor para botones de acciones dentro de tabla */
+.acciones {
+    display: flex;                      /* Layout horizontal */
+    gap: 0.5rem;                       /* Espacio entre botones */
 }
 
-.btn-action {
-    width: 32px;
-    height: 32px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    transition: all 0.2s;
-    color: var(--text-color);
-    background-color: transparent;
-    border: none;
-    cursor: pointer;
+/* Botón de acción genérico */
+.btn-accion {
+    width: 32px;                    /* Ancho fijo */
+    height: 32px;                   /* Alto fijo */
+    display: inline-flex;           /* Centrar icono */
+    align-items: center;            /* Centrar verticalmente */
+    justify-content: center;        /* Centrar horizontalmente */
+    border-radius: 50%;             /* Forma circular */
+    transition: all 0.2s;           /* Animación al interactuar */
+    color: var(--text-color);       /* Color de icono */
+    background-color: transparent;  /* Fondo transparente */
+    border: none;                   /* Sin borde */
+    cursor: pointer;                /* Cursor de mano */
 }
 
-.btn-action:hover {
-    transform: scale(1.1);
+/* Hover para botón de acción */
+.btn-accion:hover {
+    background-color: var(--light-gray); /* Fondo gris claro */
+    transform: scale(1.1);                /* Escala para dar efecto zoom */
 }
 
-.btn-edit {
-    color: var(--primary-color);
+/* === BOTÓN DE EDITAR === */
+.btn-edit { 
+    color: var(--primary-color);    /* Azul/gris principal */
 }
 
-.btn-edit:hover {
-    background-color: rgba(44, 62, 80, 0.1);
+/* Botón eliminar con color rojo */
+.btn-eliminar {
+    color: var(--accent-color);           /* Texto rojo */
 }
 
-.btn-delete {
-    color: var(--accent-color);
+/* Hover para botón eliminar */
+.btn-eliminar:hover {
+    background-color: #ffebee;             /* Fondo rojo muy claro */
 }
 
 .btn-delete:hover {
     background-color: rgba(231, 76, 60, 0.1);
 }
 
-/* Responsive */
+/* === AJUSTE RESPONSIVE SOLO DEL CONTENEDOR === */
 @media (max-width: 768px) {
-    .table-container {
-        padding: 1rem;
+    .table-container { /* Ajuste del contenedor en móviles */
+        padding: 1rem; /* Más compacto */
     }
     
+    /* Ajustes de tabla en móviles */
     .table th, .table td {
-        padding: 0.75rem 0.5rem;
-        font-size: 0.85rem;
+        padding: 0.75rem 0.5rem; /* Menos espacio en celdas */
+        font-size: 0.85rem;       /* Texto más pequeño */
     }
     
-    .status {
-        min-width: 70px;
-        font-size: 0.8rem;
+    .status { /* Estado en móviles */
+        min-width: 70px;          /* Más estrecho */
+        font-size: 0.8rem;        /* Texto más pequeño */
     }
 }
+/* === FIN SOLO CONTENEDOR RESPONSIVE === */
 
-.btn-verde {
-    background-color: #28a745; 
-    color: white;
-    padding: 10px 18px;
-    border: none;
-    border-radius: 6px;
-    font-weight: 600;
-    font-size: 1rem;
-    cursor: pointer;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px; 
-    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+
+/* === BOTÓN VERDE PERSONALIZADO === */
+.btn-verde { /* Botón verde genérico */
+    background-color: #28a745;     /* Verde principal */
+    color: white;                  /* Texto blanco */
+    padding: 10px 18px;            /* Espaciado interno */
+    border: none;                  /* Sin borde */
+    border-radius: 6px;            /* Bordes redondeados */
+    font-weight: 600;               /* Negrita */
+    font-size: 1rem;                /* Tamaño de texto */
+    cursor: pointer;                /* Cursor de mano */
+    text-decoration: none;          /* Sin subrayado */
+    display: inline-flex;           /* Alinea texto e icono */
+    align-items: center;            /* Centra verticalmente */
+    gap: 8px;                        /* Espacio entre icono y texto */
+    transition: background-color 0.3s ease, box-shadow 0.3s ease; /* Animación suave */
+
+    /* Movimiento manual forzado */
+    position: relative;
+    left: -40px; /* Ajusta este valor para moverlo más o menos */
 }
 
-.btn-verde:hover {
-    background-color: #218838; 
-    box-shadow: 0 4px 10px rgba(33, 136, 56, 0.4);
+.btn-verde:hover { /* Hover del botón verde */
+    background-color: #218838;     /* Verde más oscuro */
+    box-shadow: 0 4px 10px rgba(33, 136, 56, 0.4); /* Sombra */
 }
 
-.btn-verde i {
-    font-size: 1.2rem; 
+.btn-verde i { /* Icono dentro del botón verde */
+    font-size: 1.2rem;              /* Tamaño del icono */
 }

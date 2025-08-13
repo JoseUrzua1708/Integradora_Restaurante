@@ -1,169 +1,161 @@
+/* === CONTENEDOR PRINCIPAL DE LA TABLA === */
 .table-container {
-    background-color: #fff;
-    padding: 2rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    background-color: white;      /* Fondo blanco del contenedor */
+    padding: 0rem;                 /* Espaciado interno reducido */
+    border-radius: 8px;            /* Bordes redondeados */
+    box-shadow: 0 1px 20px rgba(0,0,0,0.1); /* Sombra ligera */
+    margin: 1rem auto;             /* Margen superior/inferior y centrado horizontal */
 }
 
+/* === TÍTULO PRINCIPAL DENTRO DEL CONTENEDOR === */
 .table-container h1 {
-    text-align: center;
-    color: var(--primary-color);
-    margin-bottom: 2rem;
-    font-size: 1.8rem;
+    color: var(--primary-color);   /* Color del texto del título */
+    text-align: center;            /* Alineación centrada */
+    padding-top: 1.9rem;            /* Baja el texto e ícono dentro del h1 */
+    margin-top: 0rem;               /* Sin margen superior */
+    margin-bottom: 1.5rem;          /* Espacio debajo del título */
+    font-size: 1.8rem;              /* Tamaño de fuente */
+    display: flex;                  /* Flexbox para icono + texto */
+    align-items: center;            /* Centrar verticalmente */
+    justify-content: center;        /* Centrar horizontalmente */
+    gap: 0.8rem;                     /* Espaciado entre icono y texto */
 }
 
+/* === CONTENEDOR DE ACCIONES DE LA TABLA (Botones) === */
 .table-actions {
-    display: flex;
-    justify-content: flex-end;
-    margin-bottom: 1.5rem;
+    display: flex;                  /* Usar flexbox para ordenar botones en línea */
+    justify-content: flex-end;      /* Alinear botones a la derecha */
+    margin-bottom: 3.2rem;          /* Espacio debajo para separar de la tabla */
 }
 
+/* === CONTENEDOR RESPONSIVO DE LA TABLA === */
 .table-responsive {
-    overflow-x: auto;
+    overflow-x: auto;               /* Scroll horizontal si es necesario */
+    margin-bottom: 1.4rem;          /* Espacio debajo */
+    border-radius: 3px;             /* Bordes redondeados */
+    border: 1px solid var(--border-color); /* Borde gris */
 }
 
+/* === ESTILOS BASE DE LA TABLA === */
 .table {
-    width: 100%;
-    border-collapse: collapse;
+    width: 100%;                    /* Ocupa todo el ancho */
+    border-collapse: collapse;      /* Sin doble borde */
+    font-size: 0.95rem;              /* Tamaño de texto */
 }
 
+/* === CELDAS DE ENCABEZADO Y DATOS === */
 .table th, .table td {
-    padding: 1rem;
-    text-align: center; /* centramos encabezados y datos */
-    border-bottom: 1px solid #ddd;
-    vertical-align: middle;
+    padding: 1rem;                  /* Espaciado interno */
+    text-align: center;             /* Texto centrado */
+    border-bottom: 1px solid var(--border-color); /* Línea divisoria */
 }
 
+/* === ENCABEZADOS DE LA TABLA === */
 .table th {
-    background-color: var(--secondary-color);
-    color: white;
-    font-weight: 600;
+    background-color: var(--primary-color); /* Fondo principal */
+    color: white;                            /* Texto blanco */
+    font-weight: 600;                         /* Negrita */
+    position: sticky;                         /* Se queda fijo al hacer scroll */
+    top: 0;                                   /* Pegado arriba */
 }
 
+/* === EFECTO HOVER EN FILAS DE LA TABLA === */
 .table tbody tr:hover {
-    background-color: #f5f5f5;
+    background-color: #f5f5f5;       /* Cambio de fondo para resaltar fila */
 }
 
+/* === CONTENEDOR DE BOTONES DE ACCIÓN === */
 .actions {
-    display: flex;
-    gap: 0.5rem;
+    display: flex;                   /* Mostrar los botones en línea */
+    gap: 0.5rem;                     /* Separación entre botones */
 }
 
+/* === ESTILOS GENERALES PARA LOS BOTONES DE ACCIÓN === */
 .btn-action {
-    padding: 0.5rem;
-    border-radius: 4px;
-    color: white;
-    font-size: 0.9rem;
-    text-decoration: none;
-    border: none;
-    cursor: pointer;
+    width: 32px;                     /* Ancho fijo */
+    height: 32px;                    /* Alto fijo */
+    display: inline-flex;            /* Centrar icono */
+    align-items: center;             /* Centrar verticalmente */
+    justify-content: center;         /* Centrar horizontalmente */
+    border-radius: 50%;              /* Forma circular */
+    transition: all 0.2s;            /* Animación al interactuar */
+    color: var(--text-color);        /* Color de icono */
+    background-color: transparent;   /* Fondo transparente */
+    border: none;                    /* Sin borde */
+    cursor: pointer;                  /* Cursor de mano */
 }
 
-.btn-edit {
-    background-color: var(--hover-color);
+.btn-action:hover {
+    transform: scale(1.1);           /* Agranda un poco */
 }
 
-.btn-delete {
-    background-color: var(--accent-color);
-}
-
-/* Modal Styles */
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0,0,0,0.5);
-    align-items: center;
-    justify-content: center;
-}
-
-.modal-content {
-    background-color: #fff;
-    padding: 2rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-    width: 90%;
-    max-width: 500px;
-}
-
-.modal-form h5 {
-    text-align: center;
+/* === BOTÓN DE EDITAR === */
+.btn-edit { 
     color: var(--primary-color);
-    margin-bottom: 2rem;
-    font-size: 1.5rem;
 }
 
-.modal-form label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-weight: 600;
-    color: var(--secondary-color);
+.btn-edit:hover {
+    background-color: rgba(44, 62, 80, 0.1);
 }
 
-.modal-form input,
-.modal-form textarea {
-    width: 100%;
-    padding: 0.8rem 1rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 1rem;
-    margin-bottom: 1rem;
+/* === BOTÓN ELIMINAR === */
+.btn-delete {
+    color: var(--accent-color);
 }
 
-.form-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 1rem;
-    margin-top: 1rem;
+.btn-delete:hover {
+    background-color: rgba(231, 76, 60, 0.1);
 }
 
+/* === BOTÓN VERDE PERSONALIZADO === */
 .btn-verde {
-    background-color: #28a745;
-    color: white;
-    padding: 0.6rem 1.2rem;
-    font-size: 1rem;
-    font-weight: 600;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    text-decoration: none;
-    display: inline-block;
-    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    background-color: #28a745;     /* Verde principal */
+    color: white;                  /* Texto blanco */
+    padding: 10px 18px;            /* Espaciado interno */
+    border: none;                  /* Sin borde */
+    border-radius: 6px;            /* Bordes redondeados */
+    font-weight: 600;               /* Negrita */
+    font-size: 1rem;                /* Tamaño de texto */
+    cursor: pointer;                /* Cursor de mano */
+    text-decoration: none;          /* Sin subrayado */
+    display: inline-flex;           /* Alinea texto e icono */
+    align-items: center;            /* Centra verticalmente */
+    gap: 8px;                        /* Espacio entre icono y texto */
+    transition: background-color 0.3s ease, box-shadow 0.3s ease; /* Animación suave */
+
+    /* Movimiento manual forzado */
+    position: relative;
+    left: -40px; /* Ajusta este valor para moverlo más o menos */
 }
 
 .btn-verde:hover {
-    background-color: #218838;
+    background-color: #218838;        /* Verde más oscuro */
     box-shadow: 0 0 8px rgba(40, 167, 69, 0.5);
 }
 
-.btn-reporte {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.5rem 1rem;
-  background-color: #d9534f;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  font-size: 0.95rem;
-  text-decoration: none;
-  font-weight: 600;
-  transition: background-color 0.3s ease;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  margin-right: 12px;
-}
-
 .btn-reporte i {
-  margin-right: 0.5rem;
-  font-size: 1rem;
+    margin-right: 0.5rem;              /* Espacio entre ícono y texto */
+    font-size: 1rem;
 }
 
 .btn-reporte:hover {
-  background-color: #c9302c;
-  text-decoration: none;
-  color: #fff;
+    background-color: #c9302c;         /* Rojo más oscuro */
+    text-decoration: none;
+    color: #fff;
+}
+
+/* === MENSAJE DE ERROR === */
+.error-message {
+    color: #e74c3c;
+    background-color: #fde8e8;
+    padding: 10px 15px;
+    border-radius: 4px;
+    margin: 10px 0;
+    border-left: 4px solid #e74c3c;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
 }

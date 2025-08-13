@@ -12,125 +12,85 @@
   {% include 'navbar.html' %}
   <div class="container">
     <main class="main-content">
-        <div class="table-container">
-    <h1><i class="fas fa-utensils"></i> Gestión de Restaurantes</h1>
-    <div class="table-actions">
-    <a href="{{ url_for('formulario_restaurante') }}" class="btn-verde">
-    <i class="fas fa-plus"></i> Agregar Restaurante
-    </a>
-</div>
-</div>
-            <div class="table-responsive">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Nombre</th>
-                            <th>Dirección</th>
-                            <th>Teléfono</th>
-                            <th>Correo</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for d in restaurantes %}
-                        <tr>
-                            <td>{{ d.ID }}</td>
-                            <td>{{ d.Nombre_Restaurante }}</td>
-                            <td>{{ d.Direccion }}</td>
-                            <td>{{ d.Telefono }}</td>
-                            <td>{{ d.Correo_Contacto }}</td>
-                            <td class="actions">
-                                <button class="btn-action btn-edit" onclick="abrirModal('{{ d.ID }}')"><i class="fas fa-edit"></i></button>
-                                <button class="btn-action btn-delete" onclick="eliminarRestaurante('{{ d.ID }}')"><i class="fas fa-trash-alt"></i></button>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+      <div class="table-container">
+        <h1><i class="fas fa-utensils"></i> Gestión de Restaurantes</h1>
+        <div class="table-actions">
+          <a href="{{ url_for('formulario_restaurante') }}" class="btn-verde">
+            <i class="fas fa-plus"></i> Agregar Restaurante
+          </a>
         </div>
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Dirección</th>
+                <th>Teléfono</th>
+                <th>Correo</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for d in restaurantes %}
+              <tr>
+                <td>{{ d.ID }}</td>
+                <td>{{ d.Nombre_Restaurante }}</td>
+                <td>{{ d.Direccion }}</td>
+                <td>{{ d.Telefono }}</td>
+                <td>{{ d.Correo_Contacto }}</td>
+                <td class="actions">
+                  <!-- Cambiado: botón editar ahora redirige a formulario con ID -->
+                  <a href="{{ url_for('formulario_restaurante', id=d.ID) }}" class="btn-action btn-edit" title="Editar Restaurante">
+                    <i class="fas fa-edit"></i>
+                  </a>
+                  <button class="btn-action btn-delete" onclick="eliminarRestaurante('{{ d.ID }}')" title="Eliminar Restaurante">
+                    <i class="fas fa-trash-alt"></i>
+                  </button>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </main>
   </div>
 
-  {% for d in restaurantes %}
-  <div class="modal" id="modal{{ d.ID }}">
-    <div class="modal-content">
-        <form action="/actualizar/{{ d.ID }}" method="post" class="modal-form">
-            <h5>Actualizar Restaurante: {{ d.Nombre_Restaurante }}</h5>
-            <label>Nombre del Restaurante</label>
-            <input type="text" name="Nombre_Restaurante" value="{{ d.Nombre_Restaurante }}" required />
-            <label>Dirección</label>
-            <textarea name="Direccion" required>{{ d.Direccion }}</textarea>
-            <label>Teléfono</label>
-            <input type="tel" name="Telefono" value="{{ d.Telefono }}" required />
-            <label>Correo de Contacto</label>
-            <input type="email" name="Correo_Contacto" value="{{ d.Correo_Contacto }}" required />
-            <label>Horario de Apertura</label>
-            <input type="time" name="Horario_Apertura" value="{{ d.Horario_Apertura }}" required />
-            <label>Horario de Cierre</label>
-            <input type="time" name="Horario_Cierre" value="{{ d.Horario_Cierre }}" required />
-            <label>Moneda</label>
-            <input type="text" name="Moneda" value="{{ d.Moneda }}" required />
-            <label>Impuesto (%)</label>
-            <input type="number" step="0.01" name="Impuesto" value="{{ d.Impuesto }}" required />
-            <label>Tiempo mínimo de reserva (minutos)</label>
-            <input type="number" name="Tiempo_Reserva_Min" value="{{ d.Tiempo_Reserva_Min }}" required />
-            <label>Política de Cancelación</label>
-            <textarea name="Politica_Cancelacion" required>{{ d.Politica_Cancelacion }}</textarea>
-            <div class="form-actions">
-                <button type="submit" class="btn btn-primary">Guardar</button>
-                <button type="button" class="btn btn-secondary" onclick="cerrarModal('{{ d.ID }}')">Cancelar</button>
-            </div>
-        </form>
-    </div>
-  </div>
-  {% endfor %}
-
-  <div id="modalConfirmacion" class="modal">
-    <div class="modal-content">
-        <p>¿Estás seguro de que deseas eliminar este restaurante?</p>
-        <div class="form-actions">
-            <button id="btnConfirmar" class="btn btn-danger">Sí</button>
-            <button id="btnCancelar" class="btn btn-secondary">Cancelar</button>
-        </div>
-    </div>
-
-  </div>
   <footer class="admin-footer">
-        <div class="footer-content">
-            <div class="footer-info">
-                <p>Sistema Administrativo del Restaurante © 2025</p>
-                <p class="dev-team">Equipo de Desarrollo</p>
-            </div>
-            <ul class="footer-menu">
-                <li>
-                    <a href="#" class="footer-link">
-                        <svg class="icon" viewBox="0 0 24 24">
-                            <path fill="currentColor" d="M22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6m-2 0l-8 5l-8-5h16m0 12H4V8l8 5l8-5v10Z"/>
-                        </svg>
-                        Contacto
-                    </a>
-                </li>
-                <li>
-                    <a href="#" class="footer-link">
-                        <svg class="icon" viewBox="0 0 24 24">
-                            <path fill="currentColor" d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12c5.16-1.26 9-6.45 9-12V5l-9-4m0 6c1.4 0 2.8 1.1 2.8 2.5V11c.6 0 1.2.6 1.2 1.3v3.5c0 .6-.6 1.2-1.3 1.2H9.2c-.6 0-1.2-.6-1.2-1.3v-3.5c0-.6.6-1.2 1.2-1.2V9.5C9.2 8.1 10.6 7 12 7m0 1.2c-.8 0-1.5.5-1.5 1.3V11h3V9.5c0-.8-.7-1.3-1.5-1.3Z"/>
-                        </svg>
-                        Políticas
-                    </a>
-                </li>
-                <li>
-                    <a href="#" class="footer-link">
-                        <svg class="icon" viewBox="0 0 24 24">
-                            <path fill="currentColor" d="M13 9h-2V7h2m0 10h-2v-6h2m-1-9A10 10 0 0 0 2 12a10 10 0 0 0 10 10a10 10 0 0 0 10-10A10 10 0 0 0 12 2Z"/>
-                        </svg>
-                        Acerca de
-                    </a>
-                </li>
-            </ul>
-        </div>
-    </footer>
+    <div class="footer-content">
+      <div class="footer-info">
+        <p>Sistema Administrativo del Restaurante © 2025</p>
+        <p class="dev-team">Equipo de Desarrollo</p>
+      </div>
+      <ul class="footer-menu">
+        <li>
+          <a href="#" class="footer-link">
+            <svg class="icon" viewBox="0 0 24 24">
+              <path fill="currentColor" d="M22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6m-2 0l-8 5l-8-5h16m0 12H4V8l8 5l8-5v10Z"/>
+            </svg>
+            Contacto
+          </a>
+        </li>
+        <li>
+          <a href="#" class="footer-link">
+            <svg class="icon" viewBox="0 0 24 24">
+              <path fill="currentColor" d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12c5.16-1.26 9-6.45 9-12V5l-9-4m0 6c1.4 0 2.8 1.1 2.8 2.5V11c.6 0 1.2.6 1.2 1.3v3.5c0 .6-.6 1.2-1.3 1.2H9.2c-.6 0-1.2-.6-1.2-1.3v-3.5c0-.6.6-1.2 1.2-1.2V9.5C9.2 8.1 10.6 7 12 7m0 1.2c-.8 0-1.5.5-1.5 1.3V11h3V9.5c0-.8-.7-1.3-1.5-1.3Z"/>
+            </svg>
+            Políticas
+          </a>
+        </li>
+        <li>
+          <a href="#" class="footer-link">
+            <svg class="icon" viewBox="0 0 24 24">
+              <path fill="currentColor" d="M13 9h-2V7h2m0 10h-2v-6h2m-1-9A10 10 0 0 0 2 12a10 10 0 0 0 10 10a10 10 0 0 0 10-10A10 10 0 0 0 12 2Z"/>
+            </svg>
+            Acerca de
+          </a>
+        </li>
+      </ul>
+    </div>
+  </footer>
 
   <script src="{{ url_for('static', filename='js/gestion_restaurante.js') }}"></script>
 </body>
