@@ -338,16 +338,12 @@ def formulario_sucursales():
     try:
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
-        cursor.execute("SELECT ID, Nombre FROM Sucursalesw")
+        cursor.execute("SELECT ID, Nombre FROM Sucursales")
         Sucursales = cursor.fetchall()
         
         # Obtener lista de responsables disponibles
         cursor.execute("SELECT ID, Nombre FROM Sucursales WHERE Rol = 'Responsable'")
         responsables = cursor.fetchall()
-        
-        # Obtener lista de responsables disponibles
-        cursor.execute("SELECT ID, Nombre FROM Sucursales ,HERE Rol = 'Responsable'")
-        responsables=responsables.fetchall()
         
         return render_template('formulario_sucursales.html', 
                             Sucursales=Sucursales, 
