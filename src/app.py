@@ -38,7 +38,7 @@ app.secret_key = os.getenv('SECRET_KEY', 'your-secret-key-here')
 db_config = {
     'host': os.getenv('DB_HOST', 'localhost'),
     'user': os.getenv('DB_USER', 'root'),
-    'password': os.getenv('DB_PASSWORD', 'Jose1708$'),
+    'password': os.getenv('DB_PASSWORD', 'pokemon445588'),
     'database': os.getenv('DB_NAME', 'administracion'),
     'pool_name': 'restaurante_pool',
     'pool_size': 10,
@@ -756,31 +756,72 @@ def actualizar_rol(id):
 ################################################################################
 @app.route('/gestion_empleados')
 def gestion_empleados():
-    """Muestra la lista de empleados con manejo seguro de conexión a BD"""
+    """Muestra la lista de empleados con búsqueda y paginación"""
     conn = None
     cursor = None
     try:
-        # Obtener conexión a la base de datos
+        # Parámetros de búsqueda y paginación
+        search = request.args.get('search', '').strip()
+        page = int(request.args.get('page', 1))
+        per_page = 10  # Registros por página
+        offset = (page - 1) * per_page
+
+        # Conexión a la base de datos
         conn = get_db_connection()
         if conn is None:
             app.logger.error("Error: No se pudo establecer conexión con la base de datos")
             flash("Error de conexión con la base de datos", "error")
             return redirect(url_for('inicio'))
 
-        # Crear cursor y ejecutar consulta
         cursor = conn.cursor(dictionary=True)
-        
+
+        # Consulta base
         query = """
             SELECT e.*, r.Nombre AS Rol_Nombre, s.Nombre AS Sucursal_Nombre
             FROM Empleados e
             LEFT JOIN Roles r ON e.Rol_ID = r.ID
             LEFT JOIN Sucursales s ON e.Sucursal_ID = s.ID
-            ORDER BY e.Fecha_Registro DESC
+            WHERE 1=1
         """
-        cursor.execute(query)
+        params = []
+
+        # Filtro de búsqueda
+        if search:
+            query += " AND (e.Nombre LIKE %s OR e.Apellido LIKE %s)"
+            like_search = f"%{search}%"
+            params.extend([like_search, like_search])
+
+        # Orden y paginación
+        query += " ORDER BY e.Fecha_Registro DESC LIMIT %s OFFSET %s"
+        params.extend([per_page, offset])
+
+        cursor.execute(query, params)
         empleados = cursor.fetchall()
 
-        return render_template('gestion_empleados.html', empleados=empleados)
+        # Contar total de registros para calcular páginas
+        count_query = """
+            SELECT COUNT(*) AS total
+            FROM Empleados e
+            LEFT JOIN Roles r ON e.Rol_ID = r.ID
+            LEFT JOIN Sucursales s ON e.Sucursal_ID = s.ID
+            WHERE 1=1
+        """
+        count_params = []
+        if search:
+            count_query += " AND (e.Nombre LIKE %s OR e.Apellido LIKE %s)"
+            count_params.extend([like_search, like_search])
+
+        cursor.execute(count_query, count_params)
+        total_registros = cursor.fetchone()['total']
+        total_paginas = (total_registros + per_page - 1) // per_page
+
+        return render_template(
+            'gestion_empleados.html',
+            empleados=empleados,
+            search=search,
+            page=page,
+            total_paginas=total_paginas
+        )
 
     except Exception as e:
         app.logger.error(f"Error en gestion_empleados: {str(e)}")
@@ -788,12 +829,10 @@ def gestion_empleados():
         return redirect(url_for('inicio'))
 
     finally:
-        # Cerrar cursor y conexión de manera segura
         if cursor:
             cursor.close()
-        if conn and conn.is_connected():  # Verificar si la conexión existe y está abierta
+        if conn and conn.is_connected():
             conn.close()
-
 
 ################################################################################
 # Formulario de empleados ----no quitar-----
