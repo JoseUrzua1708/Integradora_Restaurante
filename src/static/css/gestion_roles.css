@@ -1,53 +1,49 @@
 /* Variables CSS para colores, sombras y estilos reutilizables */
 :root {
-    --primary-color: #2c3e50;       /* Color principal oscuro para textos y encabezados */
-    --secondary-color: #34495e;     /* Color secundario para fondos y etiquetas */
-    --accent-color: #e74c3c;        /* Color de acento rojo para botones y alertas */
-    --hover-color: #34495e;         /* Color para estado hover, aquí es igual al secundario */
-    --success-color: #28a745;       /* Color verde para acciones exitosas o positivas */
-    --light-gray: #f5f5f5;          /* Gris claro para fondos o estados hover */
-    --border-color: #ddd;           /* Color neutro para bordes */
-    --shadow-color: rgba(0, 0, 0, 0.08); /* Sombra ligera para profundidad */
-    --modal-overlay: rgba(0, 0, 0, 0.6); /* Fondo oscuro semitransparente para modales */
-    --white: #fff;                  /* Blanco puro */
-    --text-color: #333;             /* Color gris oscuro para texto */
+    --primary-color: #2c3e50;      /* Color principal oscuro, usado para encabezados y textos */
+    --secondary-color: #34495e;    /* Color secundario, para hover o elementos secundarios */
+    --accent-color: #e74c3c;       /* Color de acento rojo, usado para alertas o acciones eliminar */
+    --success-color: #27ae60;      /* Verde para indicar éxito o acciones positivas */
+    --warning-color: #f39c12;      /* Amarillo para advertencias o estados de alerta */
+    --light-gray: #ecf0f1;         /* Gris claro para fondos o estados hover */
+    --border-color: #bdc3c7;       /* Color para bordes suaves */
+    --text-color: #2c3e50;         /* Color estándar para texto */
 }
 
 /* Contenedor principal para tablas */
 .table-container {
     background-color: white;      /* Fondo blanco del contenedor */
-    padding: 0.1rem;              /* Espaciado interno reducido */
+    padding: 0rem;              /* Espaciado interno reducido */
     border-radius: 8px;           /* Bordes redondeados */
     box-shadow: 0 1px 20px rgba(0,0,0,0.1); /* Sombra ligera */
-    margin: 1rem auto;                     /* Ancho máximo para pantallas muy grandes */
+    margin: 1rem auto;            /* Margen superior/inferior y centrado horizontal */
 }
 
 /* Título principal dentro del contenedor de tabla */
 .table-container h1 {
     color: var(--primary-color);  /* Color del texto del título */
     text-align: center;           /* Alineación centrada */
-    margin-top: 2rem;             /* Baja el título e ícono */
-    margin-bottom: 1.5rem;         /* Espacio debajo del título */
-    font-size: 1.8rem;             /* Tamaño de fuente */
-    display: flex;                 /* Flexbox para icono + texto */
-    align-items: center;           /* Centrar verticalmente */
-    justify-content: center;       /* Centrar horizontalmente */
-    gap: 0.8rem; 
+    padding-top: 1.8rem;          /* Baja el texto e ícono dentro del h1 */
+    margin-top: 0rem;             /* Espacio arriba para bajarlo */
+    margin-bottom: 1.5rem;        /* Espacio debajo del título */
+    font-size: 1.8rem;            /* Tamaño de fuente */
+    display: flex;                /* Flexbox para icono + texto */
+    align-items: center;          /* Centrar verticalmente */
+    justify-content: center;      /* Centrar horizontalmente */
+    gap: 0.8rem;                  /* Espaciado entre icono y texto */
 }
 
 /* Contenedor para acciones sobre la tabla (botones, filtros, etc.) */
 .table-actions {
-    display: flex;                      /* Layout flexible para alinear elementos */
-    justify-content: flex-end;          /* Alinea contenido a la derecha */
-    margin-bottom: 1.5rem;              /* Espacio debajo para separar de tabla */
-    width: 100%;                       /* Ancho completo */
-    padding-right: 2.5rem;              /* Espacio a la derecha para alineación */
+    display: flex;                 /* Coloca elementos en línea */
+    justify-content: flex-end;     /* Alinea elementos a la derecha */
+    margin-bottom: 3.2rem;         /* Espacio inferior amplio */
 }
 
 /* Contenedor que permite scroll horizontal si la tabla es muy ancha */
 .table-responsive {
     overflow-x: auto;              /* Scroll horizontal si es necesario */
-    margin-bottom: 0rem;         /* Espacio debajo */
+    margin-bottom: 1.4rem;         /* Espacio debajo */
     border-radius: 3px;            /* Bordes redondeados */
     border: 1px solid var(--border-color); /* Borde gris */
 }
@@ -56,22 +52,23 @@
 .table {
     width: 100%;                   /* Ocupa todo el ancho */
     border-collapse: collapse;     /* Sin doble borde */
-    font-size: 0.95rem;             /* Tamaño de texto */
+    font-size: 0.95rem;            /* Tamaño de texto */
 }
 
 /* Celdas (th y td) con padding, borde inferior y centrado */
 .table th, .table td {
-    padding: 1rem;                    /* Espaciado interno cómodo */
-    border-bottom: 1px solid #ddd;    /* Línea divisoria entre filas */
-    text-align: center;               /* Texto centrado */
-    vertical-align: middle;           /* Alineación vertical centrada */
+    padding: 1rem;                 /* Espaciado interno */
+    text-align: center;            /* Texto centrado */
+    border-bottom: 1px solid var(--border-color); /* Línea divisoria */
 }
 
 /* Estilos para encabezados de tabla */
 .table th {
-    background-color: var(--secondary-color); /* Fondo oscuro para encabezados */
-    color: white;                              /* Texto blanco */
-    font-weight: 600;                          /* Fuente semi-negrita */
+    background-color: var(--primary-color); /* Fondo principal */
+    color: white;                /* Texto blanco */
+    font-weight: 600;            /* Negrita */
+    position: sticky;            /* Se queda fijo al hacer scroll */
+    top: 0;                      /* Pegado arriba */
 }
 
 /* Cambio de fondo al pasar el mouse sobre las filas de la tabla */
@@ -79,243 +76,45 @@
     background-color: #f5f5f5;           /* Fondo gris claro al hover */
 }
 
-/* Estilo para select usado en roles de acción */
-select.accion-rol {
-    padding: 0.5rem 1.5rem 0.5rem 0.75rem;  /* Espaciado interno */
-    border-radius: 4px;                      /* Bordes redondeados */
-    border: 1px solid var(--border-color);  /* Borde gris claro */
-    background-color: var(--white);          /* Fondo blanco */
-    cursor: pointer;                        /* Cursor pointer para indicar clic */
-    transition: all 0.2s ease;              /* Transición suave */
-    font-size: 0.9rem;                      /* Tamaño ligeramente más pequeño */
-    position: relative;                     /* Posición relativa para posibles íconos */
-    appearance: none;                       /* Quita estilos nativos de select */
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    width: 150px;                          /* Ancho fijo */
-    margin: 0 auto;                        /* Centrado horizontal dentro de la celda */
-    display: block;
+
+/* Botón de acción genérico */
+.btn-accion {
+    width: 32px;                    /* Ancho fijo */
+    height: 32px;                   /* Alto fijo */
+    display: inline-flex;           /* Centrar icono */
+    align-items: center;            /* Centrar verticalmente */
+    justify-content: center;        /* Centrar horizontalmente */
+    border-radius: 50%;             /* Forma circular */
+    transition: all 0.2s;           /* Animación al interactuar */
+    color: var(--text-color);       /* Color de icono */
+    background-color: transparent;  /* Fondo transparente */
+    border: none;                   /* Sin borde */
+    cursor: pointer;                /* Cursor de mano */
 }
 
-/* Efecto hover para el select de roles */
-select.accion-rol:hover {
-    border-color: var(--primary-color);          /* Borde cambia a color principal */
-    box-shadow: 0 0 0 1px var(--primary-color); /* Sombra fina alrededor */
+/* Hover para botón de acción */
+.btn-accion:hover {
+    background-color: var(--light-gray); /* Fondo gris claro */
+    transform: scale(1.1);                /* Escala para dar efecto zoom */
 }
 
-/* Botón con estilo verde para acciones positivas */
-.btn-verde {
-    background-color: #28a745;            /* Verde fuerte */
-    color: white;                        /* Texto blanco */
-    padding: 0.6rem 1.2rem;              /* Relleno cómodo */
-    font-size: 1rem;                     /* Tamaño de fuente estándar */
-    font-weight: 600;                    /* Texto en negrita */
-    border: none;                       /* Sin borde */
-    border-radius: 4px;                  /* Bordes redondeados */
-    cursor: pointer;                    /* Cursor pointer */
-    text-decoration: none;              /* Sin subrayado */
-    display: inline-flex;               /* Flex para iconos + texto */
-    align-items: center;                /* Centrado vertical */
-    gap: 0.5rem;                       /* Espacio entre icono y texto */
-    transition: background-color 0.3s ease, box-shadow 0.3s ease; /* Transiciones suaves */
-    margin: 0;                         /* Sin margen */
+/* === BOTÓN DE EDITAR === */
+.btn-edit { 
+    color: var(--primary-color);    /* Azul/gris principal */
 }
 
-/* Hover para el botón verde */
-.btn-verde:hover {
-    background-color: #218838;          /* Verde más oscuro */
-    box-shadow: 0 0 8px rgba(40, 167, 69, 0.5); /* Sombra verde luminosa */
-}
-
-/* Modal overlay: oculto por defecto */
-.modal {
-    display: none;                      /* No visible */
-    position: fixed;                   /* Posicionado sobre toda la ventana */
-    z-index: 1050;                    /* Por encima de otros elementos */
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: var(--modal-overlay); /* Fondo negro semi-transparente */
-    backdrop-filter: blur(3px);         /* Desenfoque de fondo */
-    animation: fadeIn 0.3s ease;         /* Animación de entrada */
-    overflow-y: auto;                   /* Scroll vertical si es necesario */
-}
-
-/* Clase para mostrar el modal usando flexbox */
-.modal.show {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-/* Contenido interno del modal */
-.modal-content {
-    background-color: var(--white);     /* Fondo blanco */
-    margin: auto;                      /* Centrado automático */
-    padding: 2rem;                     /* Espaciado interno amplio */
-    border-radius: 10px;               /* Bordes redondeados */
-    width: 90%;                       /* Ancho flexible */
-    max-width: 500px;                 /* Máximo ancho */
-    box-shadow: 0 5px 30px rgba(0, 0, 0, 0.3); /* Sombra profunda */
-    transform: translateY(-50px);     /* Desplazamiento inicial para animación */
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Suave transición */
-    position: relative;               /* Para posicionar elementos hijos */
-}
-
-/* Cuando el modal se muestra, el contenido vuelve a posición normal */
-.modal.show .modal-content {
-    transform: translateY(0);
-}
-
-/* Grupos de formulario con margen inferior para separar campos */
-.form-group {
-    margin-bottom: 1.5rem;
-}
-
-/* Etiquetas de formulario */
-.form-group label {
-    display: block;                   /* Mostrar en bloque */
-    margin-bottom: 0.5rem;            /* Separación debajo */
-    font-weight: 500;                 /* Peso medio */
-    color: var(--secondary-color);   /* Color secundario */
-}
-
-/* Inputs, textarea y selects dentro de form-group */
-.form-group input,
-.form-group textarea,
-.form-group select {
-    width: 100%;                     /* Ocupa todo el ancho */
-    padding: 0.75rem;                /* Espaciado interno */
-    border: 1px solid var(--border-color); /* Borde gris claro */
-    border-radius: 4px;              /* Bordes redondeados */
-    font-size: 1rem;                 /* Texto estándar */
-    transition: all 0.3s ease;      /* Transición suave */
-    background-color: var(--white); /* Fondo blanco */
-}
-
-/* Estados de foco para inputs, textarea y selects */
-.form-group input:focus,
-.form-group textarea:focus,
-.form-group select:focus {
-    border-color: var(--primary-color);       /* Cambio de borde a color principal */
-    outline: none;                             /* Quita el outline predeterminado */
-    box-shadow: 0 0 0 3px rgba(44, 62, 80, 0.2); /* Sombra azulada ligera */
-}
-
-/* Textarea con altura mínima y redimensionable solo vertical */
-.form-group textarea {
-    min-height: 100px;
-    resize: vertical;
-    line-height: 1.5;        /* Mejor lectura de párrafos */
-}
-
-/* Contenedor relativo para selects personalizados */
-.select-wrapper {
-    position: relative;
-    width: 100%;
-}
-
-/* Select dentro del wrapper, quitando apariencia nativa y agregando padding */
-.select-wrapper select {
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    width: 100%;
-    padding: 0.75rem 2.5rem 0.75rem 1rem; /* Padding extra a la derecha para la flecha */
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
-    background-color: var(--white);
-    font-size: 1rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-/* Flecha personalizada para select */
-.select-arrow {
-    position: absolute;
-    right: 1rem;
-    top: 50%;
-    transform: translateY(-50%);
-    pointer-events: none;               /* No interfiere con clics */
-    color: var(--secondary-color);
-    transition: transform 0.2s ease;   /* Animación de rotación */
-}
-
-/* Gira la flecha cuando el select está enfocado */
-.select-wrapper select:focus + .select-arrow {
-    transform: translateY(-50%) rotate(180deg);
-}
-
-/* Contenedor para botones al final del formulario */
-.form-actions {
-    display: flex;
-    justify-content: flex-end; /* Botones alineados a la derecha */
-    gap: 1rem;                 /* Espacio entre botones */
-    margin-top: 2rem;          /* Separación con campos */
-}
-
-/* Botones comunes: guardar, cancelar, eliminar */
-.btn-guardar,
-.btn-cancelar,
+/* Botón eliminar con color rojo */
 .btn-eliminar {
-    padding: 0.75rem 1.5rem;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: all 0.2s ease;
-    font-size: 0.95rem;
-}
-
-/* Botón guardar con color verde */
-.btn-guardar {
-    background-color: var(--success-color);
-    color: var(--white);
-}
-
-/* Hover para botón guardar */
-.btn-guardar:hover {
-    background-color: #218838;
-    transform: translateY(-2px);
-    box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
-}
-
-/* Botón cancelar con gris */
-.btn-cancelar {
-    background-color: #6c757d;
-    color: var(--white);
-}
-
-/* Hover para botón cancelar */
-.btn-cancelar:hover {
-    background-color: #5a6268;
-    transform: translateY(-2px);
-}
-
-/* Botón eliminar con color rojo/acento */
-.btn-eliminar {
-    background-color: var(--accent-color);
-    color: var(--white);
+    color: var(--accent-color);           /* Texto rojo */
 }
 
 /* Hover para botón eliminar */
 .btn-eliminar:hover {
-    background-color: #c0392b;
-    transform: translateY(-2px);
-    box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3);
+    background-color: #ffebee;             /* Fondo rojo muy claro */
 }
 
-/* Animación para fadeIn */
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-/* Animación para slideIn */
-@keyframes slideIn {
-    from { transform: translateY(-50px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
+.btn-delete:hover {
+    background-color: rgba(231, 76, 60, 0.1);
 }
 
 /* Ajustes responsive para pantallas hasta 768px */
@@ -327,12 +126,6 @@ select.accion-rol:hover {
     .table th, .table td {
         padding: 0.75rem;      /* Padding reducido */
         font-size: 0.9rem;    /* Texto un poco más pequeño */
-    }
-    
-    .modal-content {
-        margin: 1rem auto;
-        padding: 1.5rem;
-        width: 95%;           /* Más ancho para aprovechar espacio */
     }
     
     .form-actions {
@@ -356,8 +149,9 @@ select.accion-rol:hover {
         gap: 0.5rem;                  /* Espacio reducido */
     }
     
-    select.accion-rol {
-        width: 100%;                  /* Selects ocupan todo el ancho */
+    .btn-accion {
+        padding: 0.6rem 0.8rem;
+        font-size: 0.9rem;
     }
 }
 
@@ -366,9 +160,29 @@ select.accion-rol:hover {
     text-align: center;
 }
 
-/* Contenedor para botones de acciones dentro de la tabla */
-.acciones {
-    display: flex;
-    justify-content: center;  /* Centrar botones horizontalmente */
-    gap: 0.5rem;              /* Espacio entre botones */
+/* Botón con estilo verde para acciones positivas */
+.btn-verde {
+    background-color: #28a745;     /* Verde principal */
+    color: white;                  /* Texto blanco */
+    padding: 10px 18px;            /* Espaciado interno */
+    border: none;                  /* Sin borde */
+    border-radius: 6px;            /* Bordes redondeados */
+    font-weight: 600;               /* Negrita */
+    font-size: 1rem;                /* Tamaño de texto */
+    cursor: pointer;                /* Cursor de mano */
+    text-decoration: none;          /* Sin subrayado */
+    display: inline-flex;           /* Alinea texto e icono */
+    align-items: center;            /* Centra verticalmente */
+    gap: 8px;                        /* Espacio entre icono y texto */
+    transition: background-color 0.3s ease, box-shadow 0.3s ease; /* Animación suave */
+
+    /* Movimiento manual forzado */
+    position: relative;
+    left: -40px; /* Ajusta este valor para moverlo más o menos */
+}
+
+/* Hover para el botón verde */
+.btn-verde:hover {
+    background-color: #218838;          /* Verde más oscuro */
+    box-shadow: 0 0 8px rgba(40, 167, 69, 0.5); /* Sombra verde luminosa */
 }

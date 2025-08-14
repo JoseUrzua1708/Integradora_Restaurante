@@ -44,12 +44,21 @@
                                 <td>{{ rol.Fecha_Creacion.strftime('%Y-%m-%d %H:%M:%S') if rol.Fecha_Creacion else '' }}</td>
                                 <td>{{ rol.Fecha_Actualizacion.strftime('%Y-%m-%d %H:%M:%S') if rol.Fecha_Actualizacion else '' }}</td>
                                 <td>
-                                    <select class="accion-rol" data-id="{{ rol.ID }}" data-nombre="{{ rol.Nombre }}" 
-                                            data-descripcion="{{ rol.Descripcion }}" data-sucursal-id="{{ rol.Sucursal_ID }}">
-                                        
-                                        <option value="Editar">Editar</option>
-                                        <option value="Eliminar">Eliminar</option>
-                                    </select>
+                                    <!-- Botón Editar -->
+                                    <button class="btn-accion btn-editar" 
+                                            data-id="{{ rol.ID }}" 
+                                            data-nombre="{{ rol.Nombre }}" 
+                                            data-descripcion="{{ rol.Descripcion }}" 
+                                            data-sucursal-id="{{ rol.Sucursal_ID }}" 
+                                            title="Editar">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <!-- Botón Eliminar -->
+                                    <button class="btn-accion btn-eliminar" 
+                                            data-id="{{ rol.ID }}" 
+                                            title="Eliminar">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
                                 </td>
                             </tr>
                             {% endfor %}
@@ -59,62 +68,7 @@
             </div>
         </main>
     </div>   
-    
-    <!-- Modal Editar Rol -->
-    <div id="modal-editarRol" class="modal">
-        <div class="modal-content">
-            <h2>Editar Rol</h2>
-            <form id="form-editar" method="POST">
-                <input type="hidden" name="id" id="edit-id">
-                
-                <div class="form-group">
-                    <label for="edit-nombre">Nombre:</label>
-                    <input type="text" name="Nombre" id="edit-nombre" required maxlength="25">
-                </div>
 
-                <div class="form-group">
-                    <label for="edit-descripcion">Descripción:</label>
-                    <textarea name="Descripcion" id="edit-descripcion" required></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label for="edit-sucursal">Sucursal:</label>
-                    <div class="select-wrapper">
-                        <select name="Sucursal_ID" id="edit-sucursal" required>
-                            <option value="">-- Seleccione una sucursal --</option>
-                            {% for sucursal in sucursales %}
-                                <option value="{{ sucursal.ID }}">{{ sucursal.Nombre }}</option>
-                            {% endfor %}
-                        </select>
-                        <div class="select-arrow">
-                            <i class="fas fa-chevron-down"></i>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-actions">
-                    <button type="button" class="btn-cancelar" onclick="cerrarEditar()">Cancelar</button>
-                    <button type="submit" class="btn-guardar">Guardar Cambios</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Modal Eliminar Rol -->
-    <div id="modal-eliminarRol" class="modal">
-        <div class="modal-content">
-            <h2>¿Eliminar Rol?</h2>
-            <p>Esta acción no se puede deshacer.</p>
-            <form method="POST" id="form-eliminar">
-                <input type="hidden" id="delete-id" name="id">
-                <div class="form-actions">
-                    <button type="submit" class="btn-eliminar">Sí, eliminar</button>
-                    <button type="button" class="btn-cancelar" onclick="cerrarEliminar()">Cancelar</button>
-                </div>
-            </form>
-        </div>
-    </div>
-    
     <footer class="admin-footer">
         <div class="footer-content">
             <div class="footer-info">
@@ -153,5 +107,3 @@
     <script src="{{ url_for('static', filename='js/gestion_roles.js') }}"></script>
 </body>
 </html>
-
-

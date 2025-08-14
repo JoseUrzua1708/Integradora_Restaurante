@@ -12,17 +12,26 @@
     {% include 'navbar.html' %}
     <div class="container">
         <main class="main-content">
-            <h1><i class="page-title"></i> Gestión de Almacén</h1>
+            <h1>
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M3 3h18v2H3V3zm0 4h18v2H3V7zm0 4h18v2H3v-2zm0 4h18v6H3v-6z"/>
+                  <path d="M5 15h4v4H5v-4zm6 0h4v4h-4v-4z"/>
+                </svg>
+                Gestión de Almacén
+              </h1>
+
 
             <div class="table-actions">
                 <a href="{{ url_for('formulario_almacen') }}" class="btn btn-primary">
                     <i class="fas fa-plus"></i> Nuevo Producto
                 </a>
 
-
                 <div class="search-box">
-                   
-                  <input type="text" id="searchInput" placeholder="Buscar producto..." onkeyup="filtrarTabla()" />
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); width:18px; height:18px; fill:#666; pointer-events:none;">
+                    <circle cx="11" cy="11" r="7" stroke="#666" stroke-width="2" fill="none"/>
+                      <line x1="16.5" y1="16.5" x2="22" y2="22" stroke="#666" stroke-width="2"/>
+                  </svg>
+                    <input type="text" id="searchInput" placeholder="Buscar Cliente..." onkeyup="filtrarTabla()" />
                 </div>
                 
             </div>

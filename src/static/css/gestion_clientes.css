@@ -12,22 +12,25 @@
 
 /* Contenedor principal de la tabla */
 .table-container {
-    background-color: white;                   /* Fondo blanco para claridad */
-    padding: 2rem;                             /* Espacio interior amplio para comodidad visual */
-    border-radius: 8px;                        /* Bordes redondeados para suavizar diseño */
-    box-shadow: 0 1px 20px rgba(0,0,0,0.1);  /* Sombra ligera para darle profundidad */
-    margin: 1rem auto;                         /* Separación vertical y centrado horizontal */
-    max-width: 1200px;                         /* Ancho máximo para pantallas grandes */
+    background-color: white;      /* Fondo blanco del contenedor */
+    padding: 0rem;              /* Espaciado interno reducido */
+    border-radius: 8px;           /* Bordes redondeados */
+    box-shadow: 0 1px 20px rgba(0,0,0,0.1); /* Sombra ligera */
+    margin: 1rem auto;            /* Margen superior/inferior y centrado horizontal */
 }
-
-
 
 /* Título principal dentro del contenedor */
 .table-container h1 {
-    color: var(--primary-color);               /* Color principal */
-    text-align: center;                        /* Centrar texto */
-    margin-bottom: 1.5rem;                     /* Espacio inferior para separar de otros elementos */
-    font-size: 1.8rem;                         /* Tamaño grande para destacar */
+    color: var(--primary-color);  /* Color del texto del título */
+    text-align: center;           /* Alineación centrada */
+    padding-top: 1.8rem;       /* ⬅ Baja el texto e ícono dentro del h1 */
+    margin-top: 0rem;            /* ⬅ Espacio arriba para bajarlo */
+    margin-bottom: 1.5rem;         /* Espacio debajo del título */
+    font-size: 1.8rem;             /* Tamaño de fuente */
+    display: flex;                 /* Flexbox para icono + texto */
+    align-items: center;           /* Centrar verticalmente */
+    justify-content: center;       /* Centrar horizontalmente */
+    gap: 0.8rem;                    /* Espaciado entre icono y texto */
 }
 
 /* Contenedor para acciones sobre la tabla (botones, filtros, búsqueda) */
@@ -38,6 +41,8 @@
     margin-bottom: 2.5rem;                    /* Separación debajo de las acciones */
     flex-wrap: wrap;                         /* Permite que los elementos bajen a siguiente línea si es necesario */
     gap: 1rem;                               /* Espacio entre elementos */
+    position: relative;
+    left: -70px; /* Ajusta este valor para moverlo más o menos */
 }
 
 /* Botón verde para acciones positivas */
@@ -51,6 +56,8 @@
     align-items: center;                    /* Centrado vertical */
     gap: 0.5rem;                           /* Separación entre icono y texto */
     transition: all 0.3s ease;              /* Transición suave para hover */
+    position: relative;
+    left: 110px; /* Ajusta este valor para moverlo más o menos */
 }
 
 /* Efecto hover para el botón verde */
@@ -60,15 +67,15 @@
     box-shadow: 0 2px 5px rgba(39, 174, 96, 0.3); /* Sombra verde suave */
 }
 
-
 .table-actions {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
-    flex-wrap: wrap;
-    gap: 10px;
+    display: flex;                  /* Utiliza Flexbox para organizar elementos en línea */
+    justify-content: space-between; /* Distribuye los elementos con espacio entre ellos (primero a la izquierda, último a la derecha) */
+    align-items: center;            /* Centra verticalmente los elementos dentro del contenedor */
+    margin-bottom: 3rem;            /* Agrega un espacio debajo del contenedor para separar de otros elementos */
+    flex-wrap: wrap;                /* Permite que los elementos se muevan a la siguiente línea si no caben en una sola fila */
+    gap: 10px;                      /* Espacio uniforme de 10px entre los elementos dentro del contenedor */
 }
+
 /* Caja de búsqueda con lupa integrada */
 .search-box {
     position: relative;
@@ -152,7 +159,7 @@
     position: sticky;                     /* Encabezados fijos al hacer scroll vertical */
     top: 0;                              /* Posición pegada al top */
     padding: 1rem;                       /* Espaciado interno */
-    text-align: left;                    /* Alineación izquierda para encabezados */
+    text-align: center;                    /* Alineación izquierda para encabezados */
     border-bottom: 1px solid var(--border-color); /* Línea divisoria */
 }
 
@@ -162,7 +169,7 @@
     padding: 1rem;
     border-bottom-style: 1px solid var(--border-color);
     vertical-align: middle;
-    text-align: left;
+    text-align: center;
 }
 
 
@@ -171,9 +178,9 @@
     transition: background-color 0.2s;
 }
 
-/* Cambio de fondo en fila al pasar mouse */
+/* === EFECTO HOVER EN FILAS DE LA TABLA === */
 .table tbody tr:hover {
-    background-color: var(--light-gray); /* Fondo gris claro */
+    background-color: #f5f5f5;         /* Cambio de fondo para resaltar fila al pasar el cursor */
 }
 
 /* Estilos para etiquetas de estado o estatus */
@@ -210,17 +217,28 @@
 
 /* Botón de acción genérico */
 .btn-accion {
-    color: var(--primary-color);       /* Color texto principal */
-    padding: 0.5rem;                   /* Relleno pequeño */
-    border-radius: 4px;               /* Bordes redondeados */
-    transition: all 0.2s;             /* Transición rápida para hover */
-    display: inline-flex;             /* Flex para iconos + texto si los hay */
+    width: 32px;                    /* Ancho fijo */
+    height: 32px;                   /* Alto fijo */
+    display: inline-flex;           /* Centrar icono */
+    align-items: center;            /* Centrar verticalmente */
+    justify-content: center;        /* Centrar horizontalmente */
+    border-radius: 50%;             /* Forma circular */
+    transition: all 0.2s;           /* Animación al interactuar */
+    color: var(--text-color);       /* Color de icono */
+    background-color: transparent;  /* Fondo transparente */
+    border: none;                   /* Sin borde */
+    cursor: pointer;                /* Cursor de mano */
 }
 
 /* Hover para botón de acción */
 .btn-accion:hover {
     background-color: var(--light-gray); /* Fondo gris claro */
     transform: scale(1.1);                /* Escala para dar efecto zoom */
+}
+
+/* === BOTÓN DE EDITAR === */
+.btn-edit { 
+    color: var(--primary-color);    /* Azul/gris principal */
 }
 
 /* Botón eliminar con color rojo */
@@ -231,6 +249,10 @@
 /* Hover para botón eliminar */
 .btn-eliminar:hover {
     background-color: #ffebee;             /* Fondo rojo muy claro */
+}
+
+.btn-delete:hover {
+    background-color: rgba(231, 76, 60, 0.1);
 }
 
 /* Pie de tabla con información y paginación */
@@ -245,6 +267,8 @@
 .pagination-info {
     color: var(--text-color);         /* Texto principal */
     font-size: 0.9rem;                /* Tamaño legible */
+    position: relative;
+    left: 10px; /* Ajusta este valor para moverlo más o menos */
 }
 
 /* Ajustes responsivos para pantallas pequeñas */

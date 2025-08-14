@@ -341,8 +341,13 @@ def formulario_sucursales():
         cursor.execute("SELECT ID, Nombre FROM Sucursales")
         Sucursales = cursor.fetchall()
         
-        # Obtener lista de responsables disponibles
-        cursor.execute("SELECT ID, Nombre FROM Sucursales WHERE Rol = 'Responsable'")
+        # Obtener lista de responsables disponibles (empleados con rol 'Responsable')
+        cursor.execute("""
+            SELECT E.ID, CONCAT(E.Nombre, ' ', E.Apellido_P) AS Nombre_Completo
+            FROM Empleados E
+            JOIN Roles R ON E.Rol_ID = R.ID
+            WHERE R.Nombre = 'Responsable'
+        """)
         responsables = cursor.fetchall()
         
         return render_template('formulario_sucursales.html', 
@@ -605,7 +610,7 @@ def guardar_rol():
             flash("La sucursal seleccionada no existe", "error")
             return redirect(url_for('formulario_roles'))
         datos['Sucursal_ID'] = int(datos['Sucursal_ID'])  # Convert to integer for SQL
-        datos['Sucursal'] = sucursal[0]  # Store the name of the selected branch
+        
         # Insertar el nuevo rol en la base de datos
         
         try:
@@ -718,7 +723,7 @@ def actualizar_rol(id):
             return redirect(url_for('formulario_roles'))
         
         datos['Sucursal_ID'] = int(datos['Sucursal_ID'])  # Convert to integer for SQL
-        datos['Sucursal'] = sucursal[0]  # Store the name of the selected branch
+        
         
         # Actualizar el rol en la base de datos
         query = """

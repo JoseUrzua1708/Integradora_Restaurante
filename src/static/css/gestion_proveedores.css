@@ -99,13 +99,6 @@
 }
 
 
-
-/* Contenedor para botones de acciones dentro de tabla */
-.acciones {
-    display: flex;                      /* Layout horizontal */
-    gap: 0.5rem;                       /* Espacio entre botones */
-}
-
 /* Botón de acción genérico */
 .btn-accion {
     width: 32px;                    /* Ancho fijo */
@@ -195,3 +188,4 @@
 .btn-verde i { /* Icono dentro del botón verde */
     font-size: 1.2rem;              /* Tamaño del icono */
 }
+
